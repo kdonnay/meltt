@@ -1,0 +1,1 @@
+is.meltt <- function(object) class(object) == "meltt"  # check if object is class meltt

@@ -1,0 +1,13 @@
+Package: meltt
+Type: Package
+Title: Matching Event Data by Location, Time and Type
+Version: 0.3.0
+Date: 2017-05-18
+Author: Karsten Donnay and Eric Dunford
+Maintainer: Karsten Donnay <kdonnay@gmx.net>
+Description: Framework for merging and disambiguating event data based on spatiotemporal co-occurrence and secondary event characteristics. It can account for intrinsic "fuzziness" in the coding of events, varying event taxonomies and different geo-precision codes.
+License: LGPL-3
+Depends: R (>= 2.6)
+Imports: sp, reticulate, graphics, scales, ggmap, ggplot2, plotGoogleMaps, plyr
+SystemRequirements: Python (>= 2.7)
+NeedsCompilation: no
