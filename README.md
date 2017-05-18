@@ -20,7 +20,6 @@ The package can be installed through the CRAN repository.
 
 ```R
 require(meltt)
-## this is the output
 ```
 
 Or the development version from Github
