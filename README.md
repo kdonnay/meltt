@@ -1,6 +1,8 @@
 # MELTT: Matching Event Data by Location, Time, and Type
 
-`meltt` provides a method for integrating event data in R. Event data seeks to capture micro-level information on event occurrences that are temporally and spatially disaggregated. For example, information on neighborhood crime, car accidents, terrorism events, and marathon running times are all forms of event data. These data provide a highly granular picture regarding the spatial and temporal distribution of a specific phenomena. When one or more event datasets exist that capture a seemingly related topic -- such as, one dataset that captures information on burglaries and muggings in a city and another that records assaults -- it can useful to combine data sets to bolster coverage, capture a broader spectrum of activity, or validate a dataset. However, matching event data is notoriously difficult.
+`meltt` provides a method for integrating event data in R. Event data seeks to capture micro-level information on event occurrences that are temporally and spatially disaggregated. For example, information on neighborhood crime, car accidents, terrorism events, and marathon running times are all forms of event data. These data provide a highly granular picture regarding the spatial and temporal distribution of a specific phenomena.
+
+When one or more event datasets exist that capture a seemingly related topic -- such as, one dataset that captures information on burglaries and muggings in a city and another that records assaults -- it can useful to combine data sets to bolster coverage, capture a broader spectrum of activity, or validate a dataset. However, matching event data is notoriously difficult.
 
  - **First**, different geo-referencing software can produce slightly different longitude and latitude locations for the same event. This results in a geo-spatial jittering surrounding where the same location is reported.
 
@@ -13,12 +15,14 @@ In the past, to overcome these hurdles, one had to systematically match these da
 # Installation
 
 The package can be installed through the CRAN repository.
+
 ```R
 require(meltt)
 ## this is the output
 ```
 
 Or the development version from Github
+
 ```R
 # install.packages("devtools")
 devtools::install_github("css-konstanz/meltt")
