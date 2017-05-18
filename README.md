@@ -12,7 +12,7 @@ When more than one event dataset exists capturing related topics -- such as, one
 
 In the past, to overcome these hurdles, one had to systematically match these data by hand, which needless to say, was time consuming, error-prone, and hard to reproduce. `meltt` provides a way around this problem by implementing a method that automates the matching of different event datasets in a fast, transparent, and reproducible way.
 
-More information about the specifics of the method can be found in an upcoming R Journal article as well as in the packages documentation. Below we review the basics of formalizing a taxonomy and integrating three datasets using completely fake Maryland Car Crash data.
+More information about the specifics of the method can be found in an upcoming R Journal article as well as in the packages documentation. Below we review the basics of formalizing a taxonomy by integrating three datasets using (fake) Maryland car crash data.
 
 # Installation
 
