@@ -273,11 +273,13 @@ Once the taxonomy is formalized, matching the data is straightforward. The `melt
 - `spatwindow = `: the spatial window (in kilometers);
 - `twindow = `: the temporal window (in days).
 
+Below we assume that events occurring within 4 kilometers and 2 days of another event could plausibly be the same event given how the data was constructed in each set. We then assume that the map onto each other in the way that we formalized in the taxonomies outlined above. We fold all this information together using the `meltt()` function and then store the results in an object labeled `output`.
+
 ```R
-output <- meltt(crash_data1,crash_data2,crash_data3,
+output <- meltt(crash_data1, crash_data2, crash_data3,
                 taxonomies = crash_taxonomies,
-                spatwindow = 3,
-                twindow = 1)
+                spatwindow = 4,
+                twindow = 2)
 
 output
 # MELTT Complete: 3 datasets successfully integrated.
@@ -289,7 +291,9 @@ output
 # ===================================================
 ```
 
-When printed, the `meltt` object offers a brief summary of the output. In matching the three car crash datasets, there are 195 total entries. Of those 195, 140 of them are found to be unique -- that is, no entry from another dataset matched up with them. 34 unique matches were found found, resulting in 55 entries being removed as duplicates. 
+When printed, the `meltt` object offers a brief summary of the output. In matching the three car crash datasets, there are 195 total entries (i.e. 71 entries from `crash_data1`, 64 entries from `crash_data2`, and 60 entries from `crash_data3`). Of those 195, 140 of them are unique -- that is, no entry from another dataset matched up with them. 55 entries, however, were found to be duplicates identified within 34 unique matches.
+
+The `summary()` function offers a more informed summary of the output.
 
 
 
