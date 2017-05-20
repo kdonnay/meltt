@@ -89,6 +89,7 @@ The goal is to match these three event datasets to locate which events are dupli
 
 Finally, to articulate how different coding schemas overlap, the user needs to input an event taxonomy. A taxonomy is a formalization of how variables overlap, moving from as granular as possible to as general as possible.
 
+## Generating a taxonomy
 For the car crash data, we have three variables that exist in all three in datasets, albeit in different forms. By way of example, let's consider the `damage_tax` variable recorded in each of the three datasets.
 ```R
 unique(crash_data1$damage_tax)
@@ -220,7 +221,9 @@ crash_taxonomies$model_tax
 # 31 crash_data3            Standard Pick-Up                  Unclassified       Pick-Up Large Vehicle
 
 ```
-A taxonomy can be as granular or as broad as one chooses. The more levels one includes to describe the overlap, the better the match, as `meltt` will have more information to work with when differentiating between sets of potential matches. **A good taxonomy is the key to matching data, and is the primary vehicle by which a user's assumptions -- regarding how data fits together -- is made transparent.**
+As one can see, the color and model taxonomies contain more levels than the damage taxonomy, but each level goes from more granular to more broad. For example, the `model_tax` goes from `make_level1`, which contains a schema with 7 unique entries using the Euro coding of car models as a way of specifying overlap, to `make_level3`, which contains a schema with only two categories (i.e. differentiation between large and small vehicles).
+
+All-in-all, taxonomy can be as granular or as broad as one chooses. The more levels one includes to describe the overlap, the better the match, as `meltt` will have more information to work with when differentiating between sets of potential matches. **A good taxonomy is the key to matching data, and is the primary vehicle by which a user's assumptions -- regarding how data fits together -- is made transparent.**
 
 A few things to note:
 
@@ -261,3 +264,5 @@ colnames(crash_data3)[7:9]
 3. **Each taxonomy must contain a `data.source` and `base.categories` column**: this last convention helps `meltt` identify which variable is contained in which data object. The `data.source` column should reflect the **_names of the of the data objects for input data_** and the `base.categories` should reflect the original coding of the variable on which the taxonomy is built.
 
 4. **Each input dataset must contain a `date`,`enddate` (if one exists), `longitude`, and `latitude` column**: the variables must be named accordingly (no deviations in naming conventions). The dates should be in an R date formate (`as.Date()`), and the geo-reference information must be numeric (`as.numeric`).
+
+## matching the data 
