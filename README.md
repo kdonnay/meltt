@@ -282,7 +282,7 @@ output <- meltt(crash_data1,crash_data2,crash_data3,
 output
 # MELTT Complete: 3 datasets successfully integrated.
 # ===================================================
-#   Total No. of Input Observations:		195
+# Total No. of Input Observations:		  195
 # No. of Unique Obs (after deduplication):	140
 # No. of Unique Matches:			34
 # No. of Duplicates Removed:			55
