@@ -265,4 +265,32 @@ colnames(crash_data3)[7:9]
 
 4. **Each input dataset must contain a `date`,`enddate` (if one exists), `longitude`, and `latitude` column**: the variables must be named accordingly (no deviations in naming conventions). The dates should be in an R date formate (`as.Date()`), and the geo-reference information must be numeric (`as.numeric`).
 
-## matching the data 
+## Matching data
+
+Once the taxonomy is formalized, matching the data is straightforward. The `meltt()` function takes four main arguments:
+- `...`: input data;
+- `taxonomies = `: list object containing the user-input taxonomies;
+- `spatwindow = `: the spatial window (in kilometers);
+- `twindow = `: the temporal window (in days).
+
+```R
+output <- meltt(crash_data1,crash_data2,crash_data3,
+                taxonomies = crash_taxonomies,
+                spatwindow = 3,
+                twindow = 1)
+
+output
+# MELTT Complete: 3 datasets successfully integrated.
+# ===================================================
+# Total No. of Input Observations:		          195
+# No. of Unique Obs (after deduplication):	      140
+# No. of Unique Matches:				          34
+# No. of Duplicates Removed:			          55
+# ===================================================
+```
+
+When printed, the `meltt` object offers a brief summary of the output. In matching the three car crash datasets, there are 195 total entries. Of those 195, 140 of them are found to be unique -- that is, no entry from another dataset matched up with them. 34 unique matches were found found, resulting in 55 entries being removed as duplicates. 
+
+
+
+
