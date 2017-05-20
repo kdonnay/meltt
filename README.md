@@ -74,15 +74,190 @@ str(crash_data3)
 # $ damage_tax: chr  "Vehicle Rollover" "Rear-End Collision" "Sideswipe Collision" "Vehicle Rollover" ...
 ```
 
-Each dataset contains a variable containing the `date` (and `enddate` if the event occurred across more than one day, i.e. an "episode"), `longitude`, `latitude`, and information on the model, color, and type of accident. The variable names in each dataset have been standardized for reasons outlined below.
+Each dataset contain variables regarding:
+
+- `date`: when the event occurred;
+- `enddate`: if the event occurred across more than one day, i.e. an "episode";
+- `longitude` & `latitude`: geo-location information;
+- `model_tax`: coding scheme of the type of car;
+- `color_tax`: coding scheme of the color of the car;
+- `damage_tax`: coding scheme of the type of accident.
+
+The variable names in each dataset have been standardized for reasons outlined below.
 
 The goal is to match these three event datasets to locate which events are duplicates of each other and which are unique. `meltt` formalizes all input assumptions one needs to make in order to match these data. It does this by allowing users to specify a spatial and temporal window that any potential match could plausibly fall within. Put differently, how close in space and time does an event need to be to qualify as a potential match?
 
 Finally, to articulate how different coding schemas overlap, the user needs to input an event taxonomy. A taxonomy is a formalization of how variables overlap, moving from as granular as possible to as general as possible.
 
-For the car crash data, we have three variables that exist in all three in datasets, albeit in different forms. The taxonomy explains how say a "Rear-End Collision" in one dataset relates to a "Flip" on another.
-
-By way of example, let's consider the type of damage taxonomy (`damage_tax`) that we constructed for the car crash data.
+For the car crash data, we have three variables that exist in all three in datasets, albeit in different forms. By way of example, let's consider the `damage_tax` variable recorded in each of the three datasets.
 ```R
-head(crash_taxonomies$damage_tax)
+unique(crash_data1$damage_tax)
+# [1] "1" "5" "4" "6" "2" "3" "7"
+
+unique(crash_data2$damage_tax)
+# [1] "Flip"                       
+# [2] "Mid-Rear Damage"            
+# [3] "Front Damage"               
+# [4] "Side Damage While In Motion"
+# [5] "Hit Tree"                   
+# [6] "Side Damage"                
+# [7] "Hit Property"  
+
+unique(crash_data3$damage_tax)
+# [1] "Vehicle Rollover"         "Rear-End Collision"      
+# [3] "Sideswipe Collision"      "Object Collisions"       
+# [5] "Side-Impact Collision"    "Liable Object Collisions"
+# [7] "Head-On Collision"
 ```
+Each variable records information on regarding the type of accident a little differently. A taxonomy seeks to generalize across each category by clarifying how each coding scheme maps onto the other.
+
+```R
+crash_taxonomies$damage_tax
+
+# data.source             base.categories           damage_level1
+# 1  crash_data1                           1 Multi-Vehicle Accidents
+# 2  crash_data1                           2 Multi-Vehicle Accidents
+# 3  crash_data1                           3 Multi-Vehicle Accidents
+# 4  crash_data1                           4    Single Car Accidents
+# 5  crash_data1                           5 Multi-Vehicle Accidents
+# 6  crash_data1                           6    Single Car Accidents
+# 7  crash_data1                           7    Single Car Accidents
+# 8  crash_data2             Mid-Rear Damage Multi-Vehicle Accidents
+# 9  crash_data2                 Side Damage Multi-Vehicle Accidents
+# 10 crash_data2 Side Damage While In Motion Multi-Vehicle Accidents
+# 11 crash_data2                        Flip    Single Car Accidents
+# 12 crash_data2                Front Damage Multi-Vehicle Accidents
+# 13 crash_data2                    Hit Tree    Single Car Accidents
+# 14 crash_data2                Hit Property    Single Car Accidents
+# 15 crash_data3          Rear-End Collision Multi-Vehicle Accidents
+# 16 crash_data3       Side-Impact Collision Multi-Vehicle Accidents
+# 17 crash_data3         Sideswipe Collision Multi-Vehicle Accidents
+# 18 crash_data3            Vehicle Rollover    Single Car Accidents
+# 19 crash_data3           Head-On Collision Multi-Vehicle Accidents
+# 20 crash_data3           Object Collisions    Single Car Accidents
+# 21 crash_data3    Liable Object Collisions    Single Car Accidents
+```
+`crash_taxonomies` object contains three pre-made taxonomies for each of the three overlapping variable categories. The `damage_tax` contains a single level describing how the different coding schemes overlap. When matching the data, `meltt` uses this information to score potential matches that are proximate in space and time.
+
+Likewise, we've undergone a similar exercise when formalizing how the `model_tax` and `color_tax` variables map onto one another.
+
+```R
+crash_taxonomies$color_tax
+# data.source base.categories      col_level1 col_level2
+# 1  crash_data1         255-0-0       Red Shade       Dark
+# 2  crash_data1         0-0-128      Blue Shade       Dark
+# 3  crash_data1     255-255-255 Greyscale Shade      Light
+# 4  crash_data1         0-100-0     Green Shade       Dark
+# 5  crash_data1           0-0-0 Greyscale Shade       Dark
+# 6  crash_data1     238-233-233 Greyscale Shade      Light
+# 7  crash_data1       165-42-42     Brown Shade       Dark
+# 8  crash_data1     210-180-140     Brown Shade      Light
+# 9  crash_data1     173-216-230      Blue Shade      Light
+# 10 crash_data1     245-245-220     Brown Shade      Light
+# 11 crash_data1     139-137-137 Greyscale Shade       Dark
+# 12 crash_data1     255-255-240     Brown Shade      Light
+# 13 crash_data1          50-0-3       Red Shade       Dark
+# 14 crash_data2         #Ff0000       Red Shade       Dark
+# 15 crash_data2         #000080      Blue Shade       Dark
+# 16 crash_data2         #Ffffff Greyscale Shade      Light
+# 17 crash_data2         #006400     Green Shade       Dark
+# 18 crash_data2         #000000 Greyscale Shade       Dark
+# 19 crash_data2         #Eee9e9 Greyscale Shade      Light
+# 20 crash_data2         #A52a2a     Brown Shade       Dark
+# 21 crash_data2         #D2b48c     Brown Shade      Light
+# 22 crash_data2         #Add8e6      Blue Shade      Light
+# 23 crash_data2         #F5f5dc     Brown Shade      Light
+# 24 crash_data2         #8B8989 Greyscale Shade       Dark
+# 25 crash_data2         #Fffff0     Brown Shade      Light
+# 26 crash_data2         #800020       Red Shade       Dark
+# 27 crash_data3             Red       Red Shade       Dark
+# 28 crash_data3       Navy Blue      Blue Shade       Dark
+# 29 crash_data3           White Greyscale Shade      Light
+# 30 crash_data3      Dark Green     Green Shade       Dark
+# 31 crash_data3           Black Greyscale Shade       Dark
+# 32 crash_data3          Silver Greyscale Shade      Light
+# 33 crash_data3           Brown     Brown Shade       Dark
+# 34 crash_data3     Light Brown     Brown Shade      Light
+# 35 crash_data3      Light Blue      Blue Shade      Light
+# 36 crash_data3           Beige     Brown Shade      Light
+# 37 crash_data3        Gunmetal Greyscale Shade       Dark
+# 38 crash_data3           Ivory     Brown Shade      Light
+# 39 crash_data3        Burgandy       Red Shade       Dark
+
+
+crash_taxonomies$model_tax
+# data.source             base.categories                   make_level1   make_level2   make_level3
+# 1  crash_data1                 Economy Car          B-Segment Small Cars Passenger Car Small Vehicle
+# 2  crash_data1        Mid-Sized Luxery Car      E-Segment Executive Cars Passenger Car Small Vehicle
+# 3  crash_data1            Small Family Car         C-Segment Medium Cars Passenger Car Small Vehicle
+# 4  crash_data1                         Mpv   M-Segment Multipurpose Cars           Mpv Large Vehicle
+# 5  crash_data1                     Minivan   M-Segment Multipurpose Cars           Mpv Large Vehicle
+# 6  crash_data1                    Mini Suv J-Segment Sports Utility Cars    Off-Roader Large Vehicle
+# 7  crash_data1     Mid-Sized Pick-Up Truck                  Unclassified       Pick-Up Large Vehicle
+# 8  crash_data1                Mid-Size Car          D-Segment Large Cars Passenger Car Small Vehicle
+# 9  crash_data1               Full-Size Car      E-Segment Executive Cars Passenger Car Small Vehicle
+# 10 crash_data1                   Cargo Van   M-Segment Multipurpose Cars           Mpv Large Vehicle
+# 11 crash_data1    Full-Sized Pick-Up Truck                  Unclassified       Pick-Up Large Vehicle
+# 12 crash_data1                 Compact Suv J-Segment Sports Utility Cars    Off-Roader Large Vehicle
+# 13 crash_data2                   Supermini          B-Segment Small Cars Passenger Car Small Vehicle
+# 14 crash_data2               Executive Car      E-Segment Executive Cars Passenger Car Small Vehicle
+# 15 crash_data2                   Small Car         C-Segment Medium Cars Passenger Car Small Vehicle
+# 16 crash_data2                 Compact Mpv   M-Segment Multipurpose Cars           Mpv Large Vehicle
+# 17 crash_data2                   Large Mpv   M-Segment Multipurpose Cars           Mpv Large Vehicle
+# 18 crash_data2                    Mini 4X4 J-Segment Sports Utility Cars    Off-Roader Large Vehicle
+# 19 crash_data2                     Pick-Up                  Unclassified       Pick-Up Large Vehicle
+# 20 crash_data2            Large Family Car          D-Segment Large Cars Passenger Car Small Vehicle
+# 21 crash_data2                         Van   M-Segment Multipurpose Cars           Mpv Large Vehicle
+# 22 crash_data2                 Compact Suv J-Segment Sports Utility Cars    Off-Roader Large Vehicle
+# 23 crash_data3                  Subcompact          B-Segment Small Cars Passenger Car Small Vehicle
+# 24 crash_data3                       Large      E-Segment Executive Cars Passenger Car Small Vehicle
+# 25 crash_data3                     Compact         C-Segment Medium Cars Passenger Car Small Vehicle
+# 26 crash_data3                     Minivan   M-Segment Multipurpose Cars           Mpv Large Vehicle
+# 27 crash_data3 Small Sport Utility Vehicle J-Segment Sports Utility Cars    Off-Roader Large Vehicle
+# 28 crash_data3         Small Pick-Up Truck                  Unclassified       Pick-Up Large Vehicle
+# 29 crash_data3                   Mid-Sized          D-Segment Large Cars Passenger Car Small Vehicle
+# 30 crash_data3                   Cargo Van   M-Segment Multipurpose Cars           Mpv Large Vehicle
+# 31 crash_data3            Standard Pick-Up                  Unclassified       Pick-Up Large Vehicle
+
+```
+A taxonomy can be as granular or as broad as one chooses. The more levels one includes to describe the overlap, the better the match, as `meltt` will have more information to work with when differentiating between sets of potential matches. **A good taxonomy is the key to matching data, and is the primary vehicle by which a user's assumptions -- regarding how data fits together -- is made transparent.**
+
+A few things to note:
+
+1. **Taxonomies must be organized as lists**: each taxonomy `data.frame` is read into `meltt` as a single list object.
+
+```R
+str(crash_taxonomies)
+# List of 3
+# $ model_tax :'data.frame':	31 obs. of  5 variables:
+#   ..$ data.source    : chr [1:31] "crash_data1" "crash_data1" "crash_data1" "crash_data1" ...
+# ..$ base.categories: chr [1:31] "Economy Car" "Mid-Sized Luxery Car" "Small Family Car" "Mpv" ...
+# ..$ make_level1    : chr [1:31] "B-Segment Small Cars" "E-Segment Executive Cars" "C-Segment Medium Cars" "M-Segment Multipurpose Cars" ...
+# ..$ make_level2    : chr [1:31] "Passenger Car" "Passenger Car" "Passenger Car" "Mpv" ...
+# ..$ make_level3    : chr [1:31] "Small Vehicle" "Small Vehicle" "Small Vehicle" "Large Vehicle" ...
+# $ color_tax :'data.frame':	39 obs. of  4 variables:
+#   ..$ data.source    : chr [1:39] "crash_data1" "crash_data1" "crash_data1" "crash_data1" ...
+# ..$ base.categories: chr [1:39] "255-0-0" "0-0-128" "255-255-255" "0-100-0" ...
+# ..$ col_level1     : chr [1:39] "Red Shade" "Blue Shade" "Greyscale Shade" "Green Shade" ...
+# ..$ col_level2     : chr [1:39] "Dark" "Dark" "Light" "Dark" ...
+# $ damage_tax:'data.frame':	21 obs. of  3 variables:
+#   ..$ data.source    : chr [1:21] "crash_data1" "crash_data1" "crash_data1" "crash_data1" ...
+# ..$ base.categories: chr [1:21] "1" "2" "3" "4" ...
+# ..$ damage_level1  : chr [1:21] "Multi-Vehicle Accidents" "Multi-Vehicle Accidents" "Multi-Vehicle Accidents" "Single Car Accidents" ...
+```
+
+2. **Taxonomies must be named the same as the variables they seek to describe**: `meltt` relies on simple naming conventions to identify which variable is what when matching.
+
+```R
+names(crash_taxonomies)
+# [1] "model_tax"  "color_tax"  "damage_tax"
+colnames(crash_data1)[7:9]
+# [1] "model_tax"  "color_tax"  "damage_tax"
+colnames(crash_data2)[7:9]
+# [1] "model_tax"  "color_tax"  "damage_tax"
+colnames(crash_data3)[7:9]
+# [1] "model_tax"  "color_tax"  "damage_tax"
+```
+3. **Each taxonomy must contain a `data.source` and `base.categories` column**: this last convention helps `meltt` identify which variable is contained in which data object. The `data.source` column should reflect the **_names of the of the data objects for input data_** and the `base.categories` should reflect the original coding of the variable on which the taxonomy is built.
+
+4. **Each input dataset must contain a `date`,`enddate` (if one exists), `longitude`, and `latitude` column**: the variables must be named accordingly (no deviations in naming conventions). The dates should be in an R date formate (`as.Date()`), and the geo-reference information must be numeric (`as.numeric`).
