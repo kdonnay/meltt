@@ -308,10 +308,10 @@ summary(output)
 # Taxonomy Depths: 3, 2, 1
 #
 # Total No. of Input Observations:		           195
-# No. of Unique Matches:		                    34
+# No. of Unique Matches:		                   34
 #   - No. of Event-to-Event Matches:		    26
-#   - No. of Episode-to-Episode Matches:	   8
-# No. of Duplicates Removed:		                  55
+#   - No. of Episode-to-Episode Matches:	     8
+# No. of Duplicates Removed:		                   55
 # No. of Unique Obs (after deduplication):		   140
 # ------------------------------------------------------------
 # Summary of Overlap
