@@ -295,7 +295,7 @@ When printed, the `meltt` object offers a brief summary of the output. In matchi
 
 The `summary()` function offers a more informed summary of the output.
 ```R
-# summary(output)
+summary(output)
 # MELTT output
 # ============================================================
 # No. of Input Datasets: 3
@@ -307,12 +307,12 @@ The `summary()` function offers a more informed summary of the output.
 # Taxonomy Names: model_tax, color_tax, damage_tax
 # Taxonomy Depths: 3, 2, 1
 #
-# Total No. of Input Observations:		  195
-# No. of Unique Matches:				  34
+# Total No. of Input Observations:		    195
+# No. of Unique Matches:		    34
 #   - No. of Event-to-Event Matches:		  26
-#   - No. of Episode-to-Episode Matches:		  8
-# No. of Duplicates Removed:			  55
-# No. of Unique Obs (after deduplication):	  140
+#   - No. of Episode-to-Episode Matches:	8
+# No. of Duplicates Removed:		    55
+# No. of Unique Obs (after deduplication):		    140
 # ------------------------------------------------------------
 # Summary of Overlap
 # crash_data1 crash_data2 crash_data3 Freq
@@ -328,4 +328,4 @@ The `summary()` function offers a more informed summary of the output.
 ```
 Given that meltt objects can be saved and referenced later, the summary function offers a recap on the input parameters and assumptions that underpin the match (i.e. the datasets, the spatiotemporal window, the taxonomies, etc.). Again, infromation regarding the total number of observations, the number of unique and dupicate entries, and the number matches found is reported, but this time information regarding how many of those matches were event-to-event (i.e. events that played out along one time unit where the date is equal to the end date) and episode-to-episode (i.e. events that played out over a couple of days).
 
-> NOTE: Events that have been flagged as matching to episodes require manual review using the `meltt.inspect()` function. The summary output tells us that 6 episodes are flagged as potentially matching. Technically speaking, episodes and events are at different units of analysis; thus, user discretion is required to help sort out these types of matches. The `meltt.inspect()` function eases this process of manual assessment. We are developing a shiny app to help assessment further in this regard. 
+> NOTE: Events that have been flagged as matching to episodes require manual review using the `meltt.inspect()` function. The summary output tells us that 6 episodes are flagged as potentially matching. Technically speaking, episodes and events are at different units of analysis; thus, user discretion is required to help sort out these types of matches. The `meltt.inspect()` function eases this process of manual assessment. We are developing a shiny app to help assessment further in this regard.
