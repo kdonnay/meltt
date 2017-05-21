@@ -365,7 +365,7 @@ mplot(output,interactive=T)
 ```
 See [here](http://i.imgur.com/9epY8Sr.gif) for an example.
 
-<blockquote class="imgur-embed-pub" lang="en" data-id="9epY8Sr"><a href="//imgur.com/9epY8Sr">View post on imgur.com</a></blockquote><script async src="//s.imgur.com/min/embed.js" charset="utf-8"></script>
+[Imgur](http://i.imgur.com/9epY8Sr.gifv)
 
 ### Extracting Data
 `meltt` provides two methods for extracting data from the output object.
