@@ -350,3 +350,17 @@ Users can specify the temporal unit that the data should be binned (day, week, m
 tplot(output, time.unit="day")
 ```
 ![meltt_tplot](https://cloud.githubusercontent.com/assets/13281042/26285852/e3e938c6-3e25-11e7-8d52-d310a27e1c4f.jpeg)
+
+Similarly, `mplot()` presents a summary of the spatial distribution of the data by plotting the spatial points onto a Google map. Events where matches were detected are denoted from the unity entries by blue diamonds. Again, the goal is to get a sense of the spatial distribution of the matches to both identify any clustering/disproportionate coverage in where matches are located, and to also get a sense of the spread of the integrated output.
+
+```R
+mplot(output)
+```
+![meltt_mplot](https://cloud.githubusercontent.com/assets/13281042/26286067/e36a4b98-3e29-11e7-9d7d-1156ea05c31f.jpeg)
+
+`mplot()` also contains an `interactive =` argument that when set to `TRUE` generates an interactive Google map in the user's primary browser for more granular inspection of the spatial matches. Information regarding the input criteria in which each entry was assessed (e.g. the taxonomy inputs) are retained and can be referenced by hovering over the point with a mouse.
+
+```R
+mplot(output,interactive=T)
+```
+![mplot_interactive](http://imgur.com/a/S1UJM)
