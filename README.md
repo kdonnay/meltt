@@ -15,6 +15,8 @@ In the past, to overcome these hurdles, one had to systematically match these da
 More information about the specifics of the method can be found in an upcoming R Journal article as well as in the packages documentation.
 
 # Installation
+[![CRAN](https://www.r-pkg.org/badges/version/meltt)](https://cran.r-project.org/package=meltt)
+![Downloads](https://cranlogs.r-pkg.org/badges/meltt)
 
 The package can be installed through the CRAN repository.
 
@@ -435,5 +437,9 @@ head(output$processed$event_contenders)
 # 4             0.0              0               0               0              1
 # 5             0.0              0               0               0              1
 # 6             0.0              0               0               0              1
-
 ```
+
+## Meta
+- Please [report any issues or bugs]((https://github.com/ropensci/tabulizer/issues).).
+- License: MIT
+- Get citation information for `meltt` in R doing `citation(package = 'meltt')`
