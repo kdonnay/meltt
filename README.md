@@ -440,6 +440,6 @@ head(output$processed$event_contenders)
 ```
 
 ## Meta
-- Please [report any issues or bugs]((https://github.com/ropensci/tabulizer/issues).).
+- Please [report any issues or bugs](https://github.com/ropensci/tabulizer/issues).
 - License: MIT
 - Get citation information for `meltt` in R doing `citation(package = 'meltt')`
