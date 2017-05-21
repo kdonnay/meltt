@@ -314,8 +314,8 @@ summary(output)
 # No. of Duplicates Removed:		                   55
 # No. of Unique Obs (after deduplication):		   140
 # ------------------------------------------------------------
-# Summary of Overlap
-# crash_data1 crash_data2 crash_data3 Freq
+#  Summary of Overlap
+#  crash_data1 crash_data2 crash_data3 Freq
 #            X                           41
 #                        X               34
 #                                    X   31
