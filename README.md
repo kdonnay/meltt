@@ -326,6 +326,16 @@ summary(output)
 # ============================================================
 # *Note: 6 episode(s) flagged as potentially matching to an event. Review flagged match with meltt.inspect()
 ```
-Given that meltt objects can be saved and referenced later, the summary function offers a recap on the input parameters and assumptions that underpin the match (i.e. the datasets, the spatiotemporal window, the taxonomies, etc.). Again, infromation regarding the total number of observations, the number of unique and dupicate entries, and the number matches found is reported, but this time information regarding how many of those matches were event-to-event (i.e. events that played out along one time unit where the date is equal to the end date) and episode-to-episode (i.e. events that played out over a couple of days).
+Given that meltt objects can be saved and referenced later, the summary function offers a recap on the input parameters and assumptions that underpin the match (i.e. the datasets, the spatiotemporal window, the taxonomies, etc.). Again, information regarding the total number of observations, the number of unique and duplicate entries, and the number matches found is reported, but this time information regarding how many of those matches were event-to-event (i.e. events that played out along one time unit where the date is equal to the end date) and episode-to-episode (i.e. events that played out over a couple of days).
 
 > NOTE: Events that have been flagged as matching to episodes require manual review using the `meltt.inspect()` function. The summary output tells us that 6 episodes are flagged as potentially matching. Technically speaking, episodes and events are at different units of analysis; thus, user discretion is required to help sort out these types of matches. The `meltt.inspect()` function eases this process of manual assessment. We are developing a shiny app to help assessment further in this regard.
+
+A **summary of overlap** is also provided, articulating how the different input datasets overlap and where. For example, of the 34 matches 5 occurred between crash_data1 and crash_data2, 4 between crash_data1 and crash_data3,
+4 between crash_data2 and crash_data3, and 21 between all three.
+
+For quick visualizations of the matched output, `meltt` contains three plotting methods.
+
+`plot()` offers bar plot articulating the unique and overlapping entries.
+```R
+plot(output)
+```
