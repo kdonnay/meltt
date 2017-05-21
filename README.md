@@ -365,7 +365,7 @@ mplot(output,interactive=T)
 ```
 See [here](http://i.imgur.com/9epY8Sr.gif) for an example.
 
-[Imgur](http://i.imgur.com/9epY8Sr.gifv)
+![Imgur](http://i.imgur.com/9epY8Sr.gifv)
 
 ### Extracting Data
 `meltt` provides two methods for extracting data from the output object.
