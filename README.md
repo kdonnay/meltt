@@ -263,7 +263,7 @@ colnames(crash_data3)[7:9]
 ```
 3. **Each taxonomy must contain a `data.source` and `base.categories` column**: this last convention helps `meltt` identify which variable is contained in which data object. The `data.source` column should reflect the **_names of the of the data objects for input data_** and the `base.categories` should reflect the original coding of the variable on which the taxonomy is built.
 
-4. **Each input dataset must contain a `date`,`enddate` (if one exists), `longitude`, and `latitude` column**: the variables must be named accordingly (no deviations in naming conventions). The dates should be in an R date formate (`as.Date()`), and the geo-reference information must be numeric (`as.numeric`).
+4. **Each input dataset must contain a `date`,`enddate` (if one exists), `longitude`, and `latitude` column**: the variables must be named accordingly (no deviations in naming conventions). The dates should be in an R date formate (`as.Date()`), and the geo-reference information must be numeric (`as.numeric()`).
 
 ## Matching data
 
@@ -294,7 +294,38 @@ output
 When printed, the `meltt` object offers a brief summary of the output. In matching the three car crash datasets, there are 195 total entries (i.e. 71 entries from `crash_data1`, 64 entries from `crash_data2`, and 60 entries from `crash_data3`). Of those 195, 140 of them are unique -- that is, no entry from another dataset matched up with them. 55 entries, however, were found to be duplicates identified within 34 unique matches.
 
 The `summary()` function offers a more informed summary of the output.
+```R
+# summary(output)
+# MELTT output
+# ============================================================
+# No. of Input Datasets: 3
+# Data Object Names: crash_data1, crash_data2, crash_data3
+# Spatial Window: 4km
+# Temporal Window: 2 Day(s)
+#
+# No. of Taxonomies: 3
+# Taxonomy Names: model_tax, color_tax, damage_tax
+# Taxonomy Depths: 3, 2, 1
+#
+# Total No. of Input Observations:		  195
+# No. of Unique Matches:				  34
+#   - No. of Event-to-Event Matches:		  26
+#   - No. of Episode-to-Episode Matches:		  8
+# No. of Duplicates Removed:			  55
+# No. of Unique Obs (after deduplication):	  140
+# ------------------------------------------------------------
+# Summary of Overlap
+# crash_data1 crash_data2 crash_data3 Freq
+#            X                           41
+#                        X               34
+#                                    X   31
+#            X           X                5
+#            X                       X    4
+#                        X           X    4
+#            X           X           X   21
+# ============================================================
+# *Note: 6 episode(s) flagged as potentially matching to an event. Review flagged match with meltt.inspect()
+```
+Given that meltt objects can be saved and referenced later, the summary function offers a recap on the input parameters and assumptions that underpin the match (i.e. the datasets, the spatiotemporal window, the taxonomies, etc.). Again, infromation regarding the total number of observations, the number of unique and dupicate entries, and the number matches found is reported, but this time information regarding how many of those matches were event-to-event (i.e. events that played out along one time unit where the date is equal to the end date) and episode-to-episode (i.e. events that played out over a couple of days).
 
-
-
-
+> NOTE: Events that have been flagged as matching to episodes require manual review using the `meltt.inspect()` function. The summary output tells us that 6 episodes are flagged as potentially matching. Technically speaking, episodes and events are at different units of analysis; thus, user discretion is required to help sort out these types of matches. The `meltt.inspect()` function eases this process of manual assessment. We are developing a shiny app to help assessment further in this regard. 
