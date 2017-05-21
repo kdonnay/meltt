@@ -363,4 +363,4 @@ mplot(output)
 ```R
 mplot(output,interactive=T)
 ```
-![mplot_interactive](http://imgur.com/a/S1UJM)
+[![mplot_interactive](http://i.imgur.com/9epY8Sr.gifv)](http://i.imgur.com/9epY8Sr.gifv)
