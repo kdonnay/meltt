@@ -333,9 +333,20 @@ Given that meltt objects can be saved and referenced later, the summary function
 A **summary of overlap** is also provided, articulating how the different input datasets overlap and where. For example, of the 34 matches 5 occurred between crash_data1 and crash_data2, 4 between crash_data1 and crash_data3,
 4 between crash_data2 and crash_data3, and 21 between all three.
 
+
+### Visualization
 For quick visualizations of the matched output, `meltt` contains three plotting methods.
 
-`plot()` offers bar plot articulating the unique and overlapping entries.
+`plot()` offers bar plot graphically articulating the unique and overlapping entries. Note that the entries from the leading dataset (i.e. the dataset first entered into meltt) is all black. This is because all matches are in reference to the datasets that came before it. Any match found in crash_data2 is with respect to crash_data1, and so.
 ```R
 plot(output)
 ```
+![meltt_plot](https://cloud.githubusercontent.com/assets/13281042/26285770/0789ff06-3e24-11e7-8042-7268dc12b310.jpeg)
+
+`tplot()` offers a time series plot of the meltt output. The plot works as a reflection, where raw counts of the unique entries are plotted right-side up and the raw counts of the removed duplicates are plotted below it. This offers a quick snapshot of _when_ duplicates are located. Temporal clustering of duplicates may indicate an issue with the data and/or the input assumptions, or it's potentially evidence of a unique artifact of the data itself.
+
+Users can specify the temporal unit that the data should be binned (day, week, month, year). Give that the data only covers one month, we'll look at the output by day.
+```R
+tplot(output, time.unit="day")
+```
+![meltt_tplot](https://cloud.githubusercontent.com/assets/13281042/26285852/e3e938c6-3e25-11e7-8d52-d310a27e1c4f.jpeg)
