@@ -34,7 +34,7 @@ Currently, the package requires that the user have python (>= 2.7) and a version
 
 # Usage
 
-For the following, we'll use some (fake) Maryland car crash data. These data simulate three separate lists intent on capturing the same thing: car crashes in the state of Maryland for January 2012. Each data set differs in how it codes information on the "at-fault" car's color, make, and the type of accident.
+For the following, we'll use some (fake) Maryland car crash data. These data simulate three separate lists intent on capturing the same thing: car crashes in the state of Maryland for January 2012. Each data set differs in how it codes information on the perpetrating car's color, make, and the type of accident.
 
 ```R
 data("crashMD") # Load in Example data
@@ -267,7 +267,7 @@ colnames(crash_data3)[7:9]
 
 4. **Each input dataset must contain a `date`,`enddate` (if one exists), `longitude`, and `latitude` column**: the variables must be named accordingly (no deviations in naming conventions). The dates should be in an R date formate (`as.Date()`), and the geo-reference information must be numeric (`as.numeric()`).
 
-## Output
+## Matching Data
 
 Once the taxonomy is formalized, matching the data is straightforward. The `meltt()` function takes four main arguments:
 - `...`: input data;
@@ -282,8 +282,22 @@ output <- meltt(crash_data1, crash_data2, crash_data3,
                 taxonomies = crash_taxonomies,
                 spatwindow = 4,
                 twindow = 2)
+```
+`meltt` also contains a range of adjustments to offer the user additional controls regarding how the events are matched. These auxiliary arguments are:
+- `smartmatch`: when `TRUE` (default), all available taxonomy levels are used. When `FALSE`, only specific taxonomy levels are considered.
+- `certainty`: specification of the the exact taxonomy level to match on when `smartmatch = FALSE`.
+- `partial`: specifies whether matches along only some of the taxonomy dimensions are permitted.
+- `averaging`: implement averaging of all values events are match on when matching across multiple dataframes. That is, as events are matched dataset by dataset, the metadata is averaged. (Note: that this can generate distortion in the output).
+- `weight`: specified weights for each taxonomy level to increase or decrease the importances of each taxonomy's contribution to the matching score.
 
+At times, one might want to know which taxonomy level is doing the heavy lifting. By turning off `smartmatch`, and specifying certain taxonomy levels by which to compare events, or by weighting taxonomy levels differently, one is able to better assess which assumptions are driving end result. This can help with fine-tuning the input assumptions for `meltt` to gain the most valid match possible.
+
+### Output
+When printed, the `meltt` object offers a brief summary of the output.
+
+```R
 output
+
 # MELTT Complete: 3 datasets successfully integrated.
 # ===================================================
 # Total No. of Input Observations:		 195
@@ -293,7 +307,7 @@ output
 # ===================================================
 ```
 
-When printed, the `meltt` object offers a brief summary of the output. In matching the three car crash datasets, there are 195 total entries (i.e. 71 entries from `crash_data1`, 64 entries from `crash_data2`, and 60 entries from `crash_data3`). Of those 195, 140 of them are unique -- that is, no entry from another dataset matched up with them. 55 entries, however, were found to be duplicates identified within 34 unique matches.
+In matching the three car crash datasets, there are 195 total entries (i.e. 71 entries from `crash_data1`, 64 entries from `crash_data2`, and 60 entries from `crash_data3`). Of those 195, 140 of them are unique -- that is, no entry from another dataset matched up with them. 55 entries, however, were found to be duplicates identified within 34 unique matches.
 
 The `summary()` function offers a more informed summary of the output.
 ```R
