@@ -1,16 +1,16 @@
 # MELTT: Matching Event Data by Location, Time, and Type
 
-`meltt` provides a method for integrating event data in R. Event data seeks to capture micro-level information on event occurrences that are temporally and spatially disaggregated. For example, information on neighborhood crime, car accidents, terrorism events, and marathon running times are all forms of event data. These data provide a highly granular picture regarding the spatial and temporal distribution of a specific phenomena.
+`meltt` provides a method for integrating event data in R. Event data seeks to capture micro-level information on event occurrences that are temporally and spatially disaggregated. For example, information on neighborhood crime, car accidents, terrorism events, and marathon running times are all forms of event data. These data provide a highly granular picture of the spatial and temporal distribution of a specific phenomena.
 
-When more than one event dataset exists capturing related topics -- such as, one dataset that captures information on burglaries and muggings in a city and another that records assaults -- it can be useful to combine these data to bolster coverage, capture a broader spectrum of activity, or validate a dataset. However, matching event data is notoriously difficult. Here is why:
+In many cases, more than one event dataset exists capturing related topics -- such as, one dataset that captures information on burglaries and muggings in a city and another that records assaults---and it can be useful to combine these data to bolster coverage, capture a broader spectrum of activity, or validate the coding of these datasets. However, matching event data is notoriously difficult:
 
  - **Jittering Locations**, different geo-referencing software can produce slightly different longitude and latitude locations for the same place. This results in an artificial geo-spatial "jitter" around the same location.
 
- - **Temporal Fuzziness**, given how information about events are collected, the exact date an event is reported might differ for source to source. For example, if the data is generated using news reports, one newspaper might report about an event on Sunday whereas another might not report on the same event until Monday. This creates a temporal fuzziness where the same event falls on different days given random error in reporting and circulation.
+ - **Temporal Fuzziness**, given how information about events are collected, the exact date of an event reported might differ from source to source. For example, if data is generated using news reports, they might differ in their reporting of the exact timing of the event---especially if precise on-the-ground information is hard to come by. This creates a temporal fuzziness where the same empirical event falls on different days in different datasets .
 
  - **Conceptual Differences**, different event datasets are built for different reasons, meaning each dataset will likely contain its own coding schema for the same general category. For example, a dataset recording local muggings and burglaries might have a schema that records these types of events categorically (i.e "mugging", "break in", etc.), whereas another crime dataset might record violent crimes and do so ordinally (1, 2, 3, etc.). Both datasets might be capturing the same event (say, a violent mugging) but each has its own method of coding that event.
 
-In the past, to overcome these hurdles, one had to systematically match these data by hand, which needless to say, was time consuming, error-prone, and hard to reproduce. `meltt` provides a way around this problem by implementing a method that automates the matching of different event datasets in a fast, transparent, and reproducible way.
+In the past, to overcome these hurdles, researchers have typically relied on hand-coding to systematically match these data, which needless to say, is extremely time consuming, error-prone, and hard to reproduce. `meltt` provides a way around this problem by implementing a method that automates the matching of different event datasets in a fast, transparent, and reproducible way.
 
 More information about the specifics of the method can be found in an upcoming R Journal article as well as in the packages documentation.
 
@@ -21,7 +21,7 @@ More information about the specifics of the method can be found in an upcoming R
 The package can be installed through the CRAN repository.
 
 ```R
-require(meltt)
+install.packages(''meltt'')
 ```
 
 Or the development version from Github
@@ -30,14 +30,14 @@ Or the development version from Github
 # install.packages("devtools")
 devtools::install_github("css-konstanz/meltt")
 ```
-Currently, the package requires that the user have python (>= 2.7) and a version of the `numpy` module installed on their computer. To quickly get both, install an [Anaconda](https://www.continuum.io/downloads) platform. `meltt` will use these programs in the background.
+Currently, the package requires that users have both Python (>= 2.7) and a version of the `numpy` module installed on their computer. To quickly get both, install an [Anaconda](https://www.continuum.io/downloads) platform. `meltt` will use these programs in the background.
 
 # Usage
 
-For the following, we'll use some (fake) Maryland car crash data. These data simulate three separate lists intent on capturing the same thing: car crashes in the state of Maryland for January 2012. Each data set differs in how it codes information on the perpetrating car's color, make, and the type of accident.
+In the following illustrations, we use (simulated) Maryland car crash data. These data constitute three separate data sets capturing the same thing: car crashes in the state of Maryland for January 2012. But each data set differs in how it codes information on the car's color, make, and the type of accident.
 
 ```R
-data("crashMD") # Load in Example data
+data("crashMD") # Load example data
 
 str(crash_data1)
 # 'data.frame':	71 obs. of  9 variables:
@@ -76,7 +76,7 @@ str(crash_data3)
 # $ damage_tax: chr  "Vehicle Rollover" "Rear-End Collision" "Sideswipe Collision" "Vehicle Rollover" ...
 ```
 
-Each dataset contain variables regarding:
+Each dataset contain variables that code:
 
 - `date`: when the event occurred;
 - `enddate`: if the event occurred across more than one day, i.e. an "episode";
@@ -85,14 +85,16 @@ Each dataset contain variables regarding:
 - `color_tax`: coding scheme of the color of the car;
 - `damage_tax`: coding scheme of the type of accident.
 
-The variable names in each dataset have been standardized for reasons outlined below.
+The variable names across dataset have already been standardized (for reasons further outlined below).
 
-The goal is to match these three event datasets to locate which events are duplicates of each other and which are unique. `meltt` formalizes all input assumptions one needs to make in order to match these data. It does this by allowing users to specify a spatial and temporal window that any potential match could plausibly fall within. Put differently, how close in space and time does an event need to be to qualify as a potential match?
+The goal is to match these three event datasets to locate which reported events are the same, i.e., the corresponding data set entries are duplicates, and which are unique. `meltt` formalizes all input assumptions the user needs to make in order to match these data.
 
-Finally, to articulate how different coding schemas overlap, the user needs to input an event taxonomy. A taxonomy is a formalization of how variables overlap, moving from as granular as possible to as general as possible.
+First, the user has to specify a spatial and temporal window that any potential match could plausibly fall within. Put differently, how close in space and time does an event need to be to qualify as potentially reporting on the same incident?
+
+Second, to articulate how different coding schemas overlap, the user needs to input an event taxonomy. A taxonomy is a formalization of how variables overlap, moving from as granular as possible to as general as possible. In this case, it describes how the coding of the three car-specific properties (model, color, damage) across our three data sets correspond.
 
 ## Generating a taxonomy
-For the car crash data, we have three variables that exist in all three in datasets, albeit in different forms. By way of example, let's consider the `damage_tax` variable recorded in each of the three datasets.
+Among the three variables that exist in all three in datasets we consider the `damage_tax` variable recorded in each of dataset for an in-depth example:
 ```R
 unique(crash_data1$damage_tax)
 # [1] "1" "5" "4" "6" "2" "3" "7"
@@ -112,7 +114,7 @@ unique(crash_data3$damage_tax)
 # [5] "Side-Impact Collision"    "Liable Object Collisions"
 # [7] "Head-On Collision"
 ```
-Each variable records information on regarding the type of accident a little differently. A taxonomy seeks to generalize across each category by clarifying how each coding scheme maps onto the other.
+Each variable records information on the type of accident a little differently. The idea of introducing a taxonomy is then, as mentioned before, to generalize across each category by clarifying how each coding scheme maps onto the other.
 
 ```R
 crash_taxonomies$damage_tax
@@ -140,9 +142,9 @@ crash_taxonomies$damage_tax
 # 20 crash_data3           Object Collisions    Single Car Accidents
 # 21 crash_data3    Liable Object Collisions    Single Car Accidents
 ```
-`crash_taxonomies` object contains three pre-made taxonomies for each of the three overlapping variable categories. The `damage_tax` contains a single level describing how the different coding schemes overlap. When matching the data, `meltt` uses this information to score potential matches that are proximate in space and time.
+The `crash_taxonomies` object contains three pre-made taxonomies for each of the three overlapping variable categories. As you can see, the `damage_tax` contains only a single level describing how the different coding schemes overlap. When matching the data, `meltt` uses this information to score potential matches that are proximate in space and time.
 
-Likewise, we've undergone a similar exercise when formalizing how the `model_tax` and `color_tax` variables map onto one another.
+Likewise, we similarly formalized how the `model_tax` and `color_tax` variables map onto one another.
 
 ```R
 crash_taxonomies$color_tax
@@ -223,11 +225,13 @@ crash_taxonomies$model_tax
 # 31 crash_data3            Standard Pick-Up                  Unclassified       Pick-Up Large Vehicle
 
 ```
-As one can see, the color and model taxonomies contain more levels than the damage taxonomy, but each level goes from more granular to more broad. For example, the `model_tax` goes from `make_level1`, which contains a schema with 7 unique entries using the Euro coding of car models as a way of specifying overlap, to `make_level3`, which contains a schema with only two categories (i.e. differentiation between large and small vehicles).
+The color and model taxonomies contain more levels than the damage taxonomy representing specific to increasingly broader categories under which both color and model of the cars can be described. For example, the `model_tax` goes from `make_level1`, which contains a schema with 7 unique entries using the Euro coding of car models as a way of specifying overlap, to `make_level3`, which contains a schema with only two categories (i.e. differentiation between large and small vehicles).
 
-All-in-all, taxonomy can be as granular or as broad as one chooses. The more levels one includes to describe the overlap, the better the match, as `meltt` will have more information to work with when differentiating between sets of potential matches. **A good taxonomy is the key to matching data, and is the primary vehicle by which a user's assumptions -- regarding how data fits together -- is made transparent.**
+Generally, specifications of taxonomy levels can be as granular or as broad as one chooses. The more fine-grained the levels one includes to describe the overlap, the more specific the match. At the same time, if categories are too narrow, it is difficult to conceptualize potential matches across datasets. As a rule, there is thus a trade off between specific categories that can better differentiate among possible duplicate entries and unspecific categories that more easily recognize potentially matching information across datasets.
 
-A few things to note:
+As a general rule, we therefore recommend to include, whenever it is conceptually warranted, both specific fine-grained categories and a few increasingly broader ones. In this case, `meltt` will have more information to work with when differentiating between sets of potential matches. In establishing which entries are most likely to correspond, `meltt` in case of more than two potential matches in one dataset always automatically favors the one that more precisely corresponds. **A good taxonomy is the key to matching data, and is the primary vehicle by which a user's assumptions -- regarding how data fits together -- is made transparent.**
+
+A few technical things to note:
 
 1. **Taxonomies must be organized as lists**: each taxonomy `data.frame` is read into `meltt` as a single list object.
 
@@ -269,13 +273,15 @@ colnames(crash_data3)[7:9]
 
 ## Matching Data
 
-Once the taxonomy is formalized, matching the data is straightforward. The `meltt()` function takes four main arguments:
+Once the taxonomy is formalized, matching several datasets is straightforward. The `meltt()` function takes four main arguments:
 - `...`: input data;
 - `taxonomies = `: list object containing the user-input taxonomies;
 - `spatwindow = `: the spatial window (in kilometers);
 - `twindow = `: the temporal window (in days).
 
-Below we assume that events occurring within 4 kilometers and 2 days of another event could plausibly be the same event given how the data was constructed in each set. We then assume that the map onto each other in the way that we formalized in the taxonomies outlined above. We fold all this information together using the `meltt()` function and then store the results in an object labeled `output`.
+Below we assume that any two events in two different datasets occurring within 4 kilometers and 2 days of each other could plausibly be the same event. This ''fuzziness'' basically sets the boundaries on how precise we believe the spatial location and timing of events is coded. It is usually best practice to vary these specifications systematically to ensure that no one specific combination drives the outcomes of the integration task.
+
+We then assume that event categories map onto each other according to the way that we formalized in the taxonomies outlined above. We fold all this information together using the `meltt()` function and then store the results in an object named `output`.
 
 ```R
 output <- meltt(crash_data1, crash_data2, crash_data3,
@@ -284,13 +290,13 @@ output <- meltt(crash_data1, crash_data2, crash_data3,
                 twindow = 2)
 ```
 `meltt` also contains a range of adjustments to offer the user additional controls regarding how the events are matched. These auxiliary arguments are:
-- `smartmatch`: when `TRUE` (default), all available taxonomy levels are used. When `FALSE`, only specific taxonomy levels are considered.
+- `smartmatch`: when `TRUE` (default), all available taxonomy levels are used and `meltt` uses a matching score that ensures that fine-grained agreements is favored over broader agreement, if more than one taxonomy level exists. When `FALSE`, only specific taxonomy levels are considered.
 - `certainty`: specification of the the exact taxonomy level to match on when `smartmatch = FALSE`.
 - `partial`: specifies whether matches along only some of the taxonomy dimensions are permitted.
-- `averaging`: implement averaging of all values events are match on when matching across multiple dataframes. That is, as events are matched dataset by dataset, the metadata is averaged. (Note: that this can generate distortion in the output).
+- `averaging`: implement averaging of all values events are match on when matching across multiple data.frames. That is, as events are matched dataset by dataset, the metadata is averaged. (Note: that this can generate distortion in the output).
 - `weight`: specified weights for each taxonomy level to increase or decrease the importances of each taxonomy's contribution to the matching score.
 
-At times, one might want to know which taxonomy level is doing the heavy lifting. By turning off `smartmatch`, and specifying certain taxonomy levels by which to compare events, or by weighting taxonomy levels differently, one is able to better assess which assumptions are driving end result. This can help with fine-tuning the input assumptions for `meltt` to gain the most valid match possible.
+At times, one might want to know which taxonomy level is doing the heavy lifting. By turning off `smartmatch`, and specifying certain taxonomy levels by which to compare events, or by weighting taxonomy levels differently, one is able to better assess which assumptions are driving the final integration results. This can help with fine-tuning the input assumptions for `meltt` to gain the most valid match possible.
 
 ### Output
 When printed, the `meltt` object offers a brief summary of the output.
@@ -344,22 +350,22 @@ summary(output)
 ```
 Given that meltt objects can be saved and referenced later, the summary function offers a recap on the input parameters and assumptions that underpin the match (i.e. the datasets, the spatiotemporal window, the taxonomies, etc.). Again, information regarding the total number of observations, the number of unique and duplicate entries, and the number matches found is reported, but this time information regarding how many of those matches were event-to-event (i.e. events that played out along one time unit where the date is equal to the end date) and episode-to-episode (i.e. events that played out over a couple of days).
 
-> NOTE: Events that have been flagged as matching to episodes require manual review using the `meltt.inspect()` function. The summary output tells us that 6 episodes are flagged as potentially matching. Technically speaking, episodes and events are at different units of analysis; thus, user discretion is required to help sort out these types of matches. The `meltt.inspect()` function eases this process of manual assessment. We are developing a shiny app to help assessment further in this regard.
+> NOTE: Events that have been flagged as matching to episodes require manual review using the `meltt.inspect()` function. The summary output tells us that 6 episodes are flagged as potentially matching. Technically speaking, episodes (events with different start and end dates) and events are at different units of analysis; thus, user discretion is required to help sort out these types of matches. The `meltt.inspect()` function eases this process of manual assessment. We are developing a shiny app to help assessment further in this regard.
 
 A **summary of overlap** is also provided, articulating how the different input datasets overlap and where. For example, of the 34 matches 5 occurred between crash_data1 and crash_data2, 4 between crash_data1 and crash_data3,
 4 between crash_data2 and crash_data3, and 21 between all three.
 
 
 ### Visualization
-For quick visualizations of the matched output, `meltt` contains three plotting methods.
+For quick visualizations of the matched output, `meltt` contains three plotting functions.
 
-`plot()` offers bar plot graphically articulating the unique and overlapping entries. Note that the entries from the leading dataset (i.e. the dataset first entered into meltt) is all black. This is because all matches are in reference to the datasets that came before it. Any match found in crash_data2 is with respect to crash_data1, and so.
+`plot()` offers a bar plot that graphically articulates the unique and overlapping entries. Note that the entries from the leading dataset (i.e. the dataset first entered into meltt) is all black. In this representation, all matching (or duplicate) entries are expressed in reference to the datasets that came before it. Any match found in crash_data2 is with respect to crash_data1, any in crash_data3 with respect to crash_data1 and crash_data2.
 ```R
 plot(output)
 ```
 ![meltt_plot](https://cloud.githubusercontent.com/assets/13281042/26285770/0789ff06-3e24-11e7-8042-7268dc12b310.jpeg)
 
-`tplot()` offers a time series plot of the meltt output. The plot works as a reflection, where raw counts of the unique entries are plotted right-side up and the raw counts of the removed duplicates are plotted below it. This offers a quick snapshot of _when_ duplicates are located. Temporal clustering of duplicates may indicate an issue with the data and/or the input assumptions, or it's potentially evidence of a unique artifact of the data itself.
+`tplot()` offers a time series plot of the meltt output. The plot works as a reflection, where raw counts of the unique entries are plotted right-side up and the raw counts of the removed duplicates are plotted below it. This offers a quick snapshot of _when_ duplicates are found. Temporal clustering of duplicates may indicate an issue with the data and/or the input assumptions, or it's potentially evidence of a unique artifact of the data itself.
 
 Users can specify the temporal unit that the data should be binned (day, week, month, year). Give that the data only covers one month, we'll look at the output by day.
 ```R
@@ -367,14 +373,14 @@ tplot(output, time.unit="day")
 ```
 ![meltt_tplot](https://cloud.githubusercontent.com/assets/13281042/26285852/e3e938c6-3e25-11e7-8d52-d310a27e1c4f.jpeg)
 
-Similarly, `mplot()` presents a summary of the spatial distribution of the data by plotting the spatial points onto a Google map. Events where matches were detected are denoted from the unity entries by blue diamonds. Again, the goal is to get a sense of the spatial distribution of the matches to both identify any clustering/disproportionate coverage in where matches are located, and to also get a sense of the spread of the integrated output.
+Similarly, `mplot()` presents a summary of the spatial distribution of the data by plotting the spatial points onto a Google map. Events where matches were detected are labeled by blue diamonds. Again, the goal is to get a sense of the spatial distribution of the matches to both identify any clustering/disproportionate coverage in where matches are located, and to also get a sense of the spread of the integrated output.
 
 ```R
 mplot(output)
 ```
 ![meltt_mplot](https://cloud.githubusercontent.com/assets/13281042/26286067/e36a4b98-3e29-11e7-9d7d-1156ea05c31f.jpeg)
 
-`mplot()` also contains an `interactive =` argument that when set to `TRUE` generates an interactive Google map in the user's primary browser for more granular inspection of the spatial matches. Information regarding the input criteria in which each entry was assessed (e.g. the taxonomy inputs) are retained and can be referenced by hovering over the point with a mouse.
+`mplot()` also contains an `interactive =` argument that when set to `TRUE` generates an interactive Google map in the user's primary browser for more granular inspection of the spatial matches. Information regarding the input criteria in which each entry was assessed (e.g. the taxonomy inputs) are retained and can be referenced by hovering over the point with the mouse.
 
 ```R
 mplot(output,interactive=T)
@@ -384,7 +390,7 @@ See [here](http://i.imgur.com/9epY8Sr.gifv) for an example.
 ### Extracting Data
 `meltt` provides two methods for extracting data from the output object.
 
-`meltt.data()` returns the de-duplicated data along with any necessary columns the user might need. This is the primary function for grabbing the matched data and moving on with ones analysis. The `columns =` argument takes any vector of variable names and returns those variables in the output. If no variables are specified, `meltt` returns the spatio-temporal and taxonomy variables that were employed during the match. In addition, the function returns a unique event and data ID for reference.
+`meltt.data()` returns the de-duplicated data along with any necessary columns the user might need. This is the primary function for extracting matched data and moving on with subsequent analysis. The `columns =` argument takes any vector of variable names and returns those variables in the output. If no variables are specified, `meltt` returns the spatio-temporal and taxonomy variables that were employed during the match. In addition, the function returns a unique event and data ID for reference.
 
 ```R
 uevents <- meltt.data(output,columns = c("date","model_tax"))
@@ -402,9 +408,9 @@ dim(uevents) # the unique events after de-duplication
 # [1] 140   4
 ```
 
-`meltt.duplicates()`, on the other hand, returns a data frame of all events that matched up. This provides a quick way of examining and assessing the events that matched. Since the quality of any match is only as good as the assumptions one inputs, its key that the researcher qualitatively evaluate the meltt output to assess whether any assumptions should be adjusted. Like `meltt.data()`, the `columns = ` argument can be customized to return variables of interest.
+`meltt.duplicates()`, on the other hand, returns a data frame of all events that matched up. This provides a quick way of examining and assessing the events that matched. Since the quality of any match is only as good as the assumptions we input, its key that the user qualitatively evaluate the meltt output to assess whether any assumptions should be adjusted. Like `meltt.data()`, the `columns = ` argument can be customized to return variables of interest.
 
-Note that the data is presented differently than in `meltt.data()`; here each dataset (and its corresponding variables) is presented in a separate column. This is for comparative purposes. For example, the entry for row 1 denotes that the 55th entry in the crash_data2 data matched with entry 57 from the crash_data3, whereas no entry from crash_data1 matched. The requested columns are intended to assist with validation.
+Note that the data is presented differently than in `meltt.data()`; here each dataset (and its corresponding variables) is presented in a separate column. This representation is chose for ease of comparison. For example, the entry for row 1 denotes that the 55th entry in the crash_data2 data matched with entry 57 from the crash_data3, whereas no entry from crash_data1 matched (as indicated with "dataID" and "eventID" 0 and "date" NA). The requested columns are intended to assist with validation.
 
 ```R
 dups <- meltt.duplicates(output,columns = c("date"))
@@ -430,7 +436,7 @@ dim(dups)
 ```
 
 ## Inside the Output Object
-Like most S3 objects, the output from `meltt` is nested list containing valuable information. The output from `meltt` retains the original input data and taxonomies and the specification assumptions as well as list of contender events (i.e. events that were flagged as potential matches but weren't as good as another option). Note that we are expanding meltt's functionality to include more posterior function to ease extraction of this information, but for now, note that it can be accessed with the usual `$` key.
+Like most S3 objects, the output from `meltt` is a nested list containing a range of useful information. The output from `meltt` retains the original input data and taxonomies and the specification assumptions as well as lists of contender events (i.e. events that were flagged as potential matches but did not match as closely as another event). Note that we are expanding meltt's functionality to include more posterior function to ease extraction of this information, but for now, it can simply be accessed using the usual `$` key convention.
 
 ```R
 names(output)
@@ -455,5 +461,6 @@ head(output$processed$event_contenders)
 
 ## Meta
 - Please [report any issues or bugs](https://github.com/css-konstanz/meltt/issues).
-- License: MIT
-- Get citation information for `meltt` in R doing `citation(package = 'meltt')`
+- License:  LGPL-3
+- Get citation information for `meltt` in R using `citation(package = 'meltt')`
+- CRAN: https://cran.r-project.org/package=meltt
