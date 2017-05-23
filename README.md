@@ -2,7 +2,7 @@
 
 `meltt` provides a method for integrating event data in R. Event data seeks to capture micro-level information on event occurrences that are temporally and spatially disaggregated. For example, information on neighborhood crime, car accidents, terrorism events, and marathon running times are all forms of event data. These data provide a highly granular picture of the spatial and temporal distribution of a specific phenomena.
 
-In many cases, more than one event dataset exists capturing related topics -- such as, one dataset that captures information on burglaries and muggings in a city and another that records assaults---and it can be useful to combine these data to bolster coverage, capture a broader spectrum of activity, or validate the coding of these datasets. However, matching event data is notoriously difficult:
+In many cases, more than one event dataset exists capturing related topics -- such as, one dataset that captures information on burglaries and muggings in a city and another that records assaults -- and it can be useful to combine these data to bolster coverage, capture a broader spectrum of activity, or validate the coding of these datasets. However, matching event data is notoriously difficult:
 
  - **Jittering Locations**, different geo-referencing software can produce slightly different longitude and latitude locations for the same place. This results in an artificial geo-spatial "jitter" around the same location.
 
