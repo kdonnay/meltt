@@ -11,8 +11,8 @@ summary.meltt = function(object, ...){
   match_N = match_N_event_to_event + match_N_episode_to_episode
   flagged_episodes_to_events = sum(object$processed$deduplicated_index$episodal_match != "")
   data_names = object$inputDataNames
-  swindow = object$params$spatwindow
-  twindow = object$params$twindow
+  swindow = object$parameters$spatwindow
+  twindow = object$parameters$twindow
   N_data_entries = length(data_names)
   N_taxonomies = object$taxonomy$N_taxonomies
   taxonomy_names = object$taxonomy$taxonomy_names
