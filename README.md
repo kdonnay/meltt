@@ -21,7 +21,7 @@ More information about the specifics of the method can be found in an upcoming R
 The package can be installed through the CRAN repository.
 
 ```R
-install.packages(''meltt'')
+install.packages("meltt")
 ```
 
 Or the development version from Github
