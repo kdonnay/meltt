@@ -1,4 +1,4 @@
-meltt.data <- function(object,columns=NULL){
+meltt.data <- function(object,columns=NULL,return_all=F){
   # Returns input data with duplicate entries removed.
 
   # Arguments:
@@ -11,7 +11,13 @@ meltt.data <- function(object,columns=NULL){
   if(!is.meltt(object)) stop("Object is not of class meltt")
 
   if(length(columns)==0){
-    columns = c('dataset','obs.count','date','latitude','longitude',object$taxonomy$taxonomy_names)
+    if(return_all){
+      all = unique(unlist(sapply(object$inputData,colnames)))
+      columns = unique(c('dataset','obs.count','date','latitude','longitude',object$taxonomy$taxonomy_names,all))
+      columns = all2[!all2%in% c("data.source")]
+    }else{
+      columns = c('dataset','obs.count','date','latitude','longitude',object$taxonomy$taxonomy_names)
+    }
   }else{
     columns = c('dataset','obs.count',columns) # Return data id and event id
   }
