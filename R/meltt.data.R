@@ -15,7 +15,6 @@ meltt.data <- function(object,columns=NULL){
   }else{
     columns = c('dataset','event',columns)
   }
-  
   key = object$processed$deduplicated_index[,c("dataset","event")]
   key2 = rbind(object$processed$event_matched,object$processed$episode_matched)
   for(m in seq_along(object$inputData)){
@@ -48,7 +47,6 @@ meltt.data <- function(object,columns=NULL){
     if(m==1){out = c()}
     out = rbind.fill(out,x2)
   }
-  # remove dataset and event column
-  out = out[,colnames(out)!='dataset' | colnames(out)!='event']
+  out$dataset = sapply(out$dataset, function(x) object$inputDataNames[x])
   return(out)
 }
