@@ -1,4 +1,4 @@
-meltt.data <- function(object,columns=NULL,return_all=F){
+meltt.data <- function(object,columns=NULL){
   # Returns input data with duplicate entries removed.
 
   # Arguments:
@@ -11,26 +11,44 @@ meltt.data <- function(object,columns=NULL,return_all=F){
   if(!is.meltt(object)) stop("Object is not of class meltt")
 
   if(length(columns)==0){
-    if(return_all){
-      all = unique(unlist(sapply(object$inputData,colnames)))
-      columns = unique(c('dataset','obs.count','date','latitude','longitude',object$taxonomy$taxonomy_names,all))
-      columns = all2[!all2%in% c("data.source")]
-    }else{
-      columns = c('dataset','obs.count','date','latitude','longitude',object$taxonomy$taxonomy_names)
-    }
+    columns = c('dataset','event','date','latitude','longitude',object$taxonomy$taxonomy_names)
   }else{
-    columns = c('dataset','obs.count',columns) # Return data id and event id
+    columns = c('dataset','event',columns)
   }
-
+  
   key = object$processed$deduplicated_index[,c("dataset","event")]
+  key2 = rbind(object$processed$event_matched,object$processed$episode_matched)
   for(m in seq_along(object$inputData)){
     datset = object$inputData[[m]]
     x = datset[(datset[,'obs.count'] %in% key[key[,1]==m,2]),]
-    if(m==1){out = c()}
     x2 = x[,columns[columns %in% colnames(x)]]
-    x2[,"dataset"] = object$inputDataNames[m]
+    if(m < length(object$inputData) & length(key2) > 0){
+      for(l in seq(m+1,length(object$inputData))){
+        datset2 = object$inputData[[l]]
+        mergecols = columns[columns %in% colnames(datset2)]
+        if(length(mergecols>0)){
+          datset2 = datset2[,columns[columns %in% colnames(datset2)]]
+          merge_keys = key2[,c(paste0('data',m),paste0('event',m),paste0('data',l),paste0('event',l))]
+          merge_keys = merge_keys[merge_keys[,1]>0 & merge_keys[,2]>0 & merge_keys[,3]>0 & merge_keys[,4]>0,]
+          merge_data = subset(datset2,datset2$dataset %in% merge_keys[,3] & datset2$event %in% merge_keys[,4])[,mergecols]
+          merge_data[,c('dataset','event')] = merge_keys[,1:2]
+          x2 = left_join(x2,merge_data, by = 'event')
+          ambiguous_x = colnames(x2)[grepl('.x$',colnames(x2))]
+          ambiguous_y = colnames(x2)[grepl('.y$',colnames(x2))]
+          if (length(ambiguous_x) > 0){
+            for(iter in 1:length(ambiguous_x)){
+              x2[is.na(x2[,ambiguous_x[iter]]),ambiguous_x[iter]] = x2[is.na(x2[,ambiguous_x[iter]]),ambiguous_y[iter]]
+              colnames(x2)[colnames(x2)==ambiguous_x[iter]] = substr(ambiguous_x[iter],1,nchar(ambiguous_x[iter])-2)
+              x2 = x2[,colnames(x2)!=ambiguous_y[iter]]
+            }
+          }
+        }
+      }
+    }
+    if(m==1){out = c()}
     out = rbind.fill(out,x2)
   }
-  colnames(out)[1:2] = c("meltt.dataID","meltt.eventID")
+  # remove dataset and event column
+  out = out[,colnames(out)!='dataset' | colnames(out)!='event']
   return(out)
 }
