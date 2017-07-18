@@ -33,8 +33,6 @@ meltt.data <- function(object,columns=NULL){
           merge_data = subset(datset2,datset2$dataset %in% merge_keys[,3] & datset2$event %in% merge_keys[,4])[,mergecols]
           merge_keys = merge_keys[match(merge_data$event,merge_keys[,4]),] # order key to correspond with data
           merge_data[,c('dataset','event')] = merge_keys[,1:2]
-          print(names(x2))
-          print(names(merge_data))
           x2 = merge(x2,merge_data, by = 'event', all.x=TRUE)
           ambiguous_x = colnames(x2)[grepl('.x$',colnames(x2))]
           ambiguous_y = colnames(x2)[grepl('.y$',colnames(x2))]
