@@ -25,9 +25,10 @@ meltt.data <- function(object,columns=NULL){
     if(m < length(object$inputData) & length(key2) > 0){
       for(l in seq(m+1,length(object$inputData))){
         datset2 = object$inputData[[l]]
+        colnames(datset2)[colnames(datset2)=='obs.count'] <- 'event'
         mergecols = columns[columns %in% colnames(datset2)]
         if(length(mergecols)>0){
-          datset2 = datset2[,columns[columns %in% colnames(datset2)]]
+          datset2 = datset2[,colnames(datset2) %in% mergecols]
           merge_keys = key2[,c(paste0('data',m),paste0('event',m),paste0('data',l),paste0('event',l))]
           merge_keys = merge_keys[merge_keys[,1]>0 & merge_keys[,2]>0 & merge_keys[,3]>0 & merge_keys[,4]>0,]
           merge_data = subset(datset2,datset2$dataset %in% merge_keys[,3] & datset2$event %in% merge_keys[,4])[,mergecols]
@@ -50,5 +51,6 @@ meltt.data <- function(object,columns=NULL){
     out = rbind.fill(out,x2)
   }
   out$dataset = sapply(out$dataset, function(x) object$inputDataNames[x])
+  out = out[,c(2,1,3:ncol(out))]
   return(out)
 }
