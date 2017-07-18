@@ -16,9 +16,6 @@ meltt.data(object,columns=NULL)
   \item{columns}{
   string vector referencing column names located in the input data. Default is to return all location, time stamp, and taxonomy columns the data was evaluated on.
 }
- \item{return_all}{
-  If TRUE and no columns are specified, all original columns will be returned. If FALSE, only defaults calumns are returned (i.e. the location, time stamp, and taxonomy columns the data was evaluated on). Default is FALSE.
-}
 }
 \details{
 \code{meltt.data} returns all unique entries along with specified columns. Function allows for easy extraction all de-duplicated entries.
