@@ -88,8 +88,6 @@ meltt <- function(...,taxonomies,twindow,spatwindow,smartmatch=TRUE,certainty=NA
               }
             }
           }
-
-
           if (missing(twindow)){
             missing_arguments <- append(missing_arguments,'\n  twindow')
             terminate <- TRUE
@@ -209,6 +207,8 @@ meltt <- function(...,taxonomies,twindow,spatwindow,smartmatch=TRUE,certainty=NA
     tax.out <- meltt.taxonomy(dd,taxonomies)
     tax.vars <- tax.out$processed_taxonomies
     issue_messages <- c(issue_messages,tax.out$issue_messages) # store any error messages
+    dd <- dd[order(dd$date),]
+    row.names(dd) <- NULL
     data.list[[d]] = dd # original data
     stamps = rbind(stamps,combine) # retain entry geo/time/index
     tax_entries = rbind(tax_entries,tax.vars) # retain tax
