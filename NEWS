@@ -1,0 +1,10 @@
+//
+// meltt - Updates and Bug Fixes
+//
+//
+//
+
+== 0.3.1 (19 Jul 2017) ==
+   * Fixed issue in meltt() affecting meltt.duplicates() for non time-ordered input data
+   * Extended functionality of meltt.data() to retrieve any column
+   * Fixed other small bugs and issues
