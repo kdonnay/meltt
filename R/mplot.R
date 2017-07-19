@@ -2,7 +2,7 @@ mplot <- function(object,interactive=FALSE){
   # Interactive Map function for meltt output data.
 
   if(!is.meltt(object)) stop("Object is not of class meltt")
-  latitude <- longitude <- meltt.dataID <- NULL
+  latitude <- longitude <- dataset <- NULL
 
   # Color Pallete
   colors_pal = c("#8DD3C7","#80B1D3","#FDB462","#FB8072","#BEBADA",
@@ -10,7 +10,7 @@ mplot <- function(object,interactive=FALSE){
 
   # Isolate Unique Events
   loc = meltt.data(object)
-  loc$uID = paste0(loc$meltt.dataID,"-",loc$meltt.eventID)
+  loc$uID = paste0(loc$dataset,"-",loc$event)
 
   # ID Matches and their Duplicates
   matches = object$processed$event_matched
@@ -40,13 +40,13 @@ mplot <- function(object,interactive=FALSE){
   colnames(loc2)[colnames(loc2)=="X2"] = "Duplicate_Events"
   loc2$Event_ID = loc2$uID
   # Establish Color Scheme
-  loc2$color=NA;loc2$color[loc2$meltt.dataID=="Match"] = "dodgerblue2"
-  set = unique(loc2$meltt.dataID)[unique(loc2$meltt.dataID)!="Match"]
-  for(s in 1:length(set)){loc2$color[loc2$meltt.dataID==set[s]] = colors_pal[s]}
+  loc2$color=NA;loc2$color[loc2$dataset=="Match"] = "dodgerblue2"
+  set = unique(loc2$dataset)[unique(loc2$dataset)!="Match"]
+  for(s in 1:length(set)){loc2$color[loc2$dataset==set[s]] = colors_pal[s]}
 
   # Partialing Data Types
-  match_loc = loc2[loc2$meltt.dataID=="Match",]
-  unique_loc = loc2[loc2$meltt.dataID!="Match",]
+  match_loc = loc2[loc2$dataset=="Match",]
+  unique_loc = loc2[loc2$dataset!="Match",]
 
 
   if(interactive){ # if interactive map
@@ -63,14 +63,14 @@ mplot <- function(object,interactive=FALSE){
     sp::coordinates(match_loc) <- ~ longitude + latitude
     sp::proj4string(match_loc) <- CRS("+proj=longlat +datum=WGS84")
     match_loc2 <- SpatialPointsDataFrame(match_loc, data = id_data_match)
-    ic_match <- iconlabels(attribute = match_loc$meltt.dataID, colPalette=match_loc$color,
+    ic_match <- iconlabels(attribute = match_loc$dataset, colPalette=match_loc$color,
                            icon=T,at=NULL, height=10, scale=0.6)
 
     # Unique Map Set up
     sp::coordinates(unique_loc) <- ~ longitude + latitude
     sp::proj4string(unique_loc) <- CRS("+proj=longlat +datum=WGS84")
     unique_loc2 <- SpatialPointsDataFrame(unique_loc, data = id_data_unique)
-    ic_unique <- iconlabels(attribute = unique_loc$meltt.dataID, colPalette=unique_loc$color,
+    ic_unique <- iconlabels(attribute = unique_loc$dataset, colPalette=unique_loc$color,
                             icon=T,at=NULL, height=10, scale=0.6)
 
     tmp <- tempfile() # Temp File to store maps (to guarantee stable render)
@@ -96,16 +96,16 @@ mplot <- function(object,interactive=FALSE){
 
     # Add Features
     theme_set(theme_bw(16))
-    cols <- unique(tt[,c("meltt.dataID","color")])
+    cols <- unique(tt[,c("dataset","color")])
     cols$shape <- 8
     cols[cols=="Match","shape"] <- 18
     map + geom_point(data=tt,
-                     aes(y=jitter(latitude,.2),x=jitter(longitude,.3),group=meltt.dataID,
-                         color=meltt.dataID,
-                         shape=meltt.dataID),
+                     aes(y=jitter(latitude,.2),x=jitter(longitude,.3),group=dataset,
+                         color=dataset,
+                         shape=dataset),
                      size=3,alpha=1) +
-      scale_shape_manual(labels=cols$meltt.dataID, values=cols$shape) +
-      scale_color_manual(labels=cols$meltt.dataID,values = cols$color) +
+      scale_shape_manual(labels=cols$dataset, values=cols$shape) +
+      scale_color_manual(labels=cols$dataset,values = cols$color) +
       theme(legend.position="bottom",
             legend.key = element_blank(),
             plot.margin = unit(c(.5,.5,.5,.5), "cm"),
