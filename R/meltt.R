@@ -227,7 +227,6 @@ meltt <- function(...,taxonomies,twindow,spatwindow,smartmatch=TRUE,certainty=NA
   rownames(data) = NULL
 
 
-
   # RUN matching algorithm
   for (datst in 2:dataset_number){
     if (datst == 2){
@@ -265,6 +264,25 @@ meltt <- function(...,taxonomies,twindow,spatwindow,smartmatch=TRUE,certainty=NA
   names(out)[1] = "deduplicated_index" # Rename data feature
   out$complete_index = data
   out = out[c("complete_index","deduplicated_index","event_matched","event_contenders","episode_matched","episode_contenders")]
+
+  if(ncol(out$event_matched) != ncol(out$episode_matched)){
+    # If episode matched does not map onto event_matched (due to episodal data
+    # existing in some but not all the input datasets), correct index in
+    # episode_matched
+    em = out$episode_matched
+    datindex = unique(em[,grep("data",colnames(em))])
+    for(i in 1:ncol(datindex)){
+      if(i==1){corrected=c()}
+      corrected = c(corrected,paste0(c("data","event"),c(datindex[1,i])))
+    }
+    colnames(em) = corrected
+    tmpentry = out$event_matched[1,]
+    tmpentry[1,] = 0
+    em_new = rbind.fill(em,tmpentry)
+    em_new[is.na(em_new)] = 0
+    em_new = em_new[-nrow(em_new),]
+    out$episode_matched = em_new
+  }
 
   # Retain initial input features
   tax_stats = list(taxonomy_names=tax_names,N_taxonomies = k,

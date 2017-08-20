@@ -60,6 +60,7 @@ summary.meltt = function(object, ...){
 
   # Summary of Overlap
   matched = rbind(object$processed$event_matched,object$processed$episode_matched)
+  matched[is.na(matched)] = 0
   matched2 = matched[,1:ncol(matched) %% 2 != 0]
   Lets = letters[1:ncol(matched2)]
   for(l in seq_along(Lets)){

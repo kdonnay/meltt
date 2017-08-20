@@ -25,7 +25,7 @@ meltt.taxonomy <- function(data,taxonomies){
 
     cats <- base.category$base.category # Subset Base Categories
     sub_temp_tax <- temp_tax[temp_tax$data.source==unique(inputs$data.source),] # Subset Taxonomy
-    
+
     # CHECK to ensure all base.categories are present in the input data
     ucats = unique(cats)
     check = ucats[!(ucats %in% sub_temp_tax[,2])]
@@ -36,11 +36,11 @@ meltt.taxonomy <- function(data,taxonomies){
                                                    "Specifically, the following categories fail to map:\n\t\t=> ",paste0(check,collapse=", "),"\n\n"))
       pos = pos + 1
     }
-    
+
     tax.columns <- sub_temp_tax[base::match(cats,sub_temp_tax[,2]),1:ncol(sub_temp_tax)]
     tax_master_columns <- tax.columns
     row.names(tax_master_columns) <- NULL
-    
+
     tax_master_columns = tax_master_columns[,1:2*-1] # Drop Index
     if(is.null(ncol(tax_master_columns))){
       tax_master_columns = as.data.frame(tax_master_columns)
@@ -48,7 +48,7 @@ meltt.taxonomy <- function(data,taxonomies){
     }else{
       colnames(tax_master_columns) <- paste0(tax_names[i],"_level_",1:ncol(tax_master_columns)) # rename column
     }
-    
+
 
     if(i == 1){
       processed_taxonomies=tax_master_columns
