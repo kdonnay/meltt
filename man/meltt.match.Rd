@@ -4,7 +4,7 @@
 Performing iterative comparison and matching [Auxiliary Function]
 }
 \description{
-Auxilary function that generates an R wrapper around the main python function used to process the numerical matrix generated in \code{meltt}. Returns a summary of matched entries. 
+Auxiliary function that generates an R wrapper around the main python function used to process the numerical matrix generated in \code{meltt}. Returns a summary of matched entries. 
 }
 \usage{
 meltt.match(data,twindow,spatwindow,smartmatch,certainty,k,
