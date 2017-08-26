@@ -13,6 +13,7 @@ meltt.data <- function(object,columns=NULL){
   if(length(columns)==0){
     columns = c('dataset','event','date','latitude','longitude',object$taxonomy$taxonomy_names)
   }else{
+    columns = unique(columns) # limit accidental repetition
     columns = c('dataset','event',columns)
   }
   key = object$processed$deduplicated_index[,c("dataset","event")]

@@ -16,7 +16,8 @@ meltt.inspect = function(object,columns=NULL,confirmed_matches=NULL){
 
   key = data.frame(dataset = -99,obs.count=-99)
   for(d in seq_along(object$inputData)){
-    tmp = object$inputData[[d]][,columns]
+    idat = object$inputData[[d]]
+    tmp = idat[,columns[columns %in% colnames(idat)]]
     key = merge(key,tmp,all=T)
   }
   key = key[-1,] # clear holder
@@ -48,7 +49,7 @@ meltt.inspect = function(object,columns=NULL,confirmed_matches=NULL){
     unique_entries = meltt.data(object,columns=orig_columns)
     for(k in seq_along(keep)){
       remove = keep[[k]][[2]][,c("data.source","obs.count")]
-      unique_entries = unique_entries[unique_entries$meltt.dataID != remove[,1] & unique_entries$meltt.dataID != remove[,2],]
+      unique_entries = unique_entries[unique_entries$dataset != remove[,1] & unique_entries$event != remove[,2],]
     }
     cat("All confirmed event-to-episode duplicates have been removed.\n\n")
     return(unique_entries)

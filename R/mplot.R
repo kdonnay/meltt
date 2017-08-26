@@ -34,7 +34,7 @@ mplot <- function(object,interactive=FALSE){
   # Join
   loc2 = merge(loc,match_set,by.x="uID",by.y="X1",all.x=T)
   loc2$Type = NA
-  loc2[!is.na(loc2$X2),2] = "Match"
+  loc2[!is.na(loc2$X2),3] = "Match"
   loc2[!is.na(loc2$X2),"Type"] = "Duplicate Events Located"
   loc2[is.na(loc2$X2),"Type"] = "Unique Event"
   colnames(loc2)[colnames(loc2)=="X2"] = "Duplicate_Events"
@@ -60,15 +60,15 @@ mplot <- function(object,interactive=FALSE){
     id_data_unique$date = as.character(id_data_unique$date)
 
     # Match Map Set up
-    sp::coordinates(match_loc) <- ~ longitude + latitude
-    sp::proj4string(match_loc) <- CRS("+proj=longlat +datum=WGS84")
+    coordinates(match_loc) <- ~ longitude + latitude
+    proj4string(match_loc) <- CRS("+proj=longlat +datum=WGS84")
     match_loc2 <- SpatialPointsDataFrame(match_loc, data = id_data_match)
     ic_match <- iconlabels(attribute = match_loc$dataset, colPalette=match_loc$color,
                            icon=T,at=NULL, height=10, scale=0.6)
 
     # Unique Map Set up
-    sp::coordinates(unique_loc) <- ~ longitude + latitude
-    sp::proj4string(unique_loc) <- CRS("+proj=longlat +datum=WGS84")
+    coordinates(unique_loc) <- ~ longitude + latitude
+    proj4string(unique_loc) <- CRS("+proj=longlat +datum=WGS84")
     unique_loc2 <- SpatialPointsDataFrame(unique_loc, data = id_data_unique)
     ic_unique <- iconlabels(attribute = unique_loc$dataset, colPalette=unique_loc$color,
                             icon=T,at=NULL, height=10, scale=0.6)
@@ -85,6 +85,9 @@ mplot <- function(object,interactive=FALSE){
                         mapTypeId = "terrain",
                         layerName = "Entries with Duplicates",
                         visible = T,iconMarker=ic_match,flat = F)
+
+    # Alert message given issues with existing plotGoogleMaps function
+    cat("\n\nNote interactive map will not render on Safari browser. Change default browser if issues occur. Interactive feature functions best on Google Chrome.\n\n")
 
   } else{ # else generate static map
     tt <- rbind(match_loc,unique_loc)
