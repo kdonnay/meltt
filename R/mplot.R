@@ -60,15 +60,15 @@ mplot <- function(object,interactive=FALSE){
     id_data_unique$date = as.character(id_data_unique$date)
 
     # Match Map Set up
-    coordinates(match_loc) <- ~ longitude + latitude
-    proj4string(match_loc) <- CRS("+proj=longlat +datum=WGS84")
+    sp::coordinates(match_loc) <- ~ longitude + latitude
+    sp::proj4string(match_loc) <- CRS("+proj=longlat +datum=WGS84")
     match_loc2 <- SpatialPointsDataFrame(match_loc, data = id_data_match)
     ic_match <- iconlabels(attribute = match_loc$dataset, colPalette=match_loc$color,
                            icon=T,at=NULL, height=10, scale=0.6)
 
     # Unique Map Set up
-    coordinates(unique_loc) <- ~ longitude + latitude
-    proj4string(unique_loc) <- CRS("+proj=longlat +datum=WGS84")
+    sp::coordinates(unique_loc) <- ~ longitude + latitude
+    sp::proj4string(unique_loc) <- CRS("+proj=longlat +datum=WGS84")
     unique_loc2 <- SpatialPointsDataFrame(unique_loc, data = id_data_unique)
     ic_unique <- iconlabels(attribute = unique_loc$dataset, colPalette=unique_loc$color,
                             icon=T,at=NULL, height=10, scale=0.6)
