@@ -13,7 +13,8 @@ mplot <- function(object,interactive=FALSE){
   loc$uID = paste0(loc$dataset,"-",loc$event)
 
   # ID Matches and their Duplicates
-  matches = object$processed$event_matched
+  total_n_dats = length(object$inputData)
+  matches = meltt.duplicates(object)[,1:(total_n_dats*2)] 
   cols = (1:ncol(matches))[1:ncol(matches) %% 2 == 1]
   match_id = matrix(nrow=nrow(matches),ncol=length(cols))
   for (c in 1:length(cols)) {
@@ -41,6 +42,7 @@ mplot <- function(object,interactive=FALSE){
   loc2$Event_ID = loc2$uID
   # Establish Color Scheme
   loc2$color=NA;loc2$color[loc2$dataset=="Match"] = "dodgerblue2"
+  colnames(loc2)[colnames(loc2)=="uID"] = "Event_ID"
   set = unique(loc2$dataset)[unique(loc2$dataset)!="Match"]
   for(s in 1:length(set)){loc2$color[loc2$dataset==set[s]] = colors_pal[s]}
 
@@ -60,15 +62,15 @@ mplot <- function(object,interactive=FALSE){
     id_data_unique$date = as.character(id_data_unique$date)
 
     # Match Map Set up
-    sp::coordinates(match_loc) <- ~ longitude + latitude
-    sp::proj4string(match_loc) <- CRS("+proj=longlat +datum=WGS84")
+    coordinates(match_loc) <- ~ longitude + latitude
+    proj4string(match_loc) <- CRS("+proj=longlat +datum=WGS84")
     match_loc2 <- SpatialPointsDataFrame(match_loc, data = id_data_match)
     ic_match <- iconlabels(attribute = match_loc$dataset, colPalette=match_loc$color,
                            icon=T,at=NULL, height=10, scale=0.6)
 
     # Unique Map Set up
-    sp::coordinates(unique_loc) <- ~ longitude + latitude
-    sp::proj4string(unique_loc) <- CRS("+proj=longlat +datum=WGS84")
+    coordinates(unique_loc) <- ~ longitude + latitude
+    proj4string(unique_loc) <- CRS("+proj=longlat +datum=WGS84")
     unique_loc2 <- SpatialPointsDataFrame(unique_loc, data = id_data_unique)
     ic_unique <- iconlabels(attribute = unique_loc$dataset, colPalette=unique_loc$color,
                             icon=T,at=NULL, height=10, scale=0.6)
@@ -103,12 +105,17 @@ mplot <- function(object,interactive=FALSE){
     cols$shape <- 8
     cols[cols=="Match","shape"] <- 18
     map + geom_point(data=tt,
-                     aes(y=jitter(latitude,.2),x=jitter(longitude,.3),group=dataset,
-                         color=dataset,
-                         shape=dataset),
+                     aes(y=jitter(latitude,.2),x=jitter(longitude,.3),
+                         color=factor(dataset,levels = c("Match",set)),
+                         shape=factor(dataset,levels = c("Match",set))),
                      size=3,alpha=1) +
       scale_shape_manual(labels=cols$dataset, values=cols$shape) +
       scale_color_manual(labels=cols$dataset,values = cols$color) +
+      
+      # To make points more prominent
+      geom_point(data=tt[tt$dataset=="Match",],
+                 aes(y=jitter(latitude,.2),x=jitter(longitude,.3)),
+                 size=3.5,shape=18,color="dodgerblue2")+ 
       theme(legend.position="bottom",
             legend.key = element_blank(),
             plot.margin = unit(c(.5,.5,.5,.5), "cm"),
