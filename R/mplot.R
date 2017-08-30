@@ -107,7 +107,7 @@ mplot <- function(object,interactive=FALSE){
     tt$dataset = factor(tt$dataset,levels = c("Match",col_selected))
     map + geom_point(data=tt,
                      aes(y=jitter(latitude,.2),x=jitter(longitude,.3),
-                         color=dataset),
+                         color=dataset,
                          shape=dataset),
                      size=3,alpha=1) +
       scale_shape_manual(labels=cols$dataset, values=cols$shape) +
