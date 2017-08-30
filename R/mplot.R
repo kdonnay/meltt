@@ -43,8 +43,8 @@ mplot <- function(object,interactive=FALSE){
   # Establish Color Scheme
   loc2$color=NA;loc2$color[loc2$dataset=="Match"] = "dodgerblue2"
   colnames(loc2)[colnames(loc2)=="uID"] = "Event_ID"
-  set = unique(loc2$dataset)[unique(loc2$dataset)!="Match"]
-  for(s in 1:length(set)){loc2$color[loc2$dataset==set[s]] = colors_pal[s]}
+  col_selected = unique(loc2$dataset)[unique(loc2$dataset)!="Match"]
+  for(s in 1:length(col_selected)){loc2$color[loc2$dataset==col_selected[s]] = colors_pal[s]}
 
   # Partialing Data Types
   match_loc = loc2[loc2$dataset=="Match",]
@@ -106,8 +106,8 @@ mplot <- function(object,interactive=FALSE){
     cols[cols=="Match","shape"] <- 18
     map + geom_point(data=tt,
                      aes(y=jitter(latitude,.2),x=jitter(longitude,.3),
-                         color=factor(dataset,levels = c("Match",set)),
-                         shape=factor(dataset,levels = c("Match",set))),
+                         color=factor(dataset,levels = c("Match",col_selected)),
+                         shape=factor(dataset,levels = c("Match",col_selected))),
                      size=3,alpha=1) +
       scale_shape_manual(labels=cols$dataset, values=cols$shape) +
       scale_color_manual(labels=cols$dataset,values = cols$color) +
