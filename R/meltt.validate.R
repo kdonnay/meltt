@@ -1,7 +1,7 @@
 meltt.validate = function(
   object=NULL,# Meltt object
   description.vars = NULL, # Varibles to consider in the description; if none are provided, taxonomy levels are used. 
-  sample_prop = .5, # the proportion of matches sampled (which determines the size of the control group); minimum bound of 5% is placed on this
+  sample_prop = .1, # the proportion of matches sampled (which determines the size of the control group); minimum bound of .01% is placed on this
   within_window = T, # generate entries within the meltt integration s/t window
   spatial_window = NULL, # if within_window==F, set new s window
   temporal_window = NULL, # if within_window==F, set new t window
@@ -19,7 +19,7 @@ meltt.validate = function(
     stop("'within_window' has been set to false, user must provide a new temporal and spatial window from which to draw control group.")
   }
   if(sample_prop > 1 | sample_prop < 0.01){
-    step("`sample_prop` exceeds relevant bounds. Set argument to any numeric value existing between .01 and 1")
+    stop("`sample_prop` exceeds relevant bounds. Set argument to any numeric value existing between .01 and 1")
   }
   
   # BULID VALIDATION SET (if need be) ------------------------------------------------------------------
