@@ -4,6 +4,12 @@
 //
 //
 
+
+== 0.4.0 (26 Oct 2017) ==
+   * Introduced meltt.validate as a validation procedure for output
+   * Added Rcpp src functionality for quick proximity calculation (internal)
+   * Other small bug fixes and improvements
+
 == 0.3.3 (10 Oct 2017) ==
    * Fixed issue with automatic color and shape propagation in mplot()
    * Other small bug fixes and improvements
