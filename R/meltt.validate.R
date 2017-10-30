@@ -150,6 +150,7 @@ meltt.validate = function(
     validation_set = merge(validation_set,descr,by.x="uid2",by.y="uid",all.x=T)
     colnames(validation_set)[5] = "descr2"
     validation_set$are_match = NA # the variable the coder codes when validating
+    validation_set$timestamp = NA # time stamp to track when inputs are entered
     
     # Finally, scramble the sample 
     validation_set = sample_frac(validation_set,1)
@@ -197,12 +198,10 @@ meltt.validate = function(
       fluidRow(
         column(6,align="left",
                sidebarPanel(htmlOutput("descr1"),position = "center",width=12)
-               # sidebarPanel(textOutput("descr1"),position = "center",width=12)
         ),
         
         column(6,align="left",
                sidebarPanel(htmlOutput("descr2"),position = "center",width=12)
-               # sidebarPanel(textOutput("descr2"),position = "center",width=12)
         )
       ),
       column(width = 12, offset = 0, style='padding:40px;'),
@@ -258,13 +257,11 @@ meltt.validate = function(
     observe({
       output$descr1 <-   renderUI({
         HTML(object$validation$validation_set$descr1[.n])
-        # as.character(object$validation$validation_set$descr1[.n])
       })
     })
     observe({
       output$descr2 <- renderUI({
         HTML(object$validation$validation_set$descr2[.n])
-       # as.character(object$validation$validation_set$descr2[.n])
       })
     })
     observe({
@@ -290,9 +287,11 @@ meltt.validate = function(
     # Recursive buttons...
     observeEvent(input$yes, {
       object$validation$validation_set$are_match[.n] <<- 1
+      object$validation$validation_set$timestamp[.n] <<- as.character(Sys.time())
     })
     observeEvent(input$no, {
       object$validation$validation_set$are_match[.n] <<- 0
+      object$validation$validation_set$timestamp[.n] <<- as.character(Sys.time())
     })
     observeEvent(input$next1, {
       if(.n < nrow(object$validation$validation_set)){
@@ -322,7 +321,7 @@ meltt.validate = function(
   }
   
   
-  if(any(is.na(object$validation$validation_set))){ 
+  if(any(is.na(object$validation$validation_set$are_match))){ 
     
     # If there are any values that have yet to be validated, Run app
     shinyApp(.ui, .server)
