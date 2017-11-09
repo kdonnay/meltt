@@ -57,7 +57,13 @@ meltt.validate = function(
       })
       t(out)
     })
-    match_pop = ldply(m_pairs)
+    
+    # Generate population...
+    if(is.list(m_pairs)){
+      match_pop = ldply(m_pairs)
+    } else{
+      match_pop = as.data.frame(t(m_pairs))
+    }
     colnames(match_pop) = c("uid1","uid2")
     match_pop$uid1 = as.character(match_pop$uid1)
     match_pop$uid2 = as.character(match_pop$uid2)
@@ -101,9 +107,12 @@ meltt.validate = function(
     
     # RANDOMLY SAMPLE ---------------------------------------------------------
     match_sample = sample_frac(match_pop,sample_prop,replace = F)
+    if( nrow(match_sample)< 1 ){ match_sample = sample_n(match_pop,1) } # in case sample is low
     retrieve_this_N = nrow(match_sample)
     mixed_sample = sample_n(mixed_pop,retrieve_this_N/2,replace = F)
+    if( nrow(mixed_sample)< 1 ){ mixed_sample = sample_n(mixed_pop,1) } # in case sample is low
     unique_sample = sample_n(unique_pop,retrieve_this_N/2,replace = F)
+    if( nrow(unique_sample)< 1 ){ unique_sample = sample_n(unique_pop,1) }
     
     # samples are proximate 50% from the mixes, 50% from uniques. Maybe off if
     # slightly from N of match if retrieve_this_N is odd.
