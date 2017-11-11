@@ -51,6 +51,8 @@ meltt.duplicates = function(object,columns=NULL){
     }
   }
   recon_key = key3[,!colnames(key3) %in% c("data0","event0")]
+  drop = !apply(recon_key,1,function(x){sum(!is.na(x)) <= 2}) # Drop empty match-ups
+  recon_key=recon_key[drop,]
   recon_key[is.na(recon_key)] = 0
   recon_key = recon_key[!apply(recon_key,1,function(x) all(x == 0)),] # Remove if any "all zeros" rows exist
   
