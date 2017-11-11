@@ -34,8 +34,8 @@ meltt.validate = function(
     
     
     # GENERATE MATCH PAIRINGS (M-M) -------------------------------------------
-    total_n_dats = length(object$inputData)
-    matches = meltt.duplicates(object)[,1:(total_n_dats*2)] 
+    matches = meltt.duplicates(object)
+    matches = matches[,grepl("dataID|eventID",colnames(matches))]
     cols = (1:ncol(matches))[1:ncol(matches) %% 2 == 1]
     match_id = matrix(nrow=nrow(matches),ncol=length(cols))
     for (c in 1:length(cols)) {
@@ -43,7 +43,8 @@ meltt.validate = function(
       match_id[,c] = paste0(matches[,cols[c]],"-",matches[,cols[c]+1])
     }
     # Edit out fillers
-    blacklist = paste0(object$inputDataNames,"-0")
+    blacklist = c(paste0(object$inputDataNames,"-0"),
+                  paste0(object$inputDataNames,"-NA"))
     match_id[match_id %in% blacklist] = NA
     
     flagged_as_matches = c(match_id)[!is.na(c(match_id))] # Flag relevant matches...
@@ -344,6 +345,8 @@ meltt.validate = function(
     FP  = sum(reviewed$match == 1 & reviewed$are_match == 0)/nrow(reviewed)
     TN  = sum(reviewed$match == 0 & reviewed$are_match == 0)/nrow(reviewed)
     FN  = sum(reviewed$match == 0 & reviewed$are_match == 1)/nrow(reviewed)
+    TPR = TP + TN
+    FPR = FP + FN
     
     
     # Save rates in object
@@ -356,10 +359,14 @@ meltt.validate = function(
     accuracy = matrix(round(c(TP,FP,TN,FN),3),2,2)
     colnames(accuracy) = c("Postives","Negatives")
     rownames(accuracy) = c("True","False")
+    rates = matrix(paste0(round(c(TPR,FPR),3)*100,"%"),1,2)
     cat("\n\nMELTT Performance Accuracy of Integrated Sample \n",
-        paste0(rep("---",10),collapse=""),"\n")
+        paste0(rep("---",12),collapse=""),"\n")
     print(accuracy)
-    cat("",paste0(rep("---",10),collapse=""),"\nA sample of",nrow(reviewed),"observations --",
+    cat("",paste0(rep("---",12),collapse=""),"\n")
+    cat("TPR: ",rates[1],"\n")
+    cat("FPR: ",rates[2],"\n")
+    cat("",paste0(rep("---",12),collapse=""),"\nA sample of",nrow(reviewed),"observations --",
         round(object$validation$params$sample_proportion*100,2)
         ,"% of the matched pairs with a control group of unmatched event pairs of equal size -- from the integrated data were manually reviewed.")
     assign(as.character(obj_name),object,envir = globalenv())
