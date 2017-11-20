@@ -49,22 +49,15 @@ meltt.validate = function(
     
     flagged_as_matches = c(match_id)[!is.na(c(match_id))] # Flag relevant matches...
     
-    # generate pairings
-    m_pairs = apply(match_id,1,function(x){
+    # generate pairings (permutation of each match)
+    for(m in 1:nrow(match_id)){
+      if(m==1){m_pairs=c()}
+      x = match_id[m,]
       alts = x[!is.na(x)]
-      N = length(alts)
-      out = sapply(2:N,function(x){
-        c(alts[1],alts[x])
-      })
-      t(out)
-    })
-    
-    # Generate population...
-    if(is.list(m_pairs)){
-      match_pop = ldply(m_pairs)
-    } else{
-      match_pop = as.data.frame(t(m_pairs))
+      out = t(combn(alts, 2,simplify = T))
+      m_pairs = rbind(m_pairs,out)
     }
+    match_pop = as.data.frame(m_pairs)
     colnames(match_pop) = c("uid1","uid2")
     match_pop$uid1 = as.character(match_pop$uid1)
     match_pop$uid2 = as.character(match_pop$uid2)
