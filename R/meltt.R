@@ -186,10 +186,10 @@ meltt <- function(...,taxonomies,twindow,spatwindow,smartmatch=TRUE,certainty=NA
 
 
   # FORMAT data to numerical matrix & STAMP and STORE input data.
-  stamps = c()
-  tax_entries = c()
-  data.list = list()
-  issue_messages = c()
+  stamps <- c()
+  tax_entries <- c()
+  data.list <- list()
+  issue_messages <- c()
   for(d in seq_along(datasets)) {
     dd <- eval(datasets[[d]])
     dd$data.source <- as.character(datasets[[d]])
@@ -207,11 +207,11 @@ meltt <- function(...,taxonomies,twindow,spatwindow,smartmatch=TRUE,certainty=NA
     tax.out <- meltt.taxonomy(dd,taxonomies)
     tax.vars <- tax.out$processed_taxonomies
     issue_messages <- c(issue_messages,tax.out$issue_messages) # store any error messages
-    data.list[[d]] = dd # original data
-    stamps = rbind(stamps,combine) # retain entry geo/time/index
-    tax_entries = rbind(tax_entries,tax.vars) # retain tax
+    data.list[[d]] <- dd # original data
+    stamps <- rbind(stamps,combine) # retain entry geo/time/index
+    tax_entries <- rbind(tax_entries,tax.vars) # retain tax
   }
-  if(length(issue_messages)>0){ # Taxonomy Check: stop if issue with taxonomy mapping detected
+  if(length(issue_messages) > 0){ # Taxonomy Check: stop if issue with taxonomy mapping detected
     taxonomy_stop_message <- paste0("\n\n",paste0(issue_messages,collapse=""),"Please ensure that each unique data entry in the input data contains a corresponding value in the base.category column for each input taxonomy.\n\n")
     cat(taxonomy_stop_message)
     stop("Stopped due to taxonomy error (see above report for detailed summary).")
@@ -219,37 +219,48 @@ meltt <- function(...,taxonomies,twindow,spatwindow,smartmatch=TRUE,certainty=NA
   }
 
   numeric_tax <- apply(as.matrix(tax_entries),2,function(x) as.numeric(as.factor(x))) # convert taxonomy text to numeric
-  names(data.list) = datasets # record data names to original data
-  compilation.matrix = cbind(stamps,numeric_tax) # combine entry stamps with taxonomies
-  data = compilation.matrix[order(compilation.matrix$date),] # order data
-  rownames(data) = NULL
-
-
+  names(data.list) <- datasets # record data names to original data
+  data <- cbind(stamps,numeric_tax) # combine entry stamps with taxonomies
+  
   # RUN matching algorithm
   for (datst in 2:dataset_number){
     if (datst == 2){
       dat <- subset(data,data$dataset==1)
       dat_new <- subset(data,data$dataset==2)
-      indexing <- list(dat[,1:2],dat_new[,1:2]) # save old indices
-      dat[,1] <- 1 # generate new (time-ordered) indices
+      # save old indices
+      indexing <- list(dat[,1:2],dat_new[,1:2])
+      # order data
+      dat <- dat[order(dat$date),]
+      rownames(dat) <- NULL
+      dat_new <- dat_new[order(dat_new$date),]
+      rownames(dat_new) <- NULL
+      # generate new (time-ordered) indices
+      dat[,1] <- 1
       dat[,2] <- 1:nrow(dat)
       dat_new[,1] <- 2
       dat_new[,2] <- 1:nrow(dat_new)
-      dat <- rbind(dat,dat_new) # new joined data
+      # new joined data
+      dat <- rbind(dat,dat_new)
       out <- meltt.episodal(dat,indexing,priormatches = c(),twindow,spatwindow,smartmatch,certainty,k,secondary,partial,averaging,weight)
       out$data[,1:2] <- data.frame(t(sapply(1:nrow(out$data),function(x) unlist(indexing[[out$data$dataset[x]]][out$data$event[x],])))) # restore correct indices in data
     }else{
       dat <- out$data
+      past_event_contenders <- out$event_contenders
+      past_episode_contenders <- out$episode_contenders
       dat_new <- subset(data,data$dataset==datst)
-      past_event_contenders = out$event_contenders
-      past_episode_contenders = out$episode_contenders
+      # save old indices
+      indexing <- list(dat[,1:2],dat_new[,1:2])
+      # order data
+      dat_new <- dat_new[order(dat_new$date),]
+      rownames(dat_new) <- NULL
       if (is.element("episodal_match",names(out$data))){ dat_new$episodal_match <- "" }
-      indexing <- list(dat[,1:2],dat_new[,1:2]) # save old indices
-      dat[,1] <- 1 # generate new indices
+      # generate new (time-ordered) indices
+      dat[,1] <- 1
       dat[,2] <- 1:nrow(dat)
       dat_new[,1] <- 2
       dat_new[,2] <- 1:nrow(dat_new)
-      dat <- rbind(dat,dat_new) # new joined data
+      # new joined data
+      dat <- rbind(dat,dat_new)
       out <- meltt.episodal(dat,indexing,priormatches = list(out$event_matched,
                                                              out$event_contenders,
                                                              out$episode_matched,
@@ -258,46 +269,46 @@ meltt <- function(...,taxonomies,twindow,spatwindow,smartmatch=TRUE,certainty=NA
       out$data[,1:2] <- data.frame(t(sapply(1:nrow(out$data),function(x) unlist(indexing[[out$data$dataset[x]]][out$data$event[x],])))) # restore correct indices in data
 
       # Bind past contenders with current
-      out$event_contenders = rbind(past_event_contenders,out$event_contenders)
-      out$episode_contenders = rbind(past_episode_contenders,out$episode_contenders)
+      out$event_contenders <- rbind(past_event_contenders,out$event_contenders)
+      out$episode_contenders <- rbind(past_episode_contenders,out$episode_contenders)
     }
-    out$data <- out$data[order(out$data$date),]
-    row.names(out$data)<-NULL
+    out$data <- out$data[order(out$data$date,out$data$dataset,out$data$event),]
+    row.names(out$data) <- NULL
   }
 
   # Retain Processing features
-  names(out)[1] = "deduplicated_index" # Rename data feature
-  out$complete_index = data
-  out = out[c("complete_index","deduplicated_index","event_matched","event_contenders","episode_matched","episode_contenders")]
+  names(out)[1] <- "deduplicated_index" # Rename data feature
+  out$complete_index <- data
+  out <- out[c("complete_index","deduplicated_index","event_matched","event_contenders","episode_matched","episode_contenders")]
 
   if(ncol(out$event_matched) != ncol(out$episode_matched)){
     # If episode matched does not map onto event_matched (due to episodal data
     # existing in some but not all the input datasets), correct index in
     # episode_matched
-    em = out$episode_matched
-    datindex = unique(em[,grep("data",colnames(em))])
+    em <- out$episode_matched
+    datindex <- unique(em[,grep("data",colnames(em))])
     for(i in 1:ncol(datindex)){
-      if(i==1){corrected=c()}
-      corrected = c(corrected,paste0(c("data","event"),c(datindex[1,i])))
+      if(i==1){corrected <- c()}
+      corrected <- c(corrected,paste0(c("data","event"),c(datindex[1,i])))
     }
-    colnames(em) = corrected
-    tmpentry = out$event_matched[1,]
-    tmpentry[1,] = 0
-    em_new = rbind.fill(em,tmpentry)
-    em_new[is.na(em_new)] = 0
-    em_new = em_new[-nrow(em_new),]
-    out$episode_matched = em_new
+    colnames(em) <- corrected
+    tmpentry <- out$event_matched[1,]
+    tmpentry[1,] <- 0
+    em_new <- rbind.fill(em,tmpentry)
+    em_new[is.na(em_new)] <- 0
+    em_new <- em_new[-nrow(em_new),]
+    out$episode_matched <- em_new
   }
 
   # Retain initial input features
-  tax_stats = list(taxonomy_names=tax_names,N_taxonomies = k,
+  tax_stats <- list(taxonomy_names=tax_names,N_taxonomies = k,
                taxonomy_depths = secondary,input_taxonomies=taxonomies)
-  params=list(twindow=twindow,spatwindow=spatwindow,
+  params <- list(twindow=twindow,spatwindow=spatwindow,
               smartmatch=smartmatch,certainty=certainty,
               partial=partial,averaging=averaging,weight=weight)
 
   # PRODUCE master list containing all relevant output features.
-  master.out = list(processed = out,inputData = data.list,parameters=params,
+  master.out <- list(processed = out,inputData = data.list,parameters=params,
                     inputDataNames = sapply(datasets, paste0, collapse=""),
                     taxonomy = tax_stats)
 

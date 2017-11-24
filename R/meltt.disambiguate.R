@@ -2,7 +2,6 @@ meltt.disambiguate <- function(data,match_output,indexing,priormatches,averaging
   # TRUNCATE to best match and RELABLE columns
   matches <- match_output$selected_matches[,1:4]
   names(matches) <- c('data1','event1','data2','event2')
-
   contenders = match_output$selected_matches # retain info on runners-up
 
   # DISAMBIGUATE data
@@ -80,7 +79,7 @@ meltt.disambiguate <- function(data,match_output,indexing,priormatches,averaging
   }
 
   # RETURN disambiguated data and match summary
-  output <- list('data' = data, 'matched' = matched,"contenders" = contenders)
+  output <- list('data' = data, 'matched' = matched, 'contenders' = contenders)
 
   return(output)
 }

@@ -1,4 +1,8 @@
 meltt.episodal <- function(data,indexing,priormatches,twindow,spatwindow,smartmatch,certainty,k,secondary,partial,averaging,weight){
+  
+  # SORT data by timestamp and subset
+  data <- data[order(data$date),] 
+  row.names(data) <- NULL
   data_event <- subset(data,data$date==data$enddate)
   data_episode <- subset(data,data$date!=data$enddate)
 

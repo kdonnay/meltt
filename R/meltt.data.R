@@ -29,7 +29,7 @@ meltt.data <- function(object,columns=NULL){
   
   dd2 = merge(key,dd,by=c('dataset','event'),all.x=T) # merge data to key (i.e. subset)
   out = dd2[,columns] # only select requested columns
-  out = out[order(out$date),] # order by date
+  out = out[order(out$date,out$dataset,out$event),] # order by date, if tied by dataset, then event
   row.names(out) = 1:nrow(out) # re-index rows
   out$dataset = dat.names[out$dataset] # restore data names
   return(out)

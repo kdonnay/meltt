@@ -3,7 +3,7 @@ meltt.match <- function(data,twindow,spatwindow,smartmatch,certainty,k,secondary
     certainty <- rep(0,k)
   }
   
-  # SORT data by timestamp
+  # SORT by timestamp and remove last columns, if necessary
   data <- data[order(data$date),] 
   row.names(data) <- NULL
   if (is.element("episodal_match",names(data))){
