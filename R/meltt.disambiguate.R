@@ -56,9 +56,8 @@ meltt.disambiguate <- function(data,match_output,indexing,priormatches,averaging
       colms <- c(iter*2+1,iter*2+2)
 
       if(nrow(matches)>0){ # Conditional in case there are no matches
-        # RESTORE indexing and parse matches
+        # PARSE matches
         for (event in 1:nrow(matches)){
-          #matches[event,1:2] <- data[matches$event1[event],1:2]
           if (any(matched[,cols] == matches[event,1] & matched[,cols+1] == matches[event,2])){
             for (columns in cols){
               if (any(matched[,columns] == matches[event,1] & matched[,columns+1] == matches[event,2])){

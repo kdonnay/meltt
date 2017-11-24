@@ -192,8 +192,6 @@ meltt <- function(...,taxonomies,twindow,spatwindow,smartmatch=TRUE,certainty=NA
   issue_messages = c()
   for(d in seq_along(datasets)) {
     dd <- eval(datasets[[d]])
-    dd <- dd[order(dd$date),] # time-ordering
-    row.names(dd) <- NULL
     dd$data.source <- as.character(datasets[[d]])
     dd$dataset <- match(as.character(datasets[[d]]),datasets)
     dd$obs.count <- 1:nrow(dd)
@@ -230,9 +228,16 @@ meltt <- function(...,taxonomies,twindow,spatwindow,smartmatch=TRUE,certainty=NA
   # RUN matching algorithm
   for (datst in 2:dataset_number){
     if (datst == 2){
-      dat <- subset(data,data$dataset==1 | data$dataset==2)
-      indexing <- list(subset(data,data$dataset==1)[,1:2],subset(data,data$dataset==2)[,1:2])
+      dat <- subset(data,data$dataset==1)
+      dat_new <- subset(data,data$dataset==2)
+      indexing <- list(dat[,1:2],dat_new[,1:2]) # save old indices
+      dat[,1] <- 1 # generate new (time-ordered) indices
+      dat[,2] <- 1:nrow(dat)
+      dat_new[,1] <- 2
+      dat_new[,2] <- 1:nrow(dat_new)
+      dat <- rbind(dat,dat_new) # new joined data
       out <- meltt.episodal(dat,indexing,priormatches = c(),twindow,spatwindow,smartmatch,certainty,k,secondary,partial,averaging,weight)
+      out$data[,1:2] <- data.frame(t(sapply(1:nrow(out$data),function(x) unlist(indexing[[out$data$dataset[x]]][out$data$event[x],])))) # restore correct indices in data
     }else{
       dat <- out$data
       dat_new <- subset(data,data$dataset==datst)

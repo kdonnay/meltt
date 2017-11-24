@@ -7,7 +7,7 @@ Validation method to assess data integrated by meltt.
 Function to efficiently sample a subset of integrated data to generate performance statistics.
 }
 \usage{
-meltt.validate(object=NULL,description.vars = NULL, sample_prop = .5,
+meltt.validate(object=NULL,description.vars = NULL, sample_prop = .1,
   within_window = T, spatial_window = NULL,temporal_window = NULL,reset = F)
 }
 \arguments{
@@ -20,17 +20,17 @@ String vector referencing column names located in the input data. These are the 
 \item{sample_prop}{
 Argument establishes the proportion of of the total matched pairs that are sampled from. The size of this sample is then used to determine the size of the control group (i.e. all entries not flagged as matches, which are paired with other unique entries and matches. These entries should not be matches). For example, if \code{{sample_prop}} = .1 and this results in a sample of 20 matched pairs, then 20 control pairs will be extracted from the set, leading to a total sample of 40 observations to be reviewed. Input must exist within the range .01 and 1. 
 }
-\item{within_window.vars}{
-Use the same spatio-temporal window used in the initial data integration to calculate what counts as a "proximate event" for all entries in the control group. Default = True. If set to false, user must assign a new spatio-temporal window using spatial_window &  temporal_window. 
+\item{within_window}{
+Use the same spatio-temporal window used in the initial data integration to calculate what counts as a "proximate event" for all entries in the control group. Default = TRUE. If set to FALSE, user must assign a new spatio-temporal window using spatial_window &  temporal_window. 
 }
-\item{spatial_window.vars}{
-If \code{within_window}==F, set new spatial window (in km).
+\item{spatial_window}{
+If \code{within_window}==FALSE, set new spatial window (in km).
 }
-\item{temporal_window.vars}{
-If \code{within_window}==F, set new temporal window (in days).
+\item{temporal_window}{
+If \code{within_window}==FALSE, set new temporal window (in days).
 }
 \item{reset}{
-If True, the validation step will be reset and a new validation sample frame will be produced. Default = False.
+If TRUE, the validation step will be reset and a new validation sample frame will be produced. Default = FALSE.
 }
 }
 \details{
