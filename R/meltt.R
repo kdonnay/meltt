@@ -192,6 +192,7 @@ meltt <- function(...,taxonomies,twindow,spatwindow,smartmatch=TRUE,certainty=NA
   issue_messages <- c()
   for(d in seq_along(datasets)) {
     dd <- eval(datasets[[d]])
+    dd = dd[order(dd$date),] # temporally order input data (so that indices correspond)
     dd$data.source <- as.character(datasets[[d]])
     dd$dataset <- match(as.character(datasets[[d]]),datasets)
     dd$obs.count <- 1:nrow(dd)
@@ -207,7 +208,7 @@ meltt <- function(...,taxonomies,twindow,spatwindow,smartmatch=TRUE,certainty=NA
     tax.out <- meltt.taxonomy(dd,taxonomies)
     tax.vars <- tax.out$processed_taxonomies
     issue_messages <- c(issue_messages,tax.out$issue_messages) # store any error messages
-    data.list[[d]] <- dd # original data
+    data.list[[d]] <- dd # retain original data
     stamps <- rbind(stamps,combine) # retain entry geo/time/index
     tax_entries <- rbind(tax_entries,tax.vars) # retain tax
   }
