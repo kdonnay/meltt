@@ -7,6 +7,7 @@ meltt.validate = function(
   temporal_window = NULL, # if within_window==F, set new t window
   reset = F # If T, the validation step will be reset and a new validation sample frame will be produced.
 ){
+  # The "Choose from 3-options" version
   
   obj_name = deparse(substitute(object))
   
@@ -18,22 +19,14 @@ meltt.validate = function(
   if(within_window==F & (is.null(spatial_window) | is.null(temporal_window))){
     stop("'within_window' has been set to false, user must provide a new temporal and spatial window from which to draw control group.")
   }
-  if(sample_prop > 1 | sample_prop < 0.01){
+  if(sample_prop > 1 | sample_prop < 0.001){
     stop("`sample_prop` exceeds relevant bounds. Set argument to any numeric value existing between .01 and 1")
   }
   
   # BULID VALIDATION SET (if need be) ------------------------------------------------------------------
   if(!any(names(object) == "validation") | reset){ # Generate Validation Set if one does not already exist
-  
-    # GENERATE SAMPLES --------------------------------------------------------
     
-    
-    # Generates two "universe of the data": a matching set containing pairs of all
-    # events that matched; and a "control" made up of a 50% mixture of match to
-    # unique and unique-unique. 
-    
-    
-    # GENERATE MATCH PAIRINGS (M-M) -------------------------------------------
+    # Specify Matching events
     matches = meltt.duplicates(object)
     matches = matches[,grepl("dataID|eventID",colnames(matches))]
     cols = (1:ncol(matches))[1:ncol(matches) %% 2 == 1]
@@ -46,36 +39,27 @@ meltt.validate = function(
     blacklist = c(paste0(object$inputDataNames,"-0"),
                   paste0(object$inputDataNames,"-NA"))
     match_id[match_id %in% blacklist] = NA
+    M = data.frame(match_id,stringsAsFactors = F);M$match_id = 1:nrow(M)
+    M2 = gather(M,match,uid,-match_id)
+    M2 = arrange(drop_na(select(M2,uid,match_id)),match_id)
     
-    flagged_as_matches = c(match_id)[!is.na(c(match_id))] # Flag relevant matches...
-    
-    # generate pairings (permutation of each match)
-    for(m in 1:nrow(match_id)){
-      if(m==1){m_pairs=c()}
-      x = match_id[m,]
-      alts = x[!is.na(x)]
-      out = t(combn(alts, 2,simplify = T))
-      m_pairs = rbind(m_pairs,out)
-    }
-    match_pop = as.data.frame(m_pairs)
-    colnames(match_pop) = c("uid1","uid2")
-    match_pop$uid1 = as.character(match_pop$uid1)
-    match_pop$uid2 = as.character(match_pop$uid2)
-    
-    
-    # GENERATE CONTROL PAIRINGS (M-U,U-M,U-U) ---------------------------------
-    
-    # (1) generate composition of all input data frames.
+    # GENERATE input data frame from input data
     for(i in seq_along(object$inputData)){ # Gather input data into one frame
       if(i==1){all_input_dat = c() }
       tmp = object$inputData[[i]]
       colnames(tmp)[colnames(tmp)=='obs.count'] = 'event'
+      tmp = tmp[order(tmp$date),]
       all_input_dat = rbind.fill(tmp,all_input_dat)
     }
     all_input_dat$uid = paste(object$inputDataNames[all_input_dat$dataset],
                               all_input_dat$event,sep="-")
     
-    # (2) subset to index proximate events
+    # Map match ids onto the input data frame
+    all_input_dat = merge(all_input_dat,M2,by='uid',all.x=T)
+    
+    # Order input dataframe so nearby cohorts reflect proximity
+    all_input_dat= all_input_dat[order(all_input_dat$date),]
+    
     if(within_window){ # If using the same proximity window as meltt
       t = object$parameters$twindow
       s = object$parameters$spatwindow
@@ -88,76 +72,90 @@ meltt.validate = function(
       index = proximity(D,t = t,s = s)
     }
     
-    # (3) locate the different populations (matched pairs, mixed pairs, unique pairs)
-    exp_index = data.frame(uid1 = all_input_dat[index[,1],"uid"],uid2 = all_input_dat[index[,2],"uid"],
+    # Produce set of "proximate" entries
+    exp_index = data.frame(uid1 = all_input_dat[index[,1],"uid"],
+                           uid2 = all_input_dat[index[,2],"uid"],
+                           m1 = all_input_dat[index[,1],"match_id"],
+                           m2 = all_input_dat[index[,2],"match_id"],
+                           cohort = index[-1,3],
                            stringsAsFactors = F)
-    exp_index$uid1_M = as.numeric(exp_index$uid1 %in% flagged_as_matches)
-    exp_index$uid2_M = as.numeric(exp_index$uid2 %in% flagged_as_matches)
-    exp_index = exp_index[!(exp_index$uid1_M == 1 & exp_index$uid2_M==1),] # drop matches
-    mixed_pop = exp_index[(exp_index$uid1_M == 1 | exp_index$uid2_M==1),c(1,2)] 
-    unique_pop = exp_index[(exp_index$uid1_M == 0 & exp_index$uid2_M==0),c(1,2)] # drop matches
     
+    # Determine which of those proximate entries are matches
+    exp_index$match = as.numeric((exp_index$m1 == exp_index$m2) & (!is.na(exp_index$m1) & !is.na(exp_index$m2)))
     
+    # GENERATE matches/control samples, where control is drawn from proximate events ------------------------- 
+    match_samp = sample_frac(data.frame(match_id=unique(exp_index$m1[exp_index$match == 1])),sample_prop)
+    # in case sample is low
+    if( nrow(match_samp)< 1 ){ match_samp = sample_n(data.frame(match_id=unique(exp_index$m1[exp_index$match == 1])),1) } 
     
-    # RANDOMLY SAMPLE ---------------------------------------------------------
-    match_sample = sample_frac(match_pop,sample_prop,replace = F)
-    if( nrow(match_sample)< 1 ){ match_sample = sample_n(match_pop,1) } # in case sample is low
-    retrieve_this_N = nrow(match_sample)
-    mixed_sample = sample_n(mixed_pop,retrieve_this_N/2,replace = F)
-    if( nrow(mixed_sample)< 1 ){ mixed_sample = sample_n(mixed_pop,1) } # in case sample is low
-    unique_sample = sample_n(unique_pop,retrieve_this_N/2,replace = F)
-    if( nrow(unique_sample)< 1 ){ unique_sample = sample_n(unique_pop,1) }
-    
-    # samples are proximate 50% from the mixes, 50% from uniques. Maybe off if
-    # slightly from N of match if retrieve_this_N is odd.
-    
-    # Denote what is what
-    match_sample$match = 1
-    mixed_sample$match = 0
-    unique_sample$match = 0
-    
-    
-    # BUILD VALIDATION SET ----------------------------------------------------
-    all_samp_entries = unique(
-      c(
-        c(match_sample$uid1,match_sample$uid2),
-        c(mixed_sample$uid1,mixed_sample$uid2),
-        c(unique_sample$uid1,unique_sample$uid2)
-      )
-    )
-    
-    # Gather descriptions and format in HTML 
-    if(is.null(description.vars)){ # If no, description variables are offered, taxonomy info is used.
-      descr_elements = all_input_dat[all_input_dat$uid %in% all_samp_entries,c("uid",object$taxonomy$taxonomy_names)]
-      formatted = apply(descr_elements,1,function(x){
-        x = iconv(x, "latin1", "ASCII", sub="") # Remove any potential encoding issues
-        paste0(paste(paste0("<b><i>",names(x[-1]),"</i></b>"),x[-1],sep=": "),collapse = "<br/><br/>")
-        # paste0(paste(names(x[-1]),x[-1],sep=": "),collapse = "\n\n")
-      })
-      descr = data.frame(uid=descr_elements$uid,descr=formatted,stringsAsFactors = F)
-    }else{ # Use the columns the user provided
-      descr_elements = all_input_dat[all_input_dat$uid %in% all_samp_entries,c("uid",description.vars)]
-      formatted = apply(descr_elements,1,function(x){
-        x = iconv(x, "latin1", "ASCII", sub="") # Remove any potential encoding issues
-        paste0(paste(paste0("<b><i>",names(x[-1]),"</i></b>"),x[-1],sep=": "),collapse = "<br/><br/>")
-        # paste0(paste(names(x[-1]),x[-1],sep=": "),collapse = "\n\n")
-       })
-      descr = data.frame(uid=descr_elements$uid,descr=formatted,stringsAsFactors = F)
+    cat('\nGenerating Validation Set ... \n')
+    v_set = c(); pb = progress_estimated(nrow(match_samp))
+    for(s in 1:nrow(match_samp)){
+      draw_set = exp_index %>% filter(m1==match_samp$match_id[s] | m2==match_samp$match_id[s])
+      orig_set = function(x) gsub("[-]\\d+","",x)
+      c_range = draw_set$cohort[draw_set$match==1][1]
+      
+      go <- i <- T
+      while(go){ # Adaptive code chunk that incrementally builds a "as close as possible" control group
+        if(i > 1){
+          near_by_entries = filter(exp_index,cohort >= c_range-i & cohort <= c_range+i & match!=1)
+          draw_set = unique(rbind(draw_set,near_by_entries))
+        }
+        display_entry = draw_set$uid1[draw_set$match==1][1]
+        matching_entry = draw_set$uid2[draw_set$match==1][1]
+        control_entries = c(draw_set$uid1[draw_set$match==0],draw_set$uid2[draw_set$match==0]) # generate control sample
+        control_entries = control_entries[!control_entries %in% c(display_entry,matching_entry)] # not the display/matching entry
+        control_entries = unique(control_entries[orig_set(control_entries) != orig_set(display_entry)]) # from a different source than the display entry
+        if(length(control_entries)>2){
+          go = F
+          control_sample = sample(control_entries,2,replace=F)
+          entry = data.frame(display_entry,matching_entry,control_entry1=control_sample[1],
+                             control_entry2=control_sample[2],stringsAsFactors = F)
+        }else{i = i + 1}
+      }
+      
+      v_set = rbind(v_set,entry)
+      pb$tick()$print()
     }
     
-    # Build validation set
-    validation_set = rbind(rbind(match_sample,mixed_sample),unique_sample)
-    row.names(validation_set) = NULL
-    validation_set = merge(validation_set,descr,by.x="uid1",by.y="uid",all.x=T)
-    colnames(validation_set)[4] = "descr1"
-    validation_set = merge(validation_set,descr,by.x="uid2",by.y="uid",all.x=T)
-    colnames(validation_set)[5] = "descr2"
-    validation_set$are_match = NA # the variable the coder codes when validating
-    validation_set$timestamp = NA # time stamp to track when inputs are entered
     
-    # Finally, scramble the sample 
-    validation_set = sample_frac(validation_set,1)
-    row.names(validation_set) = NULL
+    # BUILD VALIDATION SET ---------------
+    apply(v_set,1,function(x){
+      y = c()
+      for(i in x){
+        tmp = all_input_dat[all_input_dat$uid %in% i,c('uid',description.vars)]
+        y = rbind(y,tmp)
+      }
+      cbind(type=names(x),y)
+    }) -> entries_info
+    entries_info=ldply(entries_info)
+    
+    
+    # If no description variables have been specified...
+    if(is.null(description.vars)){description.vars = object$taxonomy$taxonomy_names}
+    
+    formatted = apply(entries_info[,c(1:3)*-1],1,function(x){
+      x = iconv(x, "latin1", "ASCII", sub="") # Remove any potential encoding issues
+      paste0(paste(paste0("<b><i>",names(x),"</i></b>"),x,sep=": "),collapse = "<br/><br/>")
+      # paste0(paste(names(x),x,sep=": "),collapse = "\n\n")
+    })
+    validation_set = data.frame(val_id = as.numeric(entries_info[,1]),
+                                uid=entries_info[,3],
+                                type=as.character(entries_info[,2]),
+                                descr=formatted,
+                                coding=NA,
+                                coding_txt ="",
+                                stringsAsFactors = F) 
+    
+    # Shuffle the validation entries up (so matching entry is in a different location each time)
+    for(v in unique(validation_set$val_id)){
+      if(v==1){validation_set2=c()}
+      ss = validation_set[validation_set$val_id==v,]
+      validation_set2 = rbind(validation_set2,ss[c(1,sample(2:4)),])
+    }
+    
+    
+    cat('\nValidation Set Generated!\n')
     
     
     # Save Validation set -----------------------------------------------------
@@ -165,10 +163,8 @@ meltt.validate = function(
       params = list(temporal_assessment_window = t,
                     spatial_assessment_window = s,
                     sample_proportion = sample_prop,
-                    description_variables = ifelse(is.null(description.vars),
-                                                   paste0(object$taxonomy$taxonomy_names,collapse=", "),
-                                                   description.vars)),
-      validation_set = validation_set,
+                    description_variables = paste0(description.vars,collapse=", ")),
+      validation_set = validation_set2,
       placeholder = 1,
       rates = NA
     )
@@ -181,7 +177,6 @@ meltt.validate = function(
   } 
   
   
-
   # SHINY INTERFACE ---------------------------------------------------------
   
   # Activate Shiny application with recursive feedback. Saves directly to the
@@ -192,58 +187,74 @@ meltt.validate = function(
     
     fluidRow(
       column(12,align="center",
-             h3("Do these two descriptions appear to be referencing the same event?")),
+             h3("Which of these three entries best matches the main entry?")),
+      column(width = 12, offset = 0, style='padding:10px;')),
+    
+    # Main-Entry Titles
+    fluidRow(column(12,align='center',strong("Main Entry")),
+             column(12,align='center',
+                    sidebarPanel(htmlOutput("descr_main"),position = "center",width=12)
+             )),
+    
+    # Report Regarding Choice...
+    fluidRow(
+      column(width = 12, align="center",htmlOutput("status_1"))
+    ),
+    
+    # Buttons to vote on Choice...
+    fluidRow(
       column(width = 12, offset = 0, style='padding:20px;'),
-      fluidRow(
-        column(6,align='center',strong("Description 1")),
-        column(6,align='center',strong("Description 2"))
+      column(4,align="center",
+             actionButton("choice1", "Entry A",style="color: #fff; background-color:#b3b3b5;padding:20px; font-size:18px; width: 100px")
       ),
-      fluidRow(
-        column(6,align="left",
-               sidebarPanel(htmlOutput("descr1"),position = "center",width=12)
-        ),
-        
-        column(6,align="left",
-               sidebarPanel(htmlOutput("descr2"),position = "center",width=12)
-        )
+      column(4,align="center",
+             actionButton("choice2", "Entry B",style="color: #fff; background-color:#b3b3b5;padding:20px; font-size:18px; width: 100px")
       ),
-      column(width = 12, offset = 0, style='padding:40px;'),
-      column(width = 12, align="center",htmlOutput("reviewed")),
-      column(width = 12, offset = 0, style='padding:20px;'),
-      fluidRow(
-        column(12,align="center",
-               column(6,align="right",
-                      actionButton("back1",icon("chevron-left"),
-                                   style="color: #fff; background-color:#c0c6d1;padding:20px; font-size:100%"),
-                      actionButton("yes", "Yes",
-                                   icon("thumbs-up"),
-                                   style="color: #fff; background-color:#4ACC8B;padding:20px; font-size:100%")
-               ),
-               column(6,align="left",
-                      actionButton("no", "No",
-                                   icon("thumbs-down"),
-                                   style="color: #fff; background-color:#F5585B;padding:20px; font-size:100%"),
-                      actionButton("next1",icon("chevron-right"),
-                                   style="color: #fff; background-color:#c0c6d1;padding:20px; font-size:100%")
-               )
-        ),
-        column(width = 12, offset = 0, style='padding:40px;'),
-        fluidRow(
-          column(12,align='center',textOutput("progress"))
-        ),
-        column(width = 12, offset = 0, style='padding:40px;'),
-        fluidRow(
-          column(12,align='center',
-                 actionButton("quit", "End Review", 
-                              icon = icon("circle-o-notch"),
-                              style="color: #ffffff; background-color:#444242;padding:20px; font-size:100%",
-                              onclick = "setTimeout(function(){window.close();},500);")
-          )
-        )
-        
+      
+      column(4,align="center",
+             actionButton("choice3", "Entry C",style="color: #fff; background-color:#b3b3b5;padding:20px; font-size:18px; width: 100px")
+      ),
+      column(width = 12, offset = 0, style='padding:5px;')
+    ),
+  
+    # Descriptions for the three options being drawn
+    fluidRow(
+      column(4,align="left",
+             sidebarPanel(htmlOutput("descr1"),position = "center",width=12)
+      ),
+      column(4,align="left",
+             sidebarPanel(htmlOutput("descr2"),position = "center",width=12)
+      ),
+      column(4,align="left",
+             sidebarPanel(htmlOutput("descr3"),position = "center",width=12)
       )
+    ),
+    
+    fluidRow(
+      column(12,align="center",
+             actionButton("back1",icon("chevron-left"),
+                          style="color: #fff; background-color:#c0c6d1;padding:20px; font-size:100%"),
+             actionButton("next1",icon("chevron-right"),
+                          style="color: #fff; background-color:#c0c6d1;padding:20px; font-size:100%")
+      ),
+      
+      # Progress Report
+      column(width = 12, offset = 0, style='padding:10px;'),
+      fluidRow(column(12,align='center',textOutput("progress")),
+               column(width = 12, offset = 0, style='padding:10px;')),
+      column(width = 12, offset = 0, style='padding:10px;'),
+      fluidRow(
+        column(12,align='center',
+               actionButton("quit", "End Review", 
+                            icon = icon("circle-o-notch"),
+                            style="color: #ffffff; background-color:#444242;padding:20px; font-size:100%",
+                            onclick = "setTimeout(function(){window.close();},500);")
+        )
+      )
+      
     )
   )
+  
   
   # Est. server
   .server <- function(input, output){
@@ -258,46 +269,81 @@ meltt.validate = function(
     
     # Print Text Descriptions
     observe({
+      output$descr_main <-   renderUI({
+        HTML(object$validation$validation_set$descr[object$validation$validation_set$val_id==.n][1])
+      })
+    })
+    observe({
       output$descr1 <-   renderUI({
-        HTML(object$validation$validation_set$descr1[.n])
+        HTML(object$validation$validation_set$descr[object$validation$validation_set$val_id==.n][2])
       })
     })
     observe({
       output$descr2 <- renderUI({
-        HTML(object$validation$validation_set$descr2[.n])
+        HTML(object$validation$validation_set$descr[object$validation$validation_set$val_id==.n][3])
       })
     })
     observe({
-      output$reviewed <-  renderText({
-        if(!is.na(object$validation$validation_set$are_match[.n])){
-          HTML("<font color='red' size='3'>Already Reviewed </font>")
-        }else{
-          HTML("  ")
-        }
+      output$descr3 <- renderUI({
+        HTML(object$validation$validation_set$descr[object$validation$validation_set$val_id==.n][4])
       })
-      
     })
+    
+    # Update progress
     observe({
       output$progress <- renderText({
-        paste0("This is ",.n," of ", nrow(object$validation$validation_set),
+        paste0("This is ",.n," of ", max(object$validation$validation_set$val_id),
                " entries being reviewed. Currently ",
-               round(.n/nrow(object$validation$validation_set),3)*100,
+               round(.n/max(object$validation$validation_set$val_id),3)*100,
                "% complete.")
       })
     })
     
+    # Recursively change selected output when no option has been selected yet (i.e. new entries)
+    observeEvent(.n,{
+      output$status_1 <-renderText({
+        if(all(object$validation$validation_set$coding_txt[object$validation$validation_set$val_id==.n]=="")){
+          HTML(paste0("<font color='red' size='3'>",' ', "</font>"))
+        }else{
+          txt = unique(object$validation$validation_set$coding_txt[object$validation$validation_set$val_id==.n])
+          HTML(paste0("<font color='#ef5d56' size='4' > <strong>",txt, "</strong></font>"))
+        }
+      })
+    })
     
-    # Recursive buttons...
-    observeEvent(input$yes, {
-      object$validation$validation_set$are_match[.n] <<- 1
-      object$validation$validation_set$timestamp[.n] <<- as.character(Sys.time())
+    
+    # Recursive buttons and data profile on the output frame
+    observeEvent(input$choice1,{
+      object$validation$validation_set$coding[object$validation$validation_set$val_id==.n][2] <<- 1
+      object$validation$validation_set$coding[object$validation$validation_set$val_id==.n][3] <<- 0
+      object$validation$validation_set$coding[object$validation$validation_set$val_id==.n][4] <<- 0
+      object$validation$validation_set$coding_txt[object$validation$validation_set$val_id==.n][1:4] <<- txt <- "Entry A is the best match."
+      output$status_1 <-  renderText({
+        HTML(paste0("<font color='#ef5d56' size='4' > <strong>",txt, "</strong></font>"))
+      })
     })
-    observeEvent(input$no, {
-      object$validation$validation_set$are_match[.n] <<- 0
-      object$validation$validation_set$timestamp[.n] <<- as.character(Sys.time())
+    observeEvent(input$choice2,{
+      object$validation$validation_set$coding[object$validation$validation_set$val_id==.n][2] <<- 0
+      object$validation$validation_set$coding[object$validation$validation_set$val_id==.n][3] <<- 1
+      object$validation$validation_set$coding[object$validation$validation_set$val_id==.n][4] <<- 0
+      object$validation$validation_set$coding_txt[object$validation$validation_set$val_id==.n][1:4] <<- txt <- "Entry B is the best match."
+      output$status_1 <-  renderText({
+        HTML(paste0("<font color='#ef5d56' size='4' > <strong>",txt, "</strong></font>"))
+      })
     })
+    observeEvent(input$choice3,{
+      object$validation$validation_set$coding[object$validation$validation_set$val_id==.n][2] <<- 0
+      object$validation$validation_set$coding[object$validation$validation_set$val_id==.n][3] <<- 0
+      object$validation$validation_set$coding[object$validation$validation_set$val_id==.n][4] <<- 1
+      object$validation$validation_set$coding_txt[object$validation$validation_set$val_id==.n][1:4] <<- txt <- "Entry C is the best match."
+      output$status_1 <-  renderText({
+        HTML(paste0("<font color='#ef5d56' size='4' > <strong>",txt, "</strong></font>"))
+      })
+    })
+    
+    # Navigation buttons and resets
     observeEvent(input$next1, {
-      if(.n < nrow(object$validation$validation_set)){
+      if(.n < max(object$validation$validation_set$val_id)){
         isolate({.n <<- .n + 1}) 
       }
     })
@@ -308,8 +354,6 @@ meltt.validate = function(
     })
     
     # Clear Buttons
-    observe({if(input$yes >= 1){reset("yes")}})
-    observe({if(input$no >= 1){reset("no")}})
     observe({if(input$next1 >= 1){reset("next1")}})
     observe({if(input$back1 >= 1){reset("back1")}})
     
@@ -318,13 +362,14 @@ meltt.validate = function(
     observeEvent(input$quit,{
       object$validation$placeholder <- .n
       cat("Input object has been overwritten, retaining current work.\n\n")
-      stopApp(assign(as.character(obj_name),object,envir = globalenv()))
+      # Export main data object on cancel
+      stopApp(assign(as.character(obj_name),object,envir = globalenv())) 
     })
     
   }
   
   
-  if(any(is.na(object$validation$validation_set$are_match))){ 
+  if(any(object$validation$validation_set$coding_txt=="")){ 
     
     # If there are any values that have yet to be validated, Run app
     shinyApp(.ui, .server)
@@ -333,11 +378,13 @@ meltt.validate = function(
     
     # CALCULATE ACCURACTY STATISTICS ------------------------------------------------
     reviewed = object$validation$validation_set
+    reviewed$match = as.numeric(reviewed$type == 'matching_entry')
+    reviewed = drop_na(reviewed)
     
-    TP  = sum(reviewed$match == 1 & reviewed$are_match == 1)/nrow(reviewed)
-    FP  = sum(reviewed$match == 1 & reviewed$are_match == 0)/nrow(reviewed)
-    TN  = sum(reviewed$match == 0 & reviewed$are_match == 0)/nrow(reviewed)
-    FN  = sum(reviewed$match == 0 & reviewed$are_match == 1)/nrow(reviewed)
+    TP  = sum(reviewed$match == 1 & reviewed$coding == 1)/nrow(reviewed)
+    FP  = sum(reviewed$match == 1 & reviewed$coding == 0)/nrow(reviewed)
+    TN  = sum(reviewed$match == 0 & reviewed$coding == 0)/nrow(reviewed)
+    FN  = sum(reviewed$match == 0 & reviewed$coding == 1)/nrow(reviewed)
     TPR = TP + TN
     FPR = FP + FN
     
@@ -361,7 +408,10 @@ meltt.validate = function(
     cat("FPR: ",rates[2],"\n")
     cat("",paste0(rep("---",12),collapse=""),"\nA sample of",nrow(reviewed),"observations --",
         round(object$validation$params$sample_proportion*100,2)
-        ,"% of the matched pairs with a control group of unmatched event pairs of equal size -- from the integrated data were manually reviewed.")
+        ,"% of the matched pairs -- from the integrated data were manually reviewed.",
+        "2 controls (entries not identified as matches) are randomly drawn from pool of events in proximity for each match.")
     assign(as.character(obj_name),object,envir = globalenv())
   }
+  
+  
 }
