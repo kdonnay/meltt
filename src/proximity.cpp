@@ -59,13 +59,15 @@ arma::mat proximity(
     double t,
     double s
 ){
-  arma::mat temp = arma::zeros(1,2); // bin to use when binding
-  arma::mat col_i = arma::zeros(1,2); // filler bin
+  arma::mat temp = arma::zeros(1,3); // bin to use when binding
+  arma::mat col_i = arma::zeros(1,3); // filler bin
+  int cohort = 1; // track values that are in the same spatio-temporal proximity cohort
   
   // Data needs to be organized as [data,date,lat,lon]
   
   // Adjusting to only capture and assess the lower triangle quadrant...
   for(int i = 0; i < (dat.nrow()-1); ++i){ // Rows
+    cohort += 1; // update cohort
     
     for(int j = (i+1); j < dat.nrow(); ++j){ // Columns
       
@@ -73,9 +75,10 @@ arma::mat proximity(
         
         if(abs(dat(i,1) - dat(j,1)) <= t){ // If the entries fall into the same time window
           
-          if(great_circle(dat(i,2),dat(i,3),dat(j,2),dat(j,3)) <= (s*1000)){ //if the entries fall into the same space window (convert km to m on the fly)
+          if(great_circle(dat(i,2),dat(i,3),dat(j,2),dat(j,3)) <= (s)){ //if the entries fall into the same space window (convert km to m on the fly)
             col_i(0,0) = (i+1);
             col_i(0,1) = (j+1);
+            col_i(0,2) = cohort;
             temp = join_cols(temp,col_i);
           }
         }
