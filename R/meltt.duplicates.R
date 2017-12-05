@@ -34,23 +34,24 @@ meltt.duplicates = function(object,columns=NULL){
   obs_key = key[,seq_along(key) %% 2 == 0]
   input_data = object$inputData
   
-  # Reconstituted Key (accounting for misalignment in the key log for data columns)
-  key2 = key[,colnames(key)!="match_type"]
-  for(i in seq(1,ncol(key2),2)){
-    sub = key2[,c(i,i+1)]
-    expansion=c()
-    for(c in unique(sub[,1])){
-      tmp = sub[sub[,1]==c,]
-      colnames(tmp) = paste0(c("data","event"),c)
-      expansion = rbind.fill(expansion,tmp)
-    }
-    if(i==1){
-      key3 = expansion
-    }else{
-      key3 = cbind(key3,expansion)
-    }
+  # Reconstituted Key (accounting for misalignment in the key log across data columns)
+  key2 = key[,colnames(key)!="match_type"]; key3 = c()
+  for(row in 1:nrow(key2)){
+    even = function(x){x1 = 1:ncol(x);x1 %% 2 == 0} # find even entries
+    datanames = paste0('data',key2[row,!even(key2)]) # all data columns
+    eventnames = paste0('event',key2[row,!even(key2)]) # all event columns
+    col_names=c();for(i in 1:length(datanames)){col_names=c(col_names,datanames[i],eventnames[i])} # Combine columns
+    s = key2[row,] # Subset by row
+    colnames(s) = col_names # rename column features 
+    key3 = rbind.fill(key3,s) # fill in the new key with the expanded features 
   }
-  recon_key = key3[,!colnames(key3) %in% c("data0","event0")]
+  recon_key = key3[,!colnames(key3) %in% c("data0","event0")] # Remove the blank column row
+  # Reorder the columns of the recovered key
+  datanames = colnames(recon_key)[grepl("data",colnames(recon_key))];datanames = datanames[order(datanames)]
+  eventnames = colnames(recon_key)[grepl("event",colnames(recon_key))];eventnames = eventnames[order(eventnames)]
+  col_names=c();for(i in 1:length(datanames)){col_names=c(col_names,datanames[i],eventnames[i])}
+  recon_key = recon_key[,col_names] # implement the reordering
+  
   drop = !apply(recon_key,1,function(x){sum(!is.na(x)) <= 2}) # Drop empty match-ups
   recon_key=recon_key[drop,]
   recon_key[is.na(recon_key)] = 0
