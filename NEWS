@@ -5,10 +5,11 @@
 //
 
 
-== 0.4.0 (24 Nov 2017) ==
+== 0.4.0 (13 Dec 2017) ==
    * Introduced meltt.validate as a validation procedure for output
    * Added Rcpp src functionality for quick proximity calculation (internal)
    * Fixed index propagation to retain event indices according to event order in inputs
+   * New Python core completely based on list comprehension (removes numpy dependency) 
    * Other small bug fixes and improvements
 
 == 0.3.3 (10 Oct 2017) ==

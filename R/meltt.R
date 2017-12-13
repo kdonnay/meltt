@@ -1,4 +1,4 @@
-meltt <- function(...,taxonomies,twindow,spatwindow,smartmatch=TRUE,certainty=NA,partial=FALSE,averaging=FALSE,weight=NA){
+meltt <- function(...,taxonomies,twindow,spatwindow,smartmatch=TRUE,certainty=NA,partial=0,averaging=FALSE,weight=NA){
 
   # Key Input Information
   datasets <- as.list(substitute(list(...)))[-1L]

@@ -8,7 +8,7 @@ Auxiliary function that generates an R wrapper around the main python function u
 }
 \usage{
 meltt.match(data,twindow,spatwindow,smartmatch,certainty,k,
-	     secondary,partial, weight,episodal)
+	     secondary,partial,weight,episodal)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -34,7 +34,7 @@ meltt.match(data,twindow,spatwindow,smartmatch,certainty,k,
   vector of the number of taxonomy levels for each taxonomy passed from \code{meltt}.
 }
  \item{partial}{
-  boolean for wether or not partial matches are permitted. Passed from \code{meltt}. 
+  specifies whether matches along less than the full taxonomy dimensions are permitted. Passed from \code{meltt}. 
 }
   \item{weight}{
   relative weight of each taxonomy in the calculation of the matching score. Passed from \code{meltt}. 

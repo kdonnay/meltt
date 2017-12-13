@@ -4,14 +4,14 @@ meltt.inspect = function(object,columns=NULL,confirmed_matches=NULL){
 
   if(!is.meltt(object)) stop("Object is not of class meltt")
 
-  orig_columns = columns
-  dedup = object$processed$deduplicated_index
-  suspects = dedup[dedup$episodal_match != "",]
+  orig_columns <- columns
+  dedup <- object$processed$deduplicated_index
+  suspects <- dedup[dedup$episodal_match != "",]
 
   if(length(columns)==0){
-    columns = c('data.source','dataset','obs.count','date','enddate','latitude','longitude',object$taxonomy$taxonomy_names)
+    columns <- c('data.source','dataset','obs.count','date','enddate','latitude','longitude',object$taxonomy$taxonomy_names)
   }else{
-    columns = unique(c('data.source','dataset','obs.count','date','enddate',columns)) # Return data id and event id
+    columns <- unique(c('data.source','dataset','obs.count','date','enddate',columns)) # Return data id and event id
   }
 
   key = data.frame(dataset = -99,obs.count=-99)

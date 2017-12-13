@@ -39,7 +39,7 @@ meltt.episodal(data,indexing,priormatches,twindow,spatwindow,
   vector of the number of taxonomy levels for each taxonomy passed from \code{meltt}. 
 }
  \item{partial}{
-  boolean for wether or not partial matches are permitted. Passed from \code{meltt}. 
+  specifies whether matches along less than the full taxonomy dimensions are permitted. Passed from \code{meltt}. 
 }
   \item{averaging}{
   implement averaging of all values events are match on when matching across multiple dataframes. Default = \kbd{FALSE}. 

@@ -7,9 +7,15 @@ meltt.validate = function(
   temporal_window = NULL, # if within_window==F, set new t window
   reset = F # If T, the validation step will be reset and a new validation sample frame will be produced.
 ){
+  # initialize variables to satisfy CRAN check
+  uid <- NULL
+  m1 <- NULL
+  m2 <- NULL
+  cohort <- NULL
+  
   # The "Choose from 3-options" version
   
-  obj_name = deparse(substitute(object))
+  obj_name <- deparse(substitute(object))
   
   # CHECKS ------------------------------------------------------------------
   
@@ -27,53 +33,53 @@ meltt.validate = function(
   if(!any(names(object) == "validation") | reset){ # Generate Validation Set if one does not already exist
     
     # Specify Matching events
-    matches = meltt.duplicates(object)
-    matches = matches[,grepl("dataID|eventID",colnames(matches))]
-    cols = (1:ncol(matches))[1:ncol(matches) %% 2 == 1]
-    match_id = matrix(nrow=nrow(matches),ncol=length(cols))
+    matches <- meltt.duplicates(object)
+    matches <- matches[,grepl("dataID|eventID",colnames(matches))]
+    cols <- (1:ncol(matches))[1:ncol(matches) %% 2 == 1]
+    match_id <- matrix(nrow=nrow(matches),ncol=length(cols))
     for (c in 1:length(cols)) {
-      matches[,cols[c]] = object$inputDataNames[c]
-      match_id[,c] = paste0(matches[,cols[c]],"-",matches[,cols[c]+1])
+      matches[,cols[c]] <- object$inputDataNames[c]
+      match_id[,c] <- paste0(matches[,cols[c]],"-",matches[,cols[c]+1])
     }
     # Edit out fillers
-    blacklist = c(paste0(object$inputDataNames,"-0"),
+    blacklist <- c(paste0(object$inputDataNames,"-0"),
                   paste0(object$inputDataNames,"-NA"))
     match_id[match_id %in% blacklist] = NA
-    M = data.frame(match_id,stringsAsFactors = F);M$match_id = 1:nrow(M)
-    M2 = gather(M,match,uid,-match_id)
-    M2 = arrange(drop_na(select(M2,uid,match_id)),match_id)
+    M <- data.frame(match_id,stringsAsFactors = F);M$match_id = 1:nrow(M)
+    M2 <- gather(M,match,uid,-match_id)
+    M2 <- arrange(drop_na(select(M2,uid,match_id)),match_id)
     
     # GENERATE input data frame from input data
     for(i in seq_along(object$inputData)){ # Gather input data into one frame
       if(i==1){all_input_dat = c() }
-      tmp = object$inputData[[i]]
-      colnames(tmp)[colnames(tmp)=='obs.count'] = 'event'
-      tmp = tmp[order(tmp$date),]
-      all_input_dat = rbind.fill(tmp,all_input_dat)
+      tmp <- object$inputData[[i]]
+      colnames(tmp)[colnames(tmp)=="obs.count"] <- "event"
+      tmp <- tmp[order(tmp$date),]
+      all_input_dat <- rbind.fill(tmp,all_input_dat)
     }
-    all_input_dat$uid = paste(object$inputDataNames[all_input_dat$dataset],
+    all_input_dat$uid <- paste(object$inputDataNames[all_input_dat$dataset],
                               all_input_dat$event,sep="-")
     
     # Map match ids onto the input data frame
-    all_input_dat = merge(all_input_dat,M2,by='uid',all.x=T)
+    all_input_dat <- merge(all_input_dat,M2,by="uid",all.x=T)
     
     # Order input dataframe so nearby cohorts reflect proximity
-    all_input_dat= all_input_dat[order(all_input_dat$date),]
+    all_input_dat <- all_input_dat[order(all_input_dat$date),]
     
     if(within_window){ # If using the same proximity window as meltt
-      t = object$parameters$twindow
-      s = object$parameters$spatwindow
-      D = data.matrix(all_input_dat[,c("dataset","date","latitude","longitude")])
-      index = proximity(D,t = t,s = s)
+      t <- object$parameters$twindow
+      s <- object$parameters$spatwindow
+      D <- data.matrix(all_input_dat[,c("dataset","date","latitude","longitude")])
+      index <- proximity(D,t = t,s = s)
     } else{ # If the user defines the proximity window
-      t = temporal_window
-      s = spatial_window
-      D = data.matrix(all_input_dat[,c("dataset","date","latitude","longitude")])
-      index = proximity(D,t = t,s = s)
+      t <- temporal_window
+      s <- spatial_window
+      D <- data.matrix(all_input_dat[,c("dataset","date","latitude","longitude")])
+      index <- proximity(D,t = t,s = s)
     }
     
     # Produce set of "proximate" entries
-    exp_index = data.frame(uid1 = all_input_dat[index[,1],"uid"],
+    exp_index <- data.frame(uid1 = all_input_dat[index[,1],"uid"],
                            uid2 = all_input_dat[index[,2],"uid"],
                            m1 = all_input_dat[index[,1],"match_id"],
                            m2 = all_input_dat[index[,2],"match_id"],
@@ -81,40 +87,41 @@ meltt.validate = function(
                            stringsAsFactors = F)
     
     # Determine which of those proximate entries are matches
-    exp_index$match = as.numeric((exp_index$m1 == exp_index$m2) & (!is.na(exp_index$m1) & !is.na(exp_index$m2)))
+    exp_index$match <- as.numeric((exp_index$m1 == exp_index$m2) & (!is.na(exp_index$m1) & !is.na(exp_index$m2)))
     
     # GENERATE matches/control samples, where control is drawn from proximate events ------------------------- 
-    match_samp = sample_frac(data.frame(match_id=unique(exp_index$m1[exp_index$match == 1])),sample_prop)
+    match_samp <- sample_frac(data.frame(match_id=unique(exp_index$m1[exp_index$match == 1])),sample_prop)
     # in case sample is low
-    if( nrow(match_samp)< 1 ){ match_samp = sample_n(data.frame(match_id=unique(exp_index$m1[exp_index$match == 1])),1) } 
+    if( nrow(match_samp)< 1 ){ match_samp <- sample_n(data.frame(match_id=unique(exp_index$m1[exp_index$match == 1])),1) } 
     
     cat('\nGenerating Validation Set ... \n')
-    v_set = c(); pb = progress_estimated(nrow(match_samp))
+    v_set <- c()
+    pb <- progress_estimated(nrow(match_samp))
     for(s in 1:nrow(match_samp)){
-      draw_set = exp_index %>% filter(m1==match_samp$match_id[s] | m2==match_samp$match_id[s])
-      orig_set = function(x) gsub("[-]\\d+","",x)
-      c_range = draw_set$cohort[draw_set$match==1][1]
+      draw_set <- exp_index %>% filter(m1==match_samp$match_id[s] | m2==match_samp$match_id[s])
+      orig_set <- function(x) gsub("[-]\\d+","",x)
+      c_range <- draw_set$cohort[draw_set$match==1][1]
       
       go <- i <- T
       while(go){ # Adaptive code chunk that incrementally builds a "as close as possible" control group
         if(i > 1){
-          near_by_entries = filter(exp_index,cohort >= c_range-i & cohort <= c_range+i & match!=1)
-          draw_set = unique(rbind(draw_set,near_by_entries))
+          near_by_entries <- filter(exp_index,cohort >= c_range-i & cohort <= c_range+i & match!=1)
+          draw_set <- unique(rbind(draw_set,near_by_entries))
         }
-        display_entry = draw_set$uid1[draw_set$match==1][1]
-        matching_entry = draw_set$uid2[draw_set$match==1][1]
-        control_entries = c(draw_set$uid1[draw_set$match==0],draw_set$uid2[draw_set$match==0]) # generate control sample
-        control_entries = control_entries[!control_entries %in% c(display_entry,matching_entry)] # not the display/matching entry
-        control_entries = unique(control_entries[orig_set(control_entries) != orig_set(display_entry)]) # from a different source than the display entry
+        display_entry <- draw_set$uid1[draw_set$match==1][1]
+        matching_entry <- draw_set$uid2[draw_set$match==1][1]
+        control_entries <- c(draw_set$uid1[draw_set$match==0],draw_set$uid2[draw_set$match==0]) # generate control sample
+        control_entries <- control_entries[!control_entries %in% c(display_entry,matching_entry)] # not the display/matching entry
+        control_entries <- unique(control_entries[orig_set(control_entries) != orig_set(display_entry)]) # from a different source than the display entry
         if(length(control_entries)>2){
-          go = F
-          control_sample = sample(control_entries,2,replace=F)
-          entry = data.frame(display_entry,matching_entry,control_entry1=control_sample[1],
+          go <- F
+          control_sample <- sample(control_entries,2,replace=F)
+          entry <- data.frame(display_entry,matching_entry,control_entry1=control_sample[1],
                              control_entry2=control_sample[2],stringsAsFactors = F)
         }else{i = i + 1}
       }
       
-      v_set = rbind(v_set,entry)
+      v_set <- rbind(v_set,entry)
       pb$tick()$print()
     }
     
@@ -123,23 +130,23 @@ meltt.validate = function(
     apply(v_set,1,function(x){
       y = c()
       for(i in x){
-        tmp = all_input_dat[all_input_dat$uid %in% i,c('uid',description.vars)]
-        y = rbind(y,tmp)
+        tmp <- all_input_dat[all_input_dat$uid %in% i,c("uid",description.vars)]
+        y <- rbind(y,tmp)
       }
       cbind(type=names(x),y)
     }) -> entries_info
-    entries_info=ldply(entries_info)
+    entries_info <- ldply(entries_info)
     
     
     # If no description variables have been specified...
     if(is.null(description.vars)){description.vars = object$taxonomy$taxonomy_names}
     
-    formatted = apply(entries_info[,c(1:3)*-1],1,function(x){
+    formatted <- apply(entries_info[,c(1:3)*-1],1,function(x){
       x = iconv(x, "latin1", "ASCII", sub="") # Remove any potential encoding issues
       paste0(paste(paste0("<b><i>",names(x),"</i></b>"),x,sep=": "),collapse = "<br/><br/>")
       # paste0(paste(names(x),x,sep=": "),collapse = "\n\n")
     })
-    validation_set = data.frame(val_id = as.numeric(entries_info[,1]),
+    validation_set <- data.frame(val_id = as.numeric(entries_info[,1]),
                                 uid=entries_info[,3],
                                 type=as.character(entries_info[,2]),
                                 descr=formatted,
@@ -150,8 +157,8 @@ meltt.validate = function(
     # Shuffle the validation entries up (so matching entry is in a different location each time)
     for(v in unique(validation_set$val_id)){
       if(v==1){validation_set2=c()}
-      ss = validation_set[validation_set$val_id==v,]
-      validation_set2 = rbind(validation_set2,ss[c(1,sample(2:4)),])
+      ss <- validation_set[validation_set$val_id==v,]
+      validation_set2 <- rbind(validation_set2,ss[c(1,sample(2:4)),])
     }
     
     

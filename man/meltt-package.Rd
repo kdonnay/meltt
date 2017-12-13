@@ -10,9 +10,6 @@ meltt: Matching Event Data by Location, Time, and Type
 \details{
 The \code{meltt} function iteratively matches multiple datasets by isolating proximate events based on a user-specified spatio-temporal window to determine co-occurrence. It then assesses potential matches by leveraging secondary event characteristics formalized as user-specified input taxonomies. 
 }
-\note{
-\code{meltt} requires the Python package NumPy to run. The package automatically checks whether NumPy is installed at runtime and returns an error if it is not.
-}
 \author{
 Karsten Donnay and Eric Dunford
 }

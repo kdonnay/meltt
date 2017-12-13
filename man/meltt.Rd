@@ -8,7 +8,7 @@ Matching Event Data by Location, Time and Type
 }
 \usage{
 meltt(...,taxonomies,twindow,spatwindow,smartmatch=TRUE,
-	   certainty=NA,partial=FALSE,averaging=FALSE,weight=NA)
+	   certainty=NA,partial=0,averaging=FALSE,weight=NA)
 }
 \arguments{
   \item{\dots}{
@@ -30,7 +30,7 @@ meltt(...,taxonomies,twindow,spatwindow,smartmatch=TRUE,
   specification of the the exact taxonomy level to match on when \code{smartmatch} = \kbd{FALSE}. Default = \kbd{NULL}. See Details.
 }
 \item{partial}{
-  specifies whether matches along only some of the taxonomy dimensions are permitted. Default = \kbd{FALSE}. See Details.
+  specifies whether matches along less than the full taxonomy dimensions are permitted. Default = \kbd{0}. See Details.
 }
 \item{averaging}{implement averaging of all values events are match on when matching across multiple dataframes. Default = \kbd{FALSE}. See Details.
 }
@@ -46,7 +46,7 @@ The \code{twindow} and \code{spatwindow} inputs specify the temporal and spatial
 
 \code{meltt} by default uses \code{smartmatch}, which leverages all taxonomy levels, i.e., establishes agreement on any taxonomy level while discounting inferior (i.e. more coarse) agreement using a matching score. When \code{smartmatch} is set to false, a \code{certainty} must be set, specifying which taxonomy level two events must agree on to be considered a match. 
 
-\code{partial} permits matches along less than the full number of taxonomy dimensions specified. In this case, every dimension not matched is assigned the worst matching score in the calculation of the overall fit. \code{averaging} allows for users to take the average of all input information (date, longitude, latitude, taxonomy, etc.) when merging more then one dataset. When set to \kbd{FALSE}, events use the input information of the first or most left dataset in the order the data was received.
+\code{partial} specifies the number of dimensions along which no matching information is permitted for events to still be considered a potential match. In this case, every dimension not matched is assigned the worst matching score in the calculation of the overall fit. By default, all dimensions are considered, i.e. \kbd{partial=0}. \code{averaging} allows for users to take the average of all input information (date, longitude, latitude, taxonomy, etc.) when merging more then one dataset. When set to \kbd{FALSE}, events use the input information of the first or most left dataset in the order the data was received.
 
 \code{weight} allows to weigh matches for different taxonomies in order to discount one (or several) event dimensions compared to others or vice versa. If \code{weight}=\kbd{NA} the package assumes homogeneous weights of 1. If weights are manually specified the must sum up to the total number of taxonomy dimensions used, i.e., the normalized overall weight always has to be 1. If not, the package returns an error. 
 

@@ -11,12 +11,12 @@ meltt.match <- function(data,twindow,spatwindow,smartmatch,certainty,k,secondary
   }
   # Read in the script
   # call the main "run" function with its input
-  if (py_module_available("numpy")){
+  if (py_available()){
     colnames <- colnames(data)
     match <- py_run_file(paste0(find.package("meltt"),"/python/match.py"))
     output_list <- match$run(data,colnames,twindow,spatwindow,smartmatch,k,secondary,certainty,partial,weight,episodal)
   }else{
-    stop('Execution of meltt aborted:\n"NumPy" the fundamental package for scientific computing with Python is not installed on your system.\n\n Please install the package for proper functioning of meltt().')
+    stop('Execution of meltt aborted:\n Python is not available on your system.\n\n Please install for proper functioning of meltt().')
   }
   
   # turn into data.frames
