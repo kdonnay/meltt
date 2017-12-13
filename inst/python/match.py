@@ -25,7 +25,7 @@ def run(datainput, names, twindow, spatwindow, smartmatch, k, secondary, certain
     :param double twindow: temporal proximity cutoff
     :param double spatwindow: spatial proximity cutoff
     :param boolean smartmatch: sets whether or not most closely matching taxonomy level is found iteratively
-    :param list k: number of taxonomy dimensions
+    :param int k: number of taxonomy dimensions
     :param list secondary: number of levels for each taxonomy dimension
     :param list certainty: specifies the exact taxonomy level to match on if smartmatch = False
     :param int partial: number of dimensions on which no matches are permitted
@@ -57,7 +57,7 @@ def compare(data, twindow, spatwindow, smartmatch, k, secondary, certainty, part
     :param double twindow: temporal proximity cutoff
     :param double spatwindow: spatial proximity cutoff
     :param boolean smartmatch: sets whether or not most closely matching taxonomy level is found iteratively
-    :param list k: number of taxonomy dimensions
+    :param int k: number of taxonomy dimensions
     :param list secondary: number of levels for each taxonomy dimension
     :param list certainty: specifies the exact taxonomy level to match on if smartmatch = False
     :param int partial: number of dimensions on which no matches are permitted
