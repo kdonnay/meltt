@@ -11,13 +11,9 @@ meltt.match <- function(data,twindow,spatwindow,smartmatch,certainty,k,secondary
   }
   # Read in the script
   # call the main "run" function with its input
-  if (py_available(initialize = FALSE)){
-    colnames <- colnames(data)
-    match <- py_run_file(paste0(find.package("meltt"),"/python/match.py"))
-    output_list <- match$run(data,colnames,twindow,spatwindow,smartmatch,k,secondary,certainty,partial,weight,episodal)
-  }else{
-    stop('Execution of meltt aborted:\n Python is not available on your system.\n\n Please install for proper functioning of meltt().')
-  }
+  colnames <- colnames(data)
+  match <- py_run_file(paste0(find.package("meltt"),"/python/match.py"))
+  output_list <- match$run(data,colnames,twindow,spatwindow,smartmatch,k,secondary,certainty,partial,weight,episodal)
   
   # turn into data.frames
   if(length(unlist(output_list[1]))==0){
