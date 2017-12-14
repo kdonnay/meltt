@@ -38,11 +38,11 @@ def run(datainput, names, twindow, spatwindow, smartmatch, k, secondary, certain
     spatwindow = float(spatwindow)
     if k == 1:
         secondary = [int(secondary)]
-        certainty = [int(certainty - 1)]
+        certainty = [int(certainty)]
         weight = [weight]
     else:
         secondary = [int(i) for i in secondary]
-        certainty = [int(i - 1) for i in certainty]
+        certainty = [int(i) for i in certainty]
     secondary.insert(0, 0)
     matches = compare(data, twindow, spatwindow, smartmatch, k, secondary, certainty, partial, weight, episodal)
     selected_matches = []
@@ -69,7 +69,6 @@ def compare(data, twindow, spatwindow, smartmatch, k, secondary, certainty, part
     :return: list of all potential matches
     """
     matches = []
-    matched = 0
     col0 = column(data, 0)
     datasetindex = list(set(col0))
     datasetindex.sort()
@@ -113,18 +112,16 @@ def compare(data, twindow, spatwindow, smartmatch, k, secondary, certainty, part
                                         max(1, secondary[criteria+1]-1))
                                     matched_criteria = matched_criteria + 1
                         if matched_criteria == k:
-                            total_fit = total_fit/float(matched_criteria)
+                            total_fit = total_fit/float(k)
                             matches.append(
                                 [datasetindex[0], data[event1index][1], datasetindex[1], data[event2index][1],
                                  total_fit])
-                            matched = matched + 1
                         elif partial > 0 and matched_criteria + partial == k:
-                            total_fit = (total_fit + 1)/float(matched_criteria)
+                            total_fit = (total_fit + partial)/float(k)
                             matches.append(
                                 [datasetindex[0], data[event1index][1], datasetindex[1], data[event2index][1],
                                  total_fit])
-                            matched = matched + 1
-                    if ~(data[event1index][2] - data[event2index][2] <= twindow):
+                    if not data[event1index][2] - data[event2index][2] <= twindow:
                         check = 0
                 if next_smaller_index - event2counter < 0:
                     check = 0
@@ -166,18 +163,16 @@ def compare(data, twindow, spatwindow, smartmatch, k, secondary, certainty, part
                                         max(1, secondary[criteria+1]-1))
                                     matched_criteria = matched_criteria + 1
                         if matched_criteria == k:
-                            total_fit = total_fit/float(matched_criteria)
+                            total_fit = total_fit/float(k)
                             matches.append(
                                 [datasetindex[0], data[event1index][1], datasetindex[1], data[event2index][1],
                                  total_fit])
-                            matched = matched + 1
                         elif partial > 0 and matched_criteria + partial == k:
-                            total_fit = (total_fit + 1) / float(matched_criteria)
+                            total_fit = (total_fit + partial)/float(k)
                             matches.append(
                                 [datasetindex[0], data[event1index][1], datasetindex[1], data[event2index][1],
                                  total_fit])
-                            matched = matched + 1
-                    if ~(data[event2index][2] - data[event1index][2] <= twindow):
+                    if not data[event2index][2] - data[event1index][2] <= twindow:
                         check = 0
                 if next_larger_index + event2counter >= len(index2):
                     check = 0
@@ -203,11 +198,6 @@ def select(matches):
         match_out = []
         global_stop = 0
         while len(unique_incidents) > 0 and len(unique_partners) > 0 and global_stop == 0:
-            """
-            sub1 = unique_match[unique_match[:,0] == unique_incidents[next_index][0],:]
-            sub1 = sub1[sub1[:,1] == unique_incidents[next_index][1],:]
-            sub1 = sub1[sub1[:,4].argsort(),:]
-            """
             sub1 = asy_columns(
                 [k for k, v in enumerate(column(unique_match, 0)) if v == unique_incidents[next_index][0]],
                 unique_match)
@@ -228,12 +218,6 @@ def select(matches):
                     match_out.append(entry)
                     abort = 1
                 else:
-                    """
-                    sub2 = unique_match[unique_match[:,2] == sub1[iterator,2],:]
-                    sub2 = sub2[sub2[:,3] == sub1[iterator,3],:]
-                    sub2 = sub2[sub2[:,4].argsort(),:]
-                    best_sub2 = numpy.array(sub2[0,:])
-                    """
                     sub2 = asy_columns([k for k, v in enumerate(column(unique_match, 2)) if v == sub1[iterator][2]],
                                        unique_match)
                     sub2 = asy_columns([k for k, v in enumerate(column(sub2, 3)) if v == sub1[iterator][3]], sub2)

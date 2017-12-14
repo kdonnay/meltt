@@ -192,7 +192,6 @@ meltt <- function(...,taxonomies,twindow,spatwindow,smartmatch=TRUE,certainty=NA
   issue_messages <- c()
   for(d in seq_along(datasets)) {
     dd <- eval(datasets[[d]])
-    dd = dd[order(dd$date),] # temporally order input data (so that indices correspond)
     dd$data.source <- as.character(datasets[[d]])
     dd$dataset <- match(as.character(datasets[[d]]),datasets)
     dd$obs.count <- 1:nrow(dd)
