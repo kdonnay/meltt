@@ -37,9 +37,12 @@ def run(datainput, names, twindow, spatwindow, smartmatch, k, secondary, certain
     twindow = float(twindow)
     spatwindow = float(spatwindow)
     if k == 1:
-        secondary = [secondary]
-        certainty = [certainty]
+        secondary = [int(secondary)]
+        certainty = [int(certainty - 1)]
         weight = [weight]
+    else:
+        secondary = [int(i) for i in secondary]
+        certainty = [int(i - 1) for i in certainty]
     secondary.insert(0, 0)
     matches = compare(data, twindow, spatwindow, smartmatch, k, secondary, certainty, partial, weight, episodal)
     selected_matches = []
@@ -70,8 +73,8 @@ def compare(data, twindow, spatwindow, smartmatch, k, secondary, certainty, part
     col0 = column(data, 0)
     datasetindex = list(set(col0))
     datasetindex.sort()
-    index1 = [i for i, k in enumerate(col0) if k == datasetindex[0]]
-    index2 = [i for i, k in enumerate(col0) if k == datasetindex[1]]
+    index1 = [i for i, j in enumerate(col0) if j == datasetindex[0]]
+    index2 = [i for i, j in enumerate(col0) if j == datasetindex[1]]
     for event1index in index1:
         event2counter = 0
         next_smaller_index = bisect.bisect(index2, event1index) - 1
@@ -115,7 +118,7 @@ def compare(data, twindow, spatwindow, smartmatch, k, secondary, certainty, part
                                 [datasetindex[0], data[event1index][1], datasetindex[1], data[event2index][1],
                                  total_fit])
                             matched = matched + 1
-                        elif partial > 0 & matched_criteria + partial == k:
+                        elif partial > 0 and matched_criteria + partial == k:
                             total_fit = (total_fit + 1)/float(matched_criteria)
                             matches.append(
                                 [datasetindex[0], data[event1index][1], datasetindex[1], data[event2index][1],
@@ -168,7 +171,7 @@ def compare(data, twindow, spatwindow, smartmatch, k, secondary, certainty, part
                                 [datasetindex[0], data[event1index][1], datasetindex[1], data[event2index][1],
                                  total_fit])
                             matched = matched + 1
-                        elif partial > 0 & matched_criteria + partial == k:
+                        elif partial > 0 and matched_criteria + partial == k:
                             total_fit = (total_fit + 1) / float(matched_criteria)
                             matches.append(
                                 [datasetindex[0], data[event1index][1], datasetindex[1], data[event2index][1],
