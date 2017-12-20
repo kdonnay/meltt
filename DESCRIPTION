@@ -12,3 +12,4 @@ Imports: graphics, stats, utils, ggmap, ggplot2, plotGoogleMaps, plyr, dplyr, re
 SystemRequirements: Python (>= 2.7)
 NeedsCompilation: yes
 LinkingTo: Rcpp, RcppArmadillo
+RoxygenNote: 6.0.1
