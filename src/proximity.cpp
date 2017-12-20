@@ -1,7 +1,6 @@
 #include <RcppArmadillo.h>
 #include <Rcpp.h>
 //[[Rcpp::depends(RcppArmadillo)]]
-// [[Rcpp::depends(RcppProgress)]]
 using namespace Rcpp;
 using namespace arma;
 using namespace std;
@@ -62,19 +61,19 @@ arma::mat proximity(
   arma::mat temp = arma::zeros(1,3); // bin to use when binding
   arma::mat col_i = arma::zeros(1,3); // filler bin
   int cohort = 1; // track values that are in the same spatio-temporal proximity cohort
-  
+
   // Data needs to be organized as [data,date,lat,lon]
-  
+
   // Adjusting to only capture and assess the lower triangle quadrant...
   for(int i = 0; i < (dat.nrow()-1); ++i){ // Rows
     cohort += 1; // update cohort
-    
+
     for(int j = (i+1); j < dat.nrow(); ++j){ // Columns
-      
+
       if(dat(i,0) != dat(j,0)){ // If the datasets are different
-        
+
         if(abs(dat(i,1) - dat(j,1)) <= t){ // If the entries fall into the same time window
-          
+
           if(great_circle(dat(i,2),dat(i,3),dat(j,2),dat(j,3)) <= (s)){ //if the entries fall into the same space window (convert km to m on the fly)
             col_i(0,0) = (i+1);
             col_i(0,1) = (j+1);
@@ -98,7 +97,7 @@ arma::mat proximity(
 # d2 = data.frame(source = 2, date = sample(dates,size = 30,replace = T),latitude = sample(lats,30,T),longitude = sample(lons,30,T))
 # d3 = data.frame(source = 3, date = sample(dates,size = 30,replace = T),latitude = sample(lats,30,T),longitude = sample(lons,30,T))
 # D = rbind(rbind(d1,d2),d3) %>%  data.matrix(.)
-# 
+#
 # P = proximity(dat = D,t = 1,s=1)[-1,]
 # head(P)
 
