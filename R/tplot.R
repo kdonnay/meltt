@@ -36,13 +36,13 @@ tplot.meltt = function(object,time.unit="month"){
   # gather data
   dup_dates$status = "Duplicate Entries"
   unique_dates$status = "Unique Entries"
-  D = bind_rows(dup_dates,unique_dates)
-  D = mutate(D,
-             data.source=factor(data.source,levels=rev(d.sets)),
-             status = factor(status,levels=c("Unique Entries","Duplicate Entries")))
-  D = group_by(D,data.source,unit,status)
-  D = count(D)
-  D = D[!is.na(D$data.source),]
+  D <-
+    bind_rows(dup_dates,unique_dates) %>%
+    mutate(data.source=factor(data.source,levels=rev(d.sets)),
+           status = factor(status,levels=c("Unique Entries","Duplicate Entries"))) %>%
+    group_by(data.source,unit,status) %>%
+    count() %>%
+    drop_na()
 
   # plot time series
   ggplot() +
