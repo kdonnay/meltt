@@ -1,6 +1,6 @@
 plot.meltt <- function(x,...){
 
-  # gather statistics
+  # Gather statistics
   df <-
     tibble(source = x$inputDataNames,
            total=table(x$processed$complete_index[,1]),
@@ -27,7 +27,7 @@ plot.meltt <- function(x,...){
     geom_bar(data=df[df$key=="Duplicate Entries",],aes(x=source,y=value,fill=source),
              stat="identity",alpha=.5) +
     geom_text(data=df,aes(x=source,y=value,
-                          label=abs(value),
+                          label=paste0(abs(value)," (",prop,")"),
                           color=source),
               position = position_stack(vjust = 0.5,reverse = T)) +
     coord_flip() +
