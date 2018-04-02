@@ -61,7 +61,8 @@ tplot.meltt = function(object,time.unit="month",scale.free=T){
     theme_light() +
     scale_fill_manual(values = rev(colors)) +
     labs(y="Count",x=paste0("Date (",time.unit,")"),fill='') +
-    theme(strip.placement = "inside")
+    theme(strip.placement = "inside",
+          panel.grid.minor = element_blank())
 }
 
 
