@@ -1,9 +1,9 @@
-tplot = function(object,time.unit="month"){
+tplot = function(object,time.unit="month",scale.free=T){
   UseMethod('tplot')
 }
 
 
-tplot.meltt = function(object,time.unit="month"){
+tplot.meltt = function(object,time.unit="month",scale.free=T){
 
   n.datasets = length(object$inputDataNames)
   key = object$processed$deduplicated_index[,c(1,2)]
@@ -53,11 +53,16 @@ tplot.meltt = function(object,time.unit="month"){
              aes(x=unit,y=-n,fill=data.source),
              stat="identity",alpha=.6) +
     geom_hline(yintercept=0,lwd=1,color="grey30") +
-    facet_wrap(~status,scale="free_y",ncol=1,strip.position = "right") +
+    {
+      if(scale.free){
+        facet_wrap(~status,scale="free_y",ncol=1,strip.position = "right")
+      }
+    } +
     theme_light() +
     scale_fill_manual(values = rev(colors)) +
     labs(y="Count",x=paste0("Date (",time.unit,")"),fill='') +
     theme(strip.placement = "inside")
 }
+
 
 

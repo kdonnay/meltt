@@ -25,7 +25,7 @@ plot.meltt <- function(x,...){
   ggplot() +
     geom_bar(data=df[df$key=="Unique Entries",],aes(x=source,y=value,fill=source),stat="identity") +
     geom_bar(data=df[df$key=="Duplicate Entries",],aes(x=source,y=value,fill=source),
-             stat="identity",alpha=.5) +
+             stat="identity",alpha=.4) +
     geom_text(data=df,aes(x=source,y=value,
                           label=paste0(abs(value)," (",prop,")"),
                           color=source),
@@ -37,5 +37,6 @@ plot.meltt <- function(x,...){
     theme_light()  +
     facet_wrap(~key,scales = "free_x") +
     labs(y="Count",x="") +
-    theme(legend.position = "none")
+    theme(legend.position = "none",
+          panel.grid.minor = element_blank())
 }
