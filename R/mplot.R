@@ -1,21 +1,22 @@
-mplot <- function(object,matching = F){
+mplot <- function(object,matching = F,jitter=.0001){
   UseMethod("mplot")
 }
 
-mplot.meltt <- function(object,matching = F){
+mplot.meltt <- function(object,matching = F,jitter=.0001){
 
   # Isolate Unique Entries
-  unis = meltt.data(object,c("dataset","event","longitude","latitude")) %>%
+  unis = meltt_data(object,c("dataset","event","longitude","latitude")) %>%
     mutate(type="Unique")
 
   # Isolate Duplicate Entries
-  dups = meltt.duplicates(object,c("dataset","event","longitude","latitude")) %>%
+  dups = meltt_duplicates(object) %>%
+    select(contains("_dataset"),contains("_eventID"),contains("_lon"),contains("_lat")) %>%
     mutate(index = row_number()) %>%
     gather(key,val,-index) %>%
-    mutate(dataset = gsub("[_]+\\w+","",key),
+    mutate(dataset = gsub("_dataset|_eventID|_lat+\\w+|_lon\\w+|_lat|_lon","",key),
            event = ifelse(grepl("_eventID",key),val,NA),
-           longitude = ifelse(grepl("longitude",key),val,NA),
-           latitude = ifelse(grepl("latitude",key),val,NA)) %>%
+           longitude = ifelse(grepl("_long*",key),val,NA),
+           latitude = ifelse(grepl("_lat*",key),val,NA)) %>%
     select(index,dataset,event,longitude,latitude)
 
   # Parse
@@ -38,21 +39,24 @@ mplot.meltt <- function(object,matching = F){
     mutate(type = ifelse(is.na(type),"Duplicate",type),
            type = ifelse(type == "Unique" & !is.na(index),"Match",type),
            color = ifelse(type=="Unique","orange",
-                          ifelse(type=="Duplicate","#c6c9ce",
+                          ifelse(type=="Duplicate","#8DD3C7",
                                  ifelse(type=="Match","#217dce",NA))),
            fillOpacity = ifelse(type=="Match",.7,.1)
     ) %>%
 
     # Build Description
     group_by(index) %>%
-    mutate(descr = paste0("event ",dataset[-1],":",event[-1],collapse = " and "),
-           descr = ifelse(is.na(index),NA,paste0("Event ",dataset[1],":",event[1]," matched with ",descr)),
-           descr = ifelse(type=="Duplicate",paste0("duplicate of event ",dataset[1],":",event[1]),descr)) %>%
+    mutate(descr = paste0("entry ",dataset[-1],"-",unique(event[-1]),collapse = " and "),
+           descr = ifelse(is.na(index),NA,paste0("Entry ",dataset[1],"-",event[1]," matched with ",descr)),
+           descr = ifelse(type=="Duplicate",paste0("duplicate of event ",dataset[1],"-",event[1]),descr)) %>%
     group_by(dataset,event) %>%
-    mutate(descr = ifelse(type=="Unique",paste0("Event ",dataset[1],":",event[1]," is unique"),descr),
-           descr = ifelse(type=="Duplicate",paste0("Event ",dataset[1],":",event[1]," is a ",descr),descr)) %>%
-    ungroup()
+    mutate(descr = ifelse(type=="Unique",paste0("Entry ",dataset[1],"-",event[1]," is unique"),descr),
+           descr = ifelse(type=="Duplicate",paste0("Entry ",dataset[1],"-",event[1]," is a ",descr),descr)) %>%
+    ungroup() %>%
 
+    # Jitter locations slightly so points don't overlap
+    mutate(longitude = jitter(longitude,amount = jitter),
+           latitude = jitter(latitude,amount = jitter))
 
   # Determine if only unique or only matching
   if(matching){
@@ -75,3 +79,7 @@ mplot.meltt <- function(object,matching = F){
               title = "",opacity = 1) %>%
     addMiniMap()
 }
+
+
+
+
