@@ -1,16 +1,16 @@
 meltt <- function(...,taxonomies,twindow,spatwindow,smartmatch=TRUE,certainty=NA,partial=0,averaging=FALSE,weight=NA){
-  
+
   # Key Input Information
   datasets <- as.list(substitute(list(...)))[-1L]
   names(datasets) <- NULL
   dataset_number <- length(datasets)
-  for(i in seq_along(datasets)){if(i==1){hh=c()};hh = c(hh,min(as.Date(eval(datasets[[i]])[,"date"])))}
+  for(i in seq_along(datasets)){if(i==1){hh=c()};hh = c(hh,min(as.Date(as.data.frame(eval(datasets[[i]]))[,"date"])))}
   min_date <- min(hh) # locate global minimum date
   tax_names <- names(taxonomies)
   k <- length(taxonomies)
   secondary <- c()
   for(iter in 1:k){secondary = c(secondary,ncol(taxonomies[[iter]])-2)}
-  
+
   # CHECK if input data is appropriately formatted
   missing_arguments <- c()
   warning_arguments <- c()
@@ -22,7 +22,7 @@ meltt <- function(...,taxonomies,twindow,spatwindow,smartmatch=TRUE,certainty=NA
     terminate <- TRUE
   } else{
     for (i in 1:length(datasets)){
-      if (class(eval(datasets[[i]]))!="data.frame"){
+      if (!"data.frame" %in% class(eval(datasets[[i]]))){
         missing_arguments <- append(missing_arguments,paste0('\n  ',datasets[[i]],' \n'))
       }
     }
@@ -58,13 +58,13 @@ meltt <- function(...,taxonomies,twindow,spatwindow,smartmatch=TRUE,certainty=NA
       cond <- tolower(colnames(taxonomies[[tax]])[c(1,2)]) == c("data.source","base.categories")
       if (sum(cond) !=2 ){
         colnames(taxonomies[[tax]][,c(1,2)])[!cond]
-        
+
         renam = which(!cond)
         if (renam == 1){
           comment1 <- paste0('\n  column 1 in ',names(taxonomies[tax])," taxonomy must be labeled as 'data.source' \n")
           missing_arguments <- append(missing_arguments,comment1)
           terminate <- TRUE
-          
+
           dataset_names = strsplit(x = paste0(datasets,collapse=" "),split=" ")[[1]]
           if (!all(dataset_names %in% taxonomies[[tax]][,1])){
             comment2 <- paste0('\n  column 1 in ',names(taxonomies[tax])," data.source column in the taxonomy must be labeled the same as the data object of the input data. \n")
@@ -77,7 +77,19 @@ meltt <- function(...,taxonomies,twindow,spatwindow,smartmatch=TRUE,certainty=NA
           terminate <- TRUE
         }
       }
-      
+      # Ensure that input data and data.source columns correspond
+      for (tax in 1:length(names(taxonomies))){
+        if("data.source" %in% colnames(taxonomies[[tax]])){
+          ds_named_in_tax = unique(taxonomies[[tax]]$data.source)
+          for(d in 1:length(datasets)){
+            is_there = as.character(datasets[[d]]) %in% ds_named_in_tax
+            if(!is_there){
+              missing_arguments <- append(missing_arguments,paste0('\n  dataset ',datasets[[d]],' is not named as a data.source in ',names(taxonomies[tax]),' \n'))
+              terminate <- TRUE
+            }
+          }
+        }
+      }
       # Ensure that taxonomies progress from most granular to broadest k
       tlevels = apply(as.data.frame(taxonomies[[tax]][,c(1,2)*-1]),2,function(x) length(unique(x)))
       sorted = is.unsorted(rev(tlevels)) # Sorted.
@@ -114,7 +126,7 @@ meltt <- function(...,taxonomies,twindow,spatwindow,smartmatch=TRUE,certainty=NA
       }
     }
   }
-  
+
   if(length(weight)>1){
     if (!is.numeric(weight)){
       missing_arguments <- append(missing_arguments,'\n  weight must be numeric')
@@ -141,7 +153,7 @@ meltt <- function(...,taxonomies,twindow,spatwindow,smartmatch=TRUE,certainty=NA
       missing_arguments <- append(missing_arguments,paste0('\n  data: date column(s) are missing in ',as.character(datasets[[dat]]),''))
       terminate <- TRUE
     }else{
-      if(class(eval(datasets[[dat]])[,'date'])!="Date"){
+      if(class(as.data.frame(eval(datasets[[dat]]))[,'date'])!="Date"){
         missing_arguments <- append(missing_arguments,
                                     paste0('\n  data: date column in ',
                                            as.character(datasets[[dat]]),
@@ -157,7 +169,7 @@ meltt <- function(...,taxonomies,twindow,spatwindow,smartmatch=TRUE,certainty=NA
       missing_arguments <- append(missing_arguments,paste0('\n  data: latitude column is missing in ',as.character(datasets[[dat]]),''))
       terminate <- TRUE
     } else{
-      if(class(eval(datasets[[dat]])[,'latitude'])!="numeric"){
+      if(class(as.data.frame(eval(datasets[[dat]]))[,'latitude'])!="numeric"){
         missing_arguments <- append(missing_arguments,paste0('\n  data: latitude column in ',as.character(datasets[[dat]]),
                                                              " is not class 'Numeric' \n"))
         terminate <- TRUE
@@ -167,7 +179,7 @@ meltt <- function(...,taxonomies,twindow,spatwindow,smartmatch=TRUE,certainty=NA
       missing_arguments <- append(missing_arguments,paste0('\n  data: longitude column is missing in ',as.character(datasets[[dat]]),''))
       terminate <- TRUE
     } else{
-      if(class(eval(datasets[[dat]])[,'longitude'])!="numeric"){
+      if(class(as.data.frame(eval(datasets[[dat]]))[,'longitude'])!="numeric"){
         missing_arguments <- append(missing_arguments,paste0('\n  data: longitude column in ',as.character(datasets[[dat]]),
                                                              " is not class 'Numeric'"))
         terminate <- TRUE
@@ -175,26 +187,26 @@ meltt <- function(...,taxonomies,twindow,spatwindow,smartmatch=TRUE,certainty=NA
     }
   }
   if (terminate){ # Stop the function and print warnings
-    missing_arguments <- append(missing_arguments," \n\n")
+    missing_arguments <- append(unique(missing_arguments)," \n\n")
     message("The following required arguments of meltt() are MISSING or MIS-SPECIFIED:", missing_arguments)
     stop("meltt(...,taxonomies,twindow,spatwindow)) was not executed!", call.=FALSE)
   }
   if (!is.null(warning_arguments)){
     cat(paste0("\nPlease note the following:\n",paste0(warning_arguments,collapse="")))
   }
-  
+
   # DATA Pre-Processing
-  # - retain original data and ordering 
+  # - retain original data and ordering
   data_list <- list()
   for(data_set in seq_along(datasets)){
-    dat <- eval(datasets[[data_set]])
+    dat <- as.data.frame(eval(datasets[[data_set]]))
     dat$data.source <- as.character(datasets[[data_set]])
     dat$dataset <- match(as.character(datasets[[data_set]]),datasets)
     dat$obs.count <- 1:nrow(dat)
     if(any(colnames(dat)=="enddate")){dat[,"enddate"] <- as.Date(dat[,"enddate"])}else{dat[,"enddate"] <- as.Date(dat[,"date"])}
     data_list[[data_set]] <- dat
   }
-  
+
   #FORMAT data to numerical matrix & STAMP and STORE input data.
   stamps <- c()
   tax_entries <- c()
@@ -221,13 +233,13 @@ meltt <- function(...,taxonomies,twindow,spatwindow,smartmatch=TRUE,certainty=NA
     taxonomy_stop_message <- paste0("\n\n",paste0(issue_messages,collapse=""),"Please ensure that each unique data entry in the input data contains a corresponding value in the base.category column for each input taxonomy.\n\n")
     cat(taxonomy_stop_message)
     stop("Stopped due to taxonomy error (see above report for detailed summary).")
-    
+
   }
-  
+
   numeric_tax <- apply(as.matrix(tax_entries),2,function(x) as.numeric(as.factor(x))) # convert taxonomy text to numeric
   names(data_list) <- datasets # record data names to original data
   data <- cbind(stamps,numeric_tax) # combine entry stamps with taxonomies
-  
+
   # RUN matching algorithm
   for (datst in 2:dataset_number){
     if (datst == 2){
@@ -273,7 +285,7 @@ meltt <- function(...,taxonomies,twindow,spatwindow,smartmatch=TRUE,certainty=NA
                                                              out$episode_contenders),
                             twindow,spatwindow,smartmatch,certainty,k,secondary,partial,averaging,weight)
       out$data[,1:2] <- data.frame(t(sapply(1:nrow(out$data),function(x) unlist(indexing[[out$data$dataset[x]]][out$data$event[x],])))) # restore correct indices in data
-      
+
       # Bind past contenders with current
       out$event_contenders <- rbind(past_event_contenders,out$event_contenders)
       out$episode_contenders <- rbind(past_episode_contenders,out$episode_contenders)
@@ -281,12 +293,12 @@ meltt <- function(...,taxonomies,twindow,spatwindow,smartmatch=TRUE,certainty=NA
     out$data <- out$data[order(out$data$date,out$data$dataset,out$data$event),]
     row.names(out$data) <- NULL
   }
-  
+
   # Retain Processing features
   names(out)[1] <- "deduplicated_index" # Rename data feature
   out$complete_index <- data
   out <- out[c("complete_index","deduplicated_index","event_matched","event_contenders","episode_matched","episode_contenders")]
-  
+
   if(ncol(out$event_matched) != ncol(out$episode_matched)){
     # If episode matched does not map onto event_matched (due to episodal data
     # existing in some but not all the input datasets), correct index in
@@ -305,19 +317,19 @@ meltt <- function(...,taxonomies,twindow,spatwindow,smartmatch=TRUE,certainty=NA
     em_new <- em_new[-nrow(em_new),]
     out$episode_matched <- em_new
   }
-  
+
   # Retain initial input features
   tax_stats <- list(taxonomy_names=tax_names,N_taxonomies = k,
                     taxonomy_depths = secondary,input_taxonomies=taxonomies)
   params <- list(twindow=twindow,spatwindow=spatwindow,
                  smartmatch=smartmatch,certainty=certainty,
                  partial=partial,averaging=averaging,weight=weight)
-  
+
   # PRODUCE master list containing all relevant output features.
   master.out <- list(processed = out,inputData = data_list,parameters=params,
                      inputDataNames = sapply(datasets, paste0, collapse=""),
                      taxonomy = tax_stats)
-  
+
   class(master.out) <- "meltt"
   return(master.out)
 }
