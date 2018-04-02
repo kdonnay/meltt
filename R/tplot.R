@@ -1,9 +1,9 @@
-tplot = function(object,time.unit="month",scale.free=T){
+tplot = function(object,time.unit="month",free_scale=T){
   UseMethod('tplot')
 }
 
 
-tplot.meltt = function(object,time.unit="month",scale.free=T){
+tplot.meltt = function(object,time.unit="month",free_scale=T){
 
   n.datasets = length(object$inputDataNames)
   key = object$processed$deduplicated_index[,c(1,2)]
@@ -54,7 +54,7 @@ tplot.meltt = function(object,time.unit="month",scale.free=T){
              stat="identity",alpha=.6) +
     geom_hline(yintercept=0,lwd=1,color="grey30") +
     {
-      if(scale.free){
+      if(free_scale){
         facet_wrap(~status,scale="free_y",ncol=1,strip.position = "right")
       }
     } +
