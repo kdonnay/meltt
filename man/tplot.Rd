@@ -14,7 +14,10 @@ tplot(object,time.unit="month")
   object of class \code{\link{meltt}}.
 }
   \item{time.unit}{
-  string specifying the temporal bin: "day", "week", "month", and "year". Default = "month".
+  character specifying the temporal bin: "day", "week", "month", and "year". Default = "month".
+}
+ \item{free_scale}{
+  boolean if duplicates should be presented on a different scale from unique entries. A free scale makes it easier to assess the number of duplicate entries and from which input data they emerge, given that there can relatively few at times. Default = TRUE.
 }
 }
 \details{
@@ -24,7 +27,7 @@ tplot(object,time.unit="month")
 Returns a histogram plot where the y-axis is a frequency capturing the total number of events for that time period, and the x-axis is time.
 }
 \references{
-Karsten Donnay, Eric Dunford, Erin C. McGrath, David Backer, David E. Cunningham. (2016). "MELTT: Matching Event Data by Location, Time and Type." Paper presented at \emph{Annual Conference of the Midwest Political Science Association}, April 7-10 2016, Chicago.
+Karsten Donnay, Eric Dunford, Erin C. McGrath, David Backer, David E. Cunningham. (2018). "Integrating Conflict Event Data." \emph{Journal of Conflict Resolution}.
 }
 \author{
   Karsten Donnay and Eric Dunford.

@@ -1,34 +1,34 @@
 \name{mplot}
 \alias{mplot}
 \title{
-Generate a Google Map plotting the spatial distribution of meltt output data.
+Wrapper to generate an interactive spatial plot of meltt output data via Leaflet.
 }
 \description{
-\code{mplot} provides both a static and interactive Google Map plotting the spatial distribution of duplicate and unique entries in the integrated data.
+\code{mplot} provides an interactive javascript map to plot the spatial distribution of duplicate and unique entries in the integrated data.
 }
 \usage{
-mplot(object, interactive = FALSE)
+mplot(object, matching = F, jitter=.0001)
 }
 \arguments{
   \item{object}{
   object of class \code{\link{meltt}}.
 }
-\item{interactive}{
-  Specify if the Google Map should be interactive. Default = \code{FALSE}.
+\item{matching}{
+  if TRUE, plot only matching entries (i.e. duplicates and matches), else plot unique and matching entries. Default = \code{FALSE}.
+}
+\item{matching}{
+  Numeric value to jitter longitude and latitude points. Useful when points overlap. Default is an small jitter .0001
 }
 }
 \details{
-\code{mplot} generates a static spatial map using the Google Maps API. The map identifies unique and duplicative (i.e. entries with "matches") entries. The function provides a concise summary of the integration output across the spatial bounds of the geo-referenced input data.
-
-\code{mplot} also generates an interactive spatial map that renders in the user's browser.
+\code{mplot} generates a spatial map using javascript via the \code{Leaflet} package. The map identifies unique and duplicative (i.e. entries with "matches") entries. The function provides a concise summary of the integration output across the spatial bounds of the geo-referenced input data. Plot renders in the users viewer pane (if using RStudio) or in browser. Images of the map can be saved using the export button.
 }
 \value{
-Returns a Google Map, which renders in the user's browser if \code{interactive=TRUE}, of all unique event locations. Each unique event from the input data is represented by a unique color. Matching events (i.e. events with detected duplicates) are marked as blue diamonds.
+Returns a javascript map, which renders in the user's viewer pane, of all unique event locations (or duplicate and matching entries if \code{matching=} argument is true). Each unique event are denoted as orange circles, matching entries as blue circles, and duplicate entries as green entries.
 
-For the interactive map, events where duplicates were identified are flagged as a "Match", and the duplicates for the event are marked in the point meta data. All events are provided a unique identifier which corresponds to the input data's name (i.e. the object name of the input data) and it's location in the input frame (i.e. "dataA-4" corresponds to the fourth entry in the \code{data.frame} "dataA").
 }
 \references{
-Karsten Donnay, Eric Dunford, Erin C. McGrath, David Backer, David E. Cunningham. (2016). "MELTT: Matching Event Data by Location, Time and Type." Paper presented at \emph{Annual Conference of the Midwest Political Science Association}, April 7-10 2016, Chicago.
+Karsten Donnay, Eric Dunford, Erin C. McGrath, David Backer, David E. Cunningham. (2018). "Integrating Conflict Event Data." \emph{Journal of Conflict Resolution}.
 }
 \author{
   Karsten Donnay and Eric Dunford.
@@ -42,8 +42,6 @@ data(crashMD)
 output <- meltt(crash_data1,crash_data2,crash_data3,
                 taxonomies = crash_taxonomies,twindow = 1,spatwindow = 3)
 
-mplot(output) # Static Map
-
-mplot(output,interactive=T) # Interactive Map (will render in browser)
+mplot(output)
 }
 }
