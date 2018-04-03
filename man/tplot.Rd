@@ -7,13 +7,13 @@ Temporal distribution of meltt output data.
 \code{tplot} provides a histogram of integrated data that plots the temporal distribution of duplicate and unique entries
 }
 \usage{
-tplot(object,time.unit="month")
+tplot(object,time_unit="month",free_scale=T)
 }
 \arguments{
   \item{object}{
   object of class \code{\link{meltt}}.
 }
-  \item{time.unit}{
+  \item{time_unit}{
   character specifying the temporal bin: "day", "week", "month", and "year". Default = "month".
 }
  \item{free_scale}{
@@ -40,6 +40,11 @@ Karsten Donnay, Eric Dunford, Erin C. McGrath, David Backer, David E. Cunningham
 data(crashMD)
 output <- meltt(crash_data1,crash_data2,crash_data3,
                       taxonomies = crash_taxonomies,twindow = 1,spatwindow = 3)
-tplot(output,time.unit="day")
+
+# Free scale
+tplot(output,time_unit="day")
+
+# Relative scale
+tplot(output,time_unit="day",free_scale=F)
 }
 }

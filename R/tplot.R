@@ -1,9 +1,9 @@
-tplot = function(object,time.unit="month",free_scale=T){
+tplot = function(object,time_unit="month",free_scale=T){
   UseMethod('tplot')
 }
 
 
-tplot.meltt = function(object,time.unit="month",free_scale=T){
+tplot.meltt = function(object,time_unit="month",free_scale=T){
 
   n.datasets = length(object$inputDataNames)
   key = object$processed$deduplicated_index[,c(1,2)]
@@ -22,9 +22,9 @@ tplot.meltt = function(object,time.unit="month",free_scale=T){
 
 
   # Break up by specified temporal unit
-  unique_dates$unit <-  as.Date(cut(unique_dates$date,breaks = time.unit,start.on.monday = FALSE))
-  dup_dates$unit <-  as.Date(cut(dup_dates$date,breaks = time.unit,start.on.monday = FALSE))
-  base$unit <-  as.Date(cut(base$date,breaks = time.unit,start.on.monday = FALSE))
+  unique_dates$unit <-  as.Date(cut(unique_dates$date,breaks = time_unit,start.on.monday = FALSE))
+  dup_dates$unit <-  as.Date(cut(dup_dates$date,breaks = time_unit,start.on.monday = FALSE))
+  base$unit <-  as.Date(cut(base$date,breaks = time_unit,start.on.monday = FALSE))
 
   # ensure alignment
   frame = data.frame(unit=unique(base$unit))
@@ -60,7 +60,7 @@ tplot.meltt = function(object,time.unit="month",free_scale=T){
     } +
     theme_light() +
     scale_fill_manual(values = rev(colors)) +
-    labs(y="Count",x=paste0("Date (",time.unit,")"),fill='') +
+    labs(y="Count",x=paste0("Date (",time_unit,")"),fill='') +
     theme(strip.placement = "inside",
           panel.grid.minor = element_blank())
 }
