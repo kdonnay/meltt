@@ -1,5 +1,5 @@
 meltt_validate = function(
-  object=NULL,# Meltt object
+  object,# Meltt object
   description.vars = NULL, # Varibles to consider in the description; if none are provided, taxonomy levels are used.
   sample_prop = .1, # the proportion of matches sampled (which determines the size of the control group); minimum bound of .01% is placed on this
   within_window = T, # generate entries within the meltt integration s/t window
@@ -12,7 +12,7 @@ meltt_validate = function(
 
 
 meltt_validate.meltt = function(
-  object=NULL,# Meltt object
+  object,# Meltt object
   description.vars = NULL, # Varibles to consider in the description; if none are provided, taxonomy levels are used.
   sample_prop = .1, # the proportion of matches sampled (which determines the size of the control group); minimum bound of .01% is placed on this
   within_window = T, # generate entries within the meltt integration s/t window
@@ -99,9 +99,12 @@ meltt_validate.meltt = function(
     exp_index$match <- as.numeric((exp_index$m1 == exp_index$m2) & (!is.na(exp_index$m1) & !is.na(exp_index$m2)))
 
     # GENERATE matches/control samples, where control is drawn from proximate events -------------------------
-    match_samp <- sample_frac(data.frame(match_id=unique(exp_index$m1[exp_index$match == 1])),sample_prop)
-    # in case sample is low
-    if( nrow(match_samp)< 1 ){ match_samp <- sample_n(data.frame(match_id=unique(exp_index$m1[exp_index$match == 1])),1) }
+    match_samp <- unique(exp_index$m1[exp_index$match == 1])
+    samp_size = round(length(match_samp)*sample_prop)
+    if(samp_size > length(match_samp)){ samp_size = length(match_samp) } # in case sample size is overloaded specified
+    grab_entries <- sample(1:length(match_samp),size = samp_size,replace=F) # sample & get indices
+    if(length(grab_entries) < 1){ grab_entries <- sample(1:length(match_samp),size = 1)} # in case sample is low
+    match_samp = data.frame(match_id=match_samp[grab_entries]) # Grab entries and convert to df
 
     cat('\nGenerating Validation Set ... \n')
     v_set <- c()
@@ -157,22 +160,23 @@ meltt_validate.meltt = function(
     }) -> entries_info
     entries_info <- ldply(entries_info)
 
-    formatted <- apply(entries_info[,c(1:3)*-1],1,function(x){
+    formatted <- apply(entries_info[,c(1:2)*-1],1,function(x){
       x = iconv(x, "latin1", "ASCII", sub="") # Remove any potential encoding issues
       paste0(paste(paste0("<b><i>",names(x),"</i></b>"),x,sep=": "),collapse = "<br/><br/>")
       # paste0(paste(names(x),x,sep=": "),collapse = "\n\n")
     })
-    validation_set <- data.frame(val_id = as.numeric(entries_info[,1]),
-                                uid=entries_info[,3],
-                                type=as.character(entries_info[,2]),
-                                descr=formatted,
-                                coding=NA,
-                                coding_txt ="",
-                                stringsAsFactors = F)
+    id = rep(1:(nrow(entries_info)),4)
+    validation_set <- data.frame(val_id = id[order(id)],
+                                 uid=entries_info$uid,
+                                 type=as.character(entries_info$type),
+                                 descr=formatted,
+                                 coding=NA,
+                                 coding_txt ="",
+                                 stringsAsFactors = F)
 
     # Shuffle the validation entries up (so matching entry is in a different location each time)
+    validation_set2=c()
     for(v in unique(validation_set$val_id)){
-      if(v==1){validation_set2=c()}
       ss <- validation_set[validation_set$val_id==v,]
       validation_set2 <- rbind(validation_set2,ss[c(1,sample(2:4)),])
     }
