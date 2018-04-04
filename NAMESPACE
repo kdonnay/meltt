@@ -24,6 +24,6 @@ importFrom("ggplot2", "ggplot", "geom_point", "position_stack", "scale_shape_man
 importFrom("plyr", "rbind.fill","ldply")
 importFrom("dplyr", "sample_frac","sample_n","select","arrange","progress_estimated","mutate","group_by","count","bind_rows","filter","ungroup","full_join","inner_join","contains")
 importFrom("tidyr", "drop_na","gather","%>%")
-importFrom("tibble", "tibble")
+importFrom("tibble", "tibble", "as.tibble")
 importFrom("shinyjs", "reset")
 importFrom("leaflet","leaflet","addTiles","addProviderTiles","addCircleMarkers","addLegend","addMiniMap")
