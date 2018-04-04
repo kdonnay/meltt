@@ -464,7 +464,7 @@ meltt_validate.meltt = function(
         round(object$validation$params$sample_proportion*100,2)
         ,"% of the matched pairs -- from the integrated data were manually reviewed.",
         "2 controls (entries not identified as matches) are randomly drawn from pool of events in proximity for each match.")
-    assign(as.character(obj_name),object,envir = globalenv())
+    assign(as.character(obj_name),object,envir = .GlobalEnv)
   }
 
 
