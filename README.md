@@ -248,12 +248,12 @@ output
 ```
 
     ## MELTT Complete: 3 datasets successfully integrated.
-    ## ===================================================
-    ## Total No. of Input Observations:     195
-    ## No. of Unique Obs (after deduplication): 140
-    ## No. of Unique Matches:               34
-    ## No. of Duplicates Removed:           55
-    ## ===================================================
+    ## =========================================================
+    ## Total No. of Input Observations:                  195
+    ## No. of Unique Obs (after deduplication):          140
+    ## No. of Unique Matches:                            34
+    ## No. of Duplicates Removed:                        55
+    ## =========================================================
 
 In matching the three car crash datasets, there are 195 total entries (i.e. 71 entries from `crash_data1`, 64 entries from `crash_data2`, and 60 entries from `crash_data3`). Of those 195, 140 of them are unique -- that is, no entry from another dataset matched up with them. 55 entries, however, were found to be duplicates identified within 34 unique matches.
 
@@ -275,12 +275,12 @@ summary(output)
     ## Taxonomy Names: model_tax, color_tax, damage_tax
     ## Taxonomy Depths: 3, 2, 1
     ## 
-    ## Total No. of Input Observations:       195
-    ## No. of Unique Matches:                 34
-    ##   - No. of Event-to-Event Matches:         26
-    ##   - No. of Episode-to-Episode Matches:         8
-    ## No. of Duplicates Removed:             55
-    ## No. of Unique Obs (after deduplication):   140
+    ## Total No. of Input Observations:                  195
+    ## No. of Unique Matches:                            34
+    ##   - No. of Event-to-Event Matches:                26
+    ##   - No. of Episode-to-Episode Matches:            8
+    ## No. of Duplicates Removed:                        55
+    ## No. of Unique Obs (after deduplication):          140
     ## ------------------------------------------------------------
     ## Summary of Overlap
     ##  crash_data1 crash_data2 crash_data3 Freq
@@ -292,7 +292,8 @@ summary(output)
     ##                        X           X    4
     ##            X           X           X   21
     ## ============================================================
-    ## *Note: 6 episode(s) flagged as potentially matching to an event. Review flagged match with meltt.inspect()
+    ## *Note: 6 episode(s) flagged as potentially matching to an event.
+    ## Review flagged match with meltt.inspect()
 
 Given that meltt objects can be saved and referenced later, the summary function offers a recap on the input parameters and assumptions that underpin the match (i.e. the datasets, the spatiotemporal window, the taxonomies, etc.). Again, information regarding the total number of observations, the number of unique and duplicate entries, and the number matches found is reported, but this time information regarding how many of those matches were event-to-event (i.e. events that played out along one time unit where the date is equal to the end date) and episode-to-episode (i.e. events that played out over a couple of days).
 

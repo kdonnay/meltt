@@ -1,6 +1,4 @@
 summary.meltt = function(object, ...){
-  # Table that Reports the input/output from meltt output object
-  if(!is.meltt(object)) stop("Object is not of class meltt")
 
   # Summary of Input-Output
   orig_N = nrow(object$processed$complete_index)
@@ -17,6 +15,7 @@ summary.meltt = function(object, ...){
   N_taxonomies = object$taxonomy$N_taxonomies
   taxonomy_names = object$taxonomy$taxonomy_names
   taxonomy_depths = object$taxonomy$taxonomy_depths
+  rep2 = function(txt,n) paste0(rep(txt,n),collapse="")
   summary_message = paste0("\nMELTT output\n",
                            paste(rep("===",20),collapse=""),"\n",
                            "No. of Input Datasets: ", N_data_entries,"\n",
@@ -26,12 +25,12 @@ summary.meltt = function(object, ...){
                            "No. of Taxonomies: ",N_taxonomies,"\n",
                            "Taxonomy Names: ",paste(taxonomy_names,collapse=", "),"\n",
                            "Taxonomy Depths: ",paste(taxonomy_depths,collapse=", "),"\n\n",
-                           "Total No. of Input Observations:\t\t  ",orig_N,"\n",
-                           "No. of Unique Matches:\t\t\t\t  ",match_N,"\n",
-                           "  - No. of Event-to-Event Matches:\t\t  ",match_N_event_to_event,"\n",
-                           "  - No. of Episode-to-Episode Matches:\t\t  ",match_N_episode_to_episode,"\n",
-                           "No. of Duplicates Removed:\t\t\t  ",overlap_N,"\n",
-                           "No. of Unique Obs (after deduplication):\t  ",unique_N,"\n",
+                           "Total No. of Input Observations:",rep2(" ",18),orig_N,"\n",
+                           "No. of Unique Matches:",rep2(" ",28),match_N,"\n",
+                           "  - No. of Event-to-Event Matches:",rep2(" ",16),match_N_event_to_event,"\n",
+                           "  - No. of Episode-to-Episode Matches:",rep2(" ",12),match_N_episode_to_episode,"\n",
+                           "No. of Duplicates Removed:",rep2(" ",24),overlap_N,"\n",
+                           "No. of Unique Obs (after deduplication):",rep2(" ",10),unique_N,"\n",
                            paste(rep("---",20),collapse=""),"\n",
                            "Summary of Overlap\n")
 
@@ -84,7 +83,7 @@ summary.meltt = function(object, ...){
   print(out_summary,row.names = F)
   cat(paste0(paste(rep("===",20),collapse=""),"\n"))
   if(flagged_episodes_to_events>0){
-    cat(paste0("*Note: ",flagged_episodes_to_events," episode(s) flagged as potentially matching to an event. Review flagged match with meltt.inspect()"))
+    cat(paste0("*Note: ",flagged_episodes_to_events," episode(s) flagged as potentially matching to an event.\nReview flagged match with meltt.inspect()"))
   }
   invisible(out_summary)
 }
