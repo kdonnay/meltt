@@ -225,7 +225,7 @@ meltt_validate.meltt = function(
     # End conditional ... that is, if this data already exists, no need to recreate it unless the user requests it
   } else{
     if(any(is.na(object$validation$validation_set))){
-      cat("\n\n[!]\nAn existing validation composition  was detected. Set 'reset' argument to true if a new validation set should be generated, else prior set will be utilized.\n[!] \n\n")
+      message("\n\nAn existing validation composition  was detected. Set 'reset' argument to true if a new validation set should be generated, else prior set will be utilized.\n")
     }
   }
 
