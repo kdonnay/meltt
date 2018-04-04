@@ -105,7 +105,7 @@ The goal is to match these three event datasets to locate which reported events 
 
 First, the user has to specify a spatial and temporal window that any potential match could plausibly fall within. Put differently, how close in space and time does an event need to be to qualify as potentially reporting on the same incident?
 
-Second, to articulate how different coding schemas overlap, the user needs to input an event taxonomy. A taxonomy is a formalization of how variables overlap, moving from as granular as possible to as general as possible. In this case, it describes how the coding of the three car-specific properties (model, color, damage) across our three data sets correspond.
+Second, to articulate how different coding schemes overlap, the user needs to input an event taxonomy. A taxonomy is a formalization of how variables overlap, moving from as granular as possible to as general as possible. In this case, it describes how the coding of the three car-specific properties (model, color, damage) across our three data sets correspond.
 
 Generating a taxonomy
 ---------------------
@@ -217,7 +217,7 @@ colnames(crash_data3)[7:9]
 
 1.  **Each taxonomy must contain a `data.source` and `base.categories` column**: this last convention helps `meltt` identify which variable is contained in which data object. The `data.source` column should reflect the ***names of the of the data objects for input data*** and the `base.categories` should reflect the original coding of the variable on which the taxonomy is built.
 
-2.  **Each input dataset must contain a `date`,`enddate` (if one exists), `longitude`, and `latitude` column**: the variables must be named accordingly (no deviations in naming conventions). The dates should be in an R date formate (`as.Date()`), and the geo-reference information must be numeric (`as.numeric()`).
+2.  **Each input dataset must contain a `date`,`enddate` (if one exists), `longitude`, and `latitude` column**: the variables must be named accordingly (no deviations in naming conventions). The dates should be in an R date format (`as.Date()`), and the geo-reference information must be numeric (`as.numeric()`).
 
 Matching Data
 -------------
@@ -235,7 +235,7 @@ output <- meltt(crash_data1, crash_data2, crash_data3,
                 twindow = 2)
 ```
 
-`meltt` also contains a range of adjustments to offer the user additional controls regarding how the events are matched. These auxiliary arguments are: - `smartmatch`: when `TRUE` (default), all available taxonomy levels are used and `meltt` uses a matching score that ensures that fine-grained agreements is favored over broader agreement, if more than one taxonomy level exists. When `FALSE`, only specific taxonomy levels are considered. - `certainty`: specification of the the exact taxonomy level to match on when `smartmatch = FALSE`. - `partial`: specifies whether matches along only some of the taxonomy dimensions are permitted. - `averaging`: implement averaging of all values events are match on when matching across multiple data.frames. That is, as events are matched dataset by dataset, the metadata is averaged. (Note: that this can generate distortion in the output). - `weight`: specified weights for each taxonomy level to increase or decrease the importances of each taxonomy's contribution to the matching score.
+`meltt` also contains a range of adjustments to offer the user additional controls regarding how the events are matched. These auxiliary arguments are: - `smartmatch`: when `TRUE` (default), all available taxonomy levels are used and `meltt` uses a matching score that ensures that fine-grained agreements is favored over broader agreement, if more than one taxonomy level exists. When `FALSE`, only specific taxonomy levels are considered. - `certainty`: specification of the the exact taxonomy level to match on when `smartmatch = FALSE`. - `partial`: specifies whether matches along only some of the taxonomy dimensions are permitted. - `averaging`: implement averaging of all values events are match on when matching across multiple data.frames. That is, as events are matched dataset by dataset, the metadata is averaged. (Note: that this can generate distortion in the output). - `weight`: specified weights for each taxonomy level to increase or decrease the importance of each taxonomy's contribution to the matching score.
 
 At times, one might want to know which taxonomy level is doing the heavy lifting. By turning off `smartmatch`, and specifying certain taxonomy levels by which to compare events, or by weighting taxonomy levels differently, one is able to better assess which assumptions are driving the final integration results. This can help with fine-tuning the input assumptions for `meltt` to gain the most valid match possible.
 
@@ -383,7 +383,7 @@ str(dups)
 `meltt` also offers users a way of validating the quality of any integration task with the function `meltt_validate()`. The function proceeds in three steps:
 
 1.  **Builds as validation set**: `meltt_validate()` allows users to randomly sample a proportion of matching pairs and then generates a "control group" (i.e. two entries that are close to the matching entries but were not identified as matches). This sampled subset of the data is then assessed manually by the user in step 2.
-2.  **Renders a shiny application to review each entry**: the function then instantaneously renders a shiny application that presents one "main entry" and three "candidate entries". The user must then determine which entires is mostly likely the matching entry. The shiny app updates the meltt object in the global environment offering stability and saving user progress in case all entries in the validation set are unabled to be reviewed in one pass.
+2.  **Renders a shiny application to review each entry**: the function then instantaneously renders a shiny application that presents one "main entry" and three "candidate entries". The user must then determine which entries is mostly likely the matching entry. The shiny app updates the meltt object in the global environment offering stability and saving user progress in case all entries in the validation set are unable to be reviewed in one pass.
 3.  **Reports accuracy statistics**: once the validation set has been manually reviewed, `meltt_validate()` collapses into a simple print function that reports accuracy diagnostics (i.e. the true/false positive/negative rates).
 
 ``` r
@@ -429,4 +429,4 @@ Meta
 -   License: LGPL-3
 -   Get citation information for `meltt` in R using `citation(package = 'meltt')`
 -   CRAN: <https://cran.r-project.org/package=meltt>
--   Check out our forthcoming article in the [Journal of Conflict Resolution](https://www.google.com/search?q=journal+of+conflict+resolution&oq=Journal+of+con&aqs=chrome.1.69i57j0l2j69i65j0l2.8015j0j7&sourceid=chrome&ie=UTF-8) for more details on the algorithm, its functionality, and applied applications.
+-   Check out our forthcoming article in the [Journal of Conflict Resolution](https://www.google.com/search?q=journal+of+conflict+resolution&oq=Journal+of+con&aqs=chrome.1.69i57j0l2j69i65j0l2.8015j0j7&sourceid=chrome&ie=UTF-8) for more details on the algorithm, its functionality, and applications to conflict research.
