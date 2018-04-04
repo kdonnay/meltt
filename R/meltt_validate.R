@@ -32,7 +32,7 @@ meltt_validate.meltt = function(
   # CHECKS ------------------------------------------------------------------
 
   if(within_window==F & (is.null(spatial_window) | is.null(temporal_window))){
-    stop("'within_window' has been set to false, user must provide a new temporal and spatial window from which to draw control group.")
+    stop("'within_window' has been set to FALSE, user must provide a new temporal and spatial window from which to draw control group.")
   }
   if(sample_prop > 1 | sample_prop < 0.001){
     stop("`sample_prop` exceeds relevant bounds. Set argument to any numeric value existing between .01 and 1")
@@ -75,36 +75,62 @@ meltt_validate.meltt = function(
     # Order input dataframe so nearby cohorts reflect proximity
     all_input_dat <- all_input_dat[order(all_input_dat$date),]
 
-    if(within_window){ # If using the same proximity window as meltt
-      t <- object$parameters$twindow
-      s <- object$parameters$spatwindow
-      D <- data.matrix(all_input_dat[,c("dataset","date","latitude","longitude")])
-      index <- proximity(D,t = t,s = s)
-    } else{ # If the user defines the proximity window
-      t <- temporal_window
-      s <- spatial_window
-      D <- data.matrix(all_input_dat[,c("dataset","date","latitude","longitude")])
-      index <- proximity(D,t = t,s = s)
+
+    # LOCATE proximate events
+    stay_here_and_build_index_of_prox_entries = T
+    report_window_increased = F; second_time_around = T
+    while(stay_here_and_build_index_of_prox_entries){
+      if(within_window){ # If using the same proximity window as meltt
+        t <- object$parameters$twindow
+        s <- object$parameters$spatwindow
+        D <- data.matrix(all_input_dat[,c("dataset","date","latitude","longitude")])
+        index <- proximity(D,t = t,s = s)
+      } else{ # If the user defines the proximity window
+        t <- temporal_window
+        s <- spatial_window
+        D <- data.matrix(all_input_dat[,c("dataset","date","latitude","longitude")])
+        index <- proximity(D,t = t,s = s)
+      }
+
+
+
+      # Produce set of "proximate" entries
+      exp_index <- data.frame(uid1 = all_input_dat[index[,1],"uid"],
+                              uid2 = all_input_dat[index[,2],"uid"],
+                              m1 = all_input_dat[index[,1],"match_id"],
+                              m2 = all_input_dat[index[,2],"match_id"],
+                              cohort = index[-1,3],
+                              stringsAsFactors = F)
+
+
+      # Determine which of those proximate entries are matches
+      exp_index$match <- as.numeric((exp_index$m1 == exp_index$m2) & (!is.na(exp_index$m1) & !is.na(exp_index$m2)))
+
+      # Check that there a are sufficient unique (non-matching entries) --
+      # required for the control set.
+      if(mean(exp_index$match==0) >= .4){ # If sufficient, move on
+        stay_here_and_build_index_of_prox_entries = F
+      }else{
+        within_window = F # Adjust window
+        if(second_time_around){ # Set the initial conditions if a expansion is required
+          temporal_window = t
+          spatial_window = s
+          second_time_around = F
+        }
+        temporal_window = temporal_window + 1 # increase time window by 1 day
+        spatial_window = spatial_window + 5 # increase spatial extent by 5km
+        report_window_increased = T
+      }
+    }
+    if(report_window_increased){
+      warning("\nThere was an insufficient number of unique events to build a control set from within the current spatio-temporal window.",
+          " The extent of the window was expanded until a sufficient number of non-matching events were located.\n")
     }
 
-    # Produce set of "proximate" entries
-    exp_index <- data.frame(uid1 = all_input_dat[index[,1],"uid"],
-                           uid2 = all_input_dat[index[,2],"uid"],
-                           m1 = all_input_dat[index[,1],"match_id"],
-                           m2 = all_input_dat[index[,2],"match_id"],
-                           cohort = index[-1,3],
-                           stringsAsFactors = F)
-
-    # Determine which of those proximate entries are matches
-    exp_index$match <- as.numeric((exp_index$m1 == exp_index$m2) & (!is.na(exp_index$m1) & !is.na(exp_index$m2)))
 
     # GENERATE matches/control samples, where control is drawn from proximate events -------------------------
-    match_samp <- unique(exp_index$m1[exp_index$match == 1])
-    samp_size = round(length(match_samp)*sample_prop)
-    if(samp_size > length(match_samp)){ samp_size = length(match_samp) } # in case sample size is overloaded specified
-    grab_entries <- sample(1:length(match_samp),size = samp_size,replace=F) # sample & get indices
-    if(length(grab_entries) < 1){ grab_entries <- sample(1:length(match_samp),size = 1)} # in case sample is low
-    match_samp = data.frame(match_id=match_samp[grab_entries]) # Grab entries and convert to df
+    match_samp <- sample_frac(data.frame(match_id=unique(exp_index$m1[exp_index$match == 1])),sample_prop)
+    if( nrow(match_samp)< 1 ){ match_samp <- sample_n(data.frame(match_id=unique(exp_index$m1[exp_index$match == 1])),1) } # in cases where sample is low
 
     cat('\nGenerating Validation Set ... \n')
     v_set <- c()
@@ -122,7 +148,8 @@ meltt_validate.meltt = function(
         }
         display_entry <- draw_set$uid1[draw_set$match==1][1]
         matching_entry <- draw_set$uid2[draw_set$match==1][1]
-        control_entries <- c(draw_set$uid1[draw_set$match==0],draw_set$uid2[draw_set$match==0]) # generate control sample
+        control_entries <- c(draw_set$uid1[draw_set$match==0 & (draw_set$m1!=match_samp$match_id[s] | is.na(draw_set$m1))], # generate control sample
+                             draw_set$uid2[draw_set$match==0 & draw_set$m2!=match_samp$match_id[s] | is.na(draw_set$m2)])
         control_entries <- control_entries[!control_entries %in% c(display_entry,matching_entry)] # not the display/matching entry
         control_entries <- unique(control_entries[orig_set(control_entries) != orig_set(display_entry)]) # from a different source than the display entry
         if(length(control_entries)>2){
@@ -150,15 +177,16 @@ meltt_validate.meltt = function(
     }
 
     # Build entry info
-    apply(v_set,1,function(x){
-      y = c()
-      for(i in x){
-        tmp <- all_input_dat[all_input_dat$uid %in% i,c("uid",description.vars)]
-        y <- rbind(y,tmp)
-      }
-      cbind(type=names(x),y)
-    }) -> entries_info
-    entries_info <- ldply(entries_info)
+    entries_info <-
+      apply(v_set,1,function(x){
+        y = c()
+        for(i in x){
+          tmp <- all_input_dat[all_input_dat$uid %in% i,c("uid",description.vars)]
+          y <- rbind(y,tmp)
+        }
+        cbind(type=names(x),y)
+      })
+    entries_info <- as.tibble(ldply(entries_info))
 
     formatted <- apply(entries_info[,c(1:2)*-1],1,function(x){
       x = iconv(x, "latin1", "ASCII", sub="") # Remove any potential encoding issues
@@ -183,8 +211,6 @@ meltt_validate.meltt = function(
 
 
     cat('\nValidation Set Generated!\n')
-
-
     # Save Validation set -----------------------------------------------------
     object$validation <- list(
       params = list(temporal_assessment_window = t,
