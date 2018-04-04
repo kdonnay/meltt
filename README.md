@@ -202,7 +202,7 @@ str(crash_taxonomies)
 # ..$ damage_level1  : chr [1:21] "Multi-Vehicle Accidents" "Multi-Vehicle Accidents" "Multi-Vehicle Accidents" "Single Car Accidents" ...
 ```
 
-1.  **Taxonomies must be named the same as the variables they seek to describe**: `meltt` relies on simple naming conventions to identify which variable is what when matching.
+2.  **Taxonomies must be named the same as the variables they seek to describe**: `meltt` relies on simple naming conventions to identify which variable is what when matching.
 
 ``` r
 names(crash_taxonomies)
@@ -215,9 +215,9 @@ colnames(crash_data3)[7:9]
 # [1] "model_tax"  "color_tax"  "damage_tax"
 ```
 
-1.  **Each taxonomy must contain a `data.source` and `base.categories` column**: this last convention helps `meltt` identify which variable is contained in which data object. The `data.source` column should reflect the ***names of the of the data objects for input data*** and the `base.categories` should reflect the original coding of the variable on which the taxonomy is built.
+3.  **Each taxonomy must contain a `data.source` and `base.categories` column**: this last convention helps `meltt` identify which variable is contained in which data object. The `data.source` column should reflect the ***names of the of the data objects for input data*** and the `base.categories` should reflect the original coding of the variable on which the taxonomy is built.
 
-2.  **Each input dataset must contain a `date`,`enddate` (if one exists), `longitude`, and `latitude` column**: the variables must be named accordingly (no deviations in naming conventions). The dates should be in an R date format (`as.Date()`), and the geo-reference information must be numeric (`as.numeric()`).
+4.  **Each input dataset must contain a `date`,`enddate` (if one exists), `longitude`, and `latitude` column**: the variables must be named accordingly (no deviations in naming conventions). The dates should be in an R date format (`as.Date()`), and the geo-reference information must be numeric (`as.numeric()`).
 
 Matching Data
 -------------
@@ -325,7 +325,7 @@ gridExtra::grid.arrange(t1,t2)
 
 ![](README_files/figure-markdown_github/unnamed-chunk-15-1.png)
 
-Similarly, `mplot()` presents an interactive summary of the spatial distribution of the data by plotting the spatial points using `leaflet`. The goal is to get a sense of the spatial distribution of the matches to both identify any clustering/disproportionate coverage in the areas that matches are located, and to also get a sense of the spread of the integrated output. Building the function around `leaflet` allows for easy interactive exploration from within an R notebook or viewer pain.
+Similarly, `mplot()` presents an interactive summary of the spatial distribution of the data by plotting the spatial points using `leaflet`. The goal is to get a sense of the spatial distribution of the matches to both identify any clustering/disproportionate coverage in the areas that matches are located, and to also get a sense of the spread of the integrated output. Building the function around `leaflet` allows for easy interactive exploration from within an R notebook or viewer.
 
 To view unique and matched events (i.e. the types of data retrieved via `meltt_data()`):
 
@@ -383,7 +383,7 @@ str(dups)
 
 `meltt` also offers users a way of validating the quality of any integration task with the function `meltt_validate()`. The function proceeds in three steps:
 
-1.  **Builds as validation set**: `meltt_validate()` allows users to randomly sample a proportion of matching pairs and then generates a "control group" (i.e. two entries that are close to the matching entries but were not identified as matches). This sampled subset of the data is then assessed manually by the user in step 2.
+1.  **Builds as validation set**: `meltt_validate()` allows users to randomly sample a proportion of matching pairs and then generates a "control group" of two entries that are close to the matching entries but were not identified as matches. This sampled subset of the data is then assessed manually by the user in step 2.
 2.  **Renders a shiny application to review each entry**: the function then instantaneously renders a shiny application that presents one "main entry" and three "candidate entries". The user must then determine which entries is mostly likely the matching entry. The shiny app updates the meltt object in the global environment offering stability and saving user progress in case all entries in the validation set are unable to be reviewed in one pass.
 3.  **Reports accuracy statistics**: once the validation set has been manually reviewed, `meltt_validate()` collapses into a simple print function that reports accuracy diagnostics (i.e. the true/false positive/negative rates).
 
