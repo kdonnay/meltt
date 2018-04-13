@@ -34,7 +34,7 @@ Or the development version from Github
 devtools::install_github("css-konstanz/meltt")
 ```
 
-Currently, the package requires that users have both Python (&gt;= 2.7) and a version of the `numpy` module installed on their computer. To quickly get both, install an [Anaconda](https://www.continuum.io/downloads) platform. `meltt` will use these programs in the background.
+The package requires that users have Python (&gt;= 2.7) installed on their computer. To quickly get Python, install an [Anaconda](https://www.continuum.io/downloads) platform. `meltt` will use the program in the background.
 
 Usage
 =====
