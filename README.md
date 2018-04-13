@@ -311,7 +311,7 @@ For quick visualizations of the matched output, `meltt` contains three plotting 
 plot(output)
 ```
 
-![meltt_plot](https://github.com/css-konstanz/meltt/README_files/plot.png)
+![meltt_plot](https://raw.githubusercontent.com/css-konstanz/meltt/master/README_files/plot.png)
 
 `tplot()` offers a time series plot of the meltt output. The plot works as a reflection, where raw counts of the unique entries are plotted right-side up and the raw counts of the removed duplicates are plotted below it. This offers a quick snapshot of *when* duplicates are found. Temporal clustering of duplicates may indicate an issue with the data and/or the input assumptions, or it's potentially evidence of a unique artifact of the data itself.
 
@@ -323,7 +323,7 @@ t2 <- tplot(output, time_unit="week")
 gridExtra::grid.arrange(t1,t2)
 ```
 
-![meltt_tplot](https://github.com/css-konstanz/meltt/README_files/tplot.png)
+![meltt_tplot](https://raw.githubusercontent.com/css-konstanz/meltt/master/README_files/tplot.png)
 
 Similarly, `mplot()` presents an interactive summary of the spatial distribution of the data by plotting the spatial points using `leaflet`. The goal is to get a sense of the spatial distribution of the matches to both identify any clustering/disproportionate coverage in the areas that matches are located, and to also get a sense of the spread of the integrated output. Building the function around `leaflet` allows for easy interactive exploration from within an R notebook or viewer.
 
@@ -333,7 +333,7 @@ To view unique and matched events (i.e. the types of data retrieved via `meltt_d
 mplot(output) 
 ```
 
-![meltt_mplot](https://github.com/css-konstanz/meltt/README_files/mplot.png)
+![meltt_mplot](https://raw.githubusercontent.com/css-konstanz/meltt/master/README_files/mplot.png)
 
 To view duplicate and matched events (i.e. the types of data retrieved via `meltt_duplicates()`), set the `matching=` argument to `TRUE`.
 
