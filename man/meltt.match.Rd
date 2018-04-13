@@ -8,7 +8,7 @@ Auxiliary function that generates an R wrapper around the main python function u
 }
 \usage{
 meltt.match(data, twindow, spatwindow, smartmatch, certainty, k,
-	    secondary, partial, weight, episodal)
+	    secondary, partial, weight, episodal, silent)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -41,6 +41,9 @@ meltt.match(data, twindow, spatwindow, smartmatch, certainty, k,
 }
   \item{episodal}{
   boolean for wether normal or episodal matches are performed. Automatically determined and passed from \code{meltt}. 
+}
+\item{silent}{
+  Boolean specifying whether or not messages are displayed. Passed from \code{meltt}.
 }
 }
 

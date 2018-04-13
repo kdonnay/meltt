@@ -7,8 +7,8 @@ Matching Event Data by Location, Time and Type
 \code{meltt} merges and disambiguates event data based on spatiotemporal co-occurrence and secondary event characteristics. It can account for intrinsic "fuzziness" in the coding of events through the incorporation of user-specified taxonomies and adjusts for different degrees of geospatial and temporal precision by allowing for the specification of spatiotemporal "windows".
 }
 \usage{
-meltt(...,taxonomies, twindow, spatwindow, smartmatch = TRUE,
-	   certainty = NA, partial = 0, averaging = FALSE, weight = NA)
+meltt(...,taxonomies, twindow, spatwindow, smartmatch = TRUE, certainty = NA,
+	  partial = 0, averaging = FALSE, weight = NA, silent = FALSE)
 }
 \arguments{
   \item{\dots}{
@@ -36,6 +36,9 @@ meltt(...,taxonomies, twindow, spatwindow, smartmatch = TRUE,
 }
 \item{weight}{
   specified weights for each taxonomy level to increase or decrease the importances of each taxonomy's contribution to the matching score. Default = \kbd{NA}. See Details.
+}
+\item{silent}{
+  Boolean specifying whether or not messages are displayed. Default = \kbd{FALSE}.
 }
 }
 

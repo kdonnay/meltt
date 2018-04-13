@@ -1,4 +1,4 @@
-meltt.episodal <- function(data,indexing,priormatches,twindow,spatwindow,smartmatch,certainty,k,secondary,partial,averaging,weight){
+meltt.episodal <- function(data,indexing,priormatches,twindow,spatwindow,smartmatch,certainty,k,secondary,partial,averaging,weight,silent){
   
   # SORT data by timestamp and subset
   data <- data[order(data$date),] 
@@ -8,7 +8,7 @@ meltt.episodal <- function(data,indexing,priormatches,twindow,spatwindow,smartma
 
   # FIRST, event-to-event matching
   if (nrow(data_event)>0){
-    output <- meltt.match(data=data_event,twindow,spatwindow,smartmatch,certainty,k,secondary,partial,weight,episodal = 0)
+    output <- meltt.match(data=data_event,twindow,spatwindow,smartmatch,certainty,k,secondary,partial,weight,episodal = 0,silent)
     out_event <- meltt.disambiguate(data = data_event,match_output = output,indexing = indexing,priormatches = priormatches[[1]],averaging = averaging)
   }else{ # If empty, generate placeholders
     data_empty <- data.frame(matrix(0,nrow=0,ncol=ncol(data)))
@@ -24,7 +24,7 @@ meltt.episodal <- function(data,indexing,priormatches,twindow,spatwindow,smartma
 
   # THEN, episode-to-episode matching
   if (nrow(data_episode)>0 & length(unique(data_episode$dataset))>1){
-    output <- meltt.match(data=data_episode,twindow,spatwindow,smartmatch,certainty,k,secondary,partial,weight,episodal = 0)
+    output <- meltt.match(data=data_episode,twindow,spatwindow,smartmatch,certainty,k,secondary,partial,weight,episodal = 0,silent)
     out_episode <- meltt.disambiguate(data = data_episode,match_output = output,indexing = indexing,priormatches = priormatches[[3]],averaging = averaging)
   }else{
     data_empty <- data.frame(matrix(0,nrow=0,ncol=ncol(data)))
@@ -53,7 +53,7 @@ meltt.episodal <- function(data,indexing,priormatches,twindow,spatwindow,smartma
   evnts2 = subset(out$data,out$data$date==out$data$enddate & out$data$dataset==2)
   data_12 <- rbind(epsds1,evnts2)
   if (nrow(epsds1)>0 & nrow(evnts2)>0){
-    out_12 <- meltt.match(data=data_12,twindow,spatwindow,smartmatch,certainty,k,secondary,partial,weight,episodal = 1)
+    out_12 <- meltt.match(data=data_12,twindow,spatwindow,smartmatch,certainty,k,secondary,partial,weight,episodal = 1,silent)
   }else{
     match_empty <- data.frame(matrix(0,nrow=0,ncol=4))
     names(match_empty) <- c('data1','event1','data2','event2')
@@ -73,7 +73,7 @@ meltt.episodal <- function(data,indexing,priormatches,twindow,spatwindow,smartma
   data_21$dataset[dataset_index==2] <- 1
   data_21$dataset[dataset_index==1] <- 2
   if (nrow(epsds2)>0 & nrow(evnts1)>0){
-    out_21 <- meltt.match(data=data_21,twindow,spatwindow,smartmatch,certainty,k,secondary,partial,weight,episodal = 1)
+    out_21 <- meltt.match(data=data_21,twindow,spatwindow,smartmatch,certainty,k,secondary,partial,weight,episodal = 1,silent)
     # re-invert dataset labels
     if (nrow(out_21$matches)>0){
       out_21$matches[,c(1,3)] <- t(sapply(1:nrow(out_21$matches), function(x) out_21$matches[x,c(1,3)]<-c(2,1)))

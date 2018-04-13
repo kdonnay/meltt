@@ -1,4 +1,4 @@
-meltt.match <- function(data,twindow,spatwindow,smartmatch,certainty,k,secondary,partial,weight,episodal){
+meltt.match <- function(data,twindow,spatwindow,smartmatch,certainty,k,secondary,partial,weight,episodal,silent){
   
   if (smartmatch==TRUE){
     # set default value
@@ -18,7 +18,7 @@ meltt.match <- function(data,twindow,spatwindow,smartmatch,certainty,k,secondary
   # call the main "run" function with its input
   colnames <- colnames(data)
   match <- py_run_file(paste0(find.package("meltt"),"/python/match.py"))
-  output_list <- match$run(data,colnames,twindow,spatwindow,smartmatch,k,secondary,certainty,partial,weight,episodal)
+  output_list <- match$run(data,colnames,twindow,spatwindow,smartmatch,k,secondary,certainty,partial,weight,episodal,silent)
   
   # turn into data.frames
   if(length(unlist(output_list[1]))==0){

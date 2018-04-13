@@ -7,8 +7,8 @@ Handling events and episodal data [Auxiliary Function]
 Auxiliary function that receives the compilation matrix and systematically subsets events and episodes to deal with differences in event duration. The function passes subsets to \code{meltt.match}to be processed. Output includes a full list of matching events and/or episodes. 
 }
 \usage{
-meltt.episodal(data, indexing, priormatches, twindow, spatwindow,
-	       smartmatch, certainty, k, secondary, partial, averaging, weight)
+meltt.episodal(data, indexing, priormatches, twindow, spatwindow, smartmatch,
+	       certainty, k, secondary, partial, averaging, weight, silent)
 }
 \arguments{
   \item{data}{
@@ -46,6 +46,9 @@ meltt.episodal(data, indexing, priormatches, twindow, spatwindow,
 }
   \item{weight}{
   relative weight of each taxonomy in the calculation of the matching score. Passed from \code{meltt}. 
+}
+\item{silent}{
+  Boolean specifying whether or not messages are displayed. Passed from \code{meltt}.
 }
 }
 \details{

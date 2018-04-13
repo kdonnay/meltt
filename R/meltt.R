@@ -1,5 +1,16 @@
-meltt <- function(...,taxonomies,twindow,spatwindow,smartmatch=TRUE,certainty=NA,partial=0,averaging=FALSE,weight=NA){
-
+meltt <- function(...,taxonomies,twindow,spatwindow,smartmatch=TRUE,certainty=NA,partial=0,averaging=FALSE,weight=NA,silent=FALSE){
+  
+  # Mute interactive features, if silent = TRUE
+  if(silent){
+    cat <- function(...){}  
+  }
+  
+  cat(' meltt: Matching Event Data by Location, Time and Type.\n Karsten Donnay and Eric Dunford, 2018\n\n NOTE: Depending on size and number of datasets, integration may take some time!\n\n\n ')
+  call <- match.call()
+  if (!silent){
+    print(call)
+  }
+  
   # Key Input Information
   datasets <- as.list(substitute(list(...)))[-1L]
   names(datasets) <- NULL
@@ -11,6 +22,7 @@ meltt <- function(...,taxonomies,twindow,spatwindow,smartmatch=TRUE,certainty=NA
   secondary <- sapply(1:k,function(x) length(taxonomies[[x]])-2)
 
   # CHECK if input data is appropriately formatted
+  cat(' Checking meltt() arguments and inputs: ')
   missing_arguments <- c()
   warning_arguments <- c()
   terminate <- FALSE
@@ -189,6 +201,8 @@ meltt <- function(...,taxonomies,twindow,spatwindow,smartmatch=TRUE,certainty=NA
     missing_arguments <- append(unique(missing_arguments)," \n\n")
     message("The following required arguments of meltt() are MISSING or MIS-SPECIFIED:", missing_arguments)
     stop("meltt(...,taxonomies,twindow,spatwindow)) was not executed!", call.=FALSE)
+  }else{
+    cat('Done.\n')
   }
   if (!is.null(warning_arguments)){
     cat(paste0("\nPlease note the following:\n",paste0(warning_arguments,collapse="")))
@@ -196,6 +210,7 @@ meltt <- function(...,taxonomies,twindow,spatwindow,smartmatch=TRUE,certainty=NA
 
   # DATA Pre-Processing
   # - retain original data and ordering
+  cat(' Preparing data for integration: ')
   data_list <- list()
   for(data_set in seq_along(datasets)){
     dat <- as.data.frame(eval(datasets[[data_set]]))
@@ -238,10 +253,13 @@ meltt <- function(...,taxonomies,twindow,spatwindow,smartmatch=TRUE,certainty=NA
   numeric_tax <- apply(as.matrix(tax_entries),2,function(x) as.numeric(as.factor(x))) # convert taxonomy text to numeric
   names(data_list) <- datasets # record data names to original data
   data <- cbind(stamps,numeric_tax) # combine entry stamps with taxonomies
+  
+  cat('Done.\n')
 
   # RUN matching algorithm
   for (datst in 2:dataset_number){
     if (datst == 2){
+      cat(' Integrating dataset 1 with dataset 2: ')
       dat <- subset(data,data$dataset==1)
       dat_new <- subset(data,data$dataset==2)
       # save old indices
@@ -258,9 +276,11 @@ meltt <- function(...,taxonomies,twindow,spatwindow,smartmatch=TRUE,certainty=NA
       dat_new[,2] <- 1:nrow(dat_new)
       # new joined data
       dat <- rbind(dat,dat_new)
-      out <- meltt.episodal(dat,indexing,priormatches = c(),twindow,spatwindow,smartmatch,certainty,k,secondary,partial,averaging,weight)
+      out <- meltt.episodal(dat,indexing,priormatches = c(),twindow,spatwindow,smartmatch,certainty,k,secondary,partial,averaging,weight,silent)
       out$data[,1:2] <- data.frame(t(sapply(1:nrow(out$data),function(x) unlist(indexing[[out$data$dataset[x]]][out$data$event[x],])))) # restore correct indices in data
+      cat('Done.')
     }else{
+      cat(paste0('\n Integrating merged data and dataset ',datst,': '))
       dat <- out$data
       past_event_contenders <- out$event_contenders
       past_episode_contenders <- out$episode_contenders
@@ -282,12 +302,13 @@ meltt <- function(...,taxonomies,twindow,spatwindow,smartmatch=TRUE,certainty=NA
                                                              out$event_contenders,
                                                              out$episode_matched,
                                                              out$episode_contenders),
-                            twindow,spatwindow,smartmatch,certainty,k,secondary,partial,averaging,weight)
+                            twindow,spatwindow,smartmatch,certainty,k,secondary,partial,averaging,weight,silent)
       out$data[,1:2] <- data.frame(t(sapply(1:nrow(out$data),function(x) unlist(indexing[[out$data$dataset[x]]][out$data$event[x],])))) # restore correct indices in data
 
       # Bind past contenders with current
       out$event_contenders <- rbind(past_event_contenders,out$event_contenders)
       out$episode_contenders <- rbind(past_episode_contenders,out$episode_contenders)
+      cat('Done.')
     }
     out$data <- out$data[order(out$data$date,out$data$dataset,out$data$event),]
     row.names(out$data) <- NULL
@@ -330,5 +351,6 @@ meltt <- function(...,taxonomies,twindow,spatwindow,smartmatch=TRUE,certainty=NA
                      taxonomy = tax_stats)
 
   class(master.out) <- "meltt"
+  cat('\n Integration completed!')
   return(master.out)
 }

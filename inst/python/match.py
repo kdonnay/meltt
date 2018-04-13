@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# Copyright 2017 University of Maryland
+# Copyright 2018 University of Maryland
 #
-# This file is part of the "meltt" R Package.
+# This file is part of the "meltt" R Package by Karsten Donnay & Eric Dunford.
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU Lesser General Public License as published
@@ -17,7 +17,7 @@ import bisect
 import math
 
 
-def run(datainput, names, twindow, spatwindow, smartmatch, k, secondary, certainty, partial, weight, episodal):
+def run(datainput, names, twindow, spatwindow, smartmatch, k, secondary, certainty, partial, weight, episodal, silent):
     """
     Main method that implements full iterative pairwise data comparison and disambiguation functionality
     :param dict datainput: input datasets
@@ -31,6 +31,7 @@ def run(datainput, names, twindow, spatwindow, smartmatch, k, secondary, certain
     :param int partial: number of dimensions on which no matches are permitted
     :param list weight: weights of secondary event dimensions considered
     :param boolean episodal: sets whether or not code is run for episodal data
+    :param boolean silent: determines whether or not progress is shown
     :return: lists of all potential matches and of the best fitting matches selected
     """
     data = [[datainput[name][i] for name in names] for i in range(len(datainput[names[0]]))]
@@ -44,7 +45,7 @@ def run(datainput, names, twindow, spatwindow, smartmatch, k, secondary, certain
         secondary = [int(i) for i in secondary]
         certainty = [int(i) for i in certainty]
     secondary.insert(0, 0)
-    matches = compare(data, twindow, spatwindow, smartmatch, k, secondary, certainty, partial, weight, episodal)
+    matches = compare(data, twindow, spatwindow, smartmatch, k, secondary, certainty, partial, weight, episodal, silent)
     selected_matches = []
     if episodal == 0:
         selected_matches = select(matches)
@@ -53,7 +54,7 @@ def run(datainput, names, twindow, spatwindow, smartmatch, k, secondary, certain
     return matches, selected_matches
 
 
-def compare(data, twindow, spatwindow, smartmatch, k, secondary, certainty, partial, weight, episodal):
+def compare(data, twindow, spatwindow, smartmatch, k, secondary, certainty, partial, weight, episodal, silent):
     """
     Method implementing the pairwise comparison for a given spatial and temporal comparison horizon
     :param list data: data as (nested) list
@@ -66,6 +67,7 @@ def compare(data, twindow, spatwindow, smartmatch, k, secondary, certainty, part
     :param int partial: number of dimensions on which no matches are permitted
     :param list weight: weights of secondary event dimensions considered
     :param boolean episodal: sets whether or not code is run for episodal data
+    :param boolean silent: determines whether or not progress is shown
     :return: list of all potential matches
     """
     matches = []
@@ -74,6 +76,7 @@ def compare(data, twindow, spatwindow, smartmatch, k, secondary, certainty, part
     datasetindex.sort()
     index1 = [i for i, j in enumerate(col0) if j == datasetindex[0]]
     index2 = [i for i, j in enumerate(col0) if j == datasetindex[1]]
+    tick = math.ceil(len(index1)/5)
     for event1index in index1:
         event2counter = 0
         next_smaller_index = bisect.bisect(index2, event1index) - 1
@@ -177,6 +180,9 @@ def compare(data, twindow, spatwindow, smartmatch, k, secondary, certainty, part
                 if next_larger_index + event2counter >= len(index2):
                     check = 0
                 event2counter = event2counter + 1
+        if event1index > tick and not silent:
+            sys.stdout.write('.')
+            tick += tick
     return matches
 
 
