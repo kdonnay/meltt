@@ -8,8 +8,8 @@
 == 0.4.0 (13 Apr 2018) ==
    * Introduced meltt_validate() as a validation procedure for output
    * Added Rcpp src functionality for quick proximity calculation (internal)
-   * All new (interactive) mplot() function based exclusively using ggplot2 and leaflet
-   * Now using tidyverse to simplify data handling and processing
+   * All new (interactive) mplot() function based exclusively on ggplot2 and leaflet
+   * Now using tidyverse to streamline data handling and processing
    * New Python core completely based on list comprehension (removes numpy dependency) 
    * Other bug fixes and improvements
 
