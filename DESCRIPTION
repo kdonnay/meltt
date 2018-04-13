@@ -2,7 +2,7 @@ Package: meltt
 Type: Package
 Title: Matching Event Data by Location, Time and Type
 Version: 0.4.0
-Date: 2018-04-12
+Date: 2018-04-13
 Author: Karsten Donnay and Eric Dunford
 Maintainer: Karsten Donnay <kdonnay@gmx.net>
 Description: Framework for merging and disambiguating event data based on spatiotemporal co-occurrence and secondary event characteristics. It can account for intrinsic "fuzziness" in the coding of events, varying event taxonomies and different geo-precision codes.

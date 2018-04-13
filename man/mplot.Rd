@@ -7,7 +7,7 @@ Wrapper to generate an interactive spatial plot of meltt output data via Leaflet
 \code{mplot} provides an interactive javascript map to plot the spatial distribution of duplicate and unique entries in the integrated data.
 }
 \usage{
-mplot(object, matching = F, jitter=.0001)
+mplot(object, matching = FALSE, jitter=.0001)
 }
 \arguments{
   \item{object}{
@@ -16,8 +16,8 @@ mplot(object, matching = F, jitter=.0001)
 \item{matching}{
   if TRUE, plot only matching entries (i.e. duplicates and matches), else plot unique and matching entries. Default = \code{FALSE}.
 }
-\item{matching}{
-  Numeric value to jitter longitude and latitude points. Useful when points overlap. Default is an small jitter .0001
+\item{jitter}{
+  Numeric value to randomly offset longitude and latitude of points for plotting. Useful when points overlap. Default is a small jitter of .0001 degrees.
 }
 }
 \details{
@@ -28,7 +28,7 @@ Returns a javascript map, which renders in the user's viewer pane, of all unique
 
 }
 \references{
-Karsten Donnay, Eric Dunford, Erin C. McGrath, David Backer, David E. Cunningham. (2018). "Integrating Conflict Event Data." \emph{Journal of Conflict Resolution}.
+Karsten Donnay, Eric T. Dunford, Erin C. McGrath, David Backer, David E. Cunningham. (2018). "Integrating Conflict Event Data." \emph{Journal of Conflict Resolution}.
 }
 \author{
   Karsten Donnay and Eric Dunford.
@@ -37,10 +37,10 @@ Karsten Donnay, Eric Dunford, Erin C. McGrath, David Backer, David E. Cunningham
   \code{\link{meltt}}, \code{\link{tplot}}
 }
 \examples{
-\dontrun{
+\donttest{
 data(crashMD)
-output <- meltt(crash_data1,crash_data2,crash_data3,
-                taxonomies = crash_taxonomies,twindow = 1,spatwindow = 3)
+output <- meltt(crash_data1, crash_data2, crash_data3,
+                taxonomies = crash_taxonomies, twindow = 1,spatwindow = 3)
 
 mplot(output)
 }

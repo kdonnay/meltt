@@ -7,8 +7,8 @@ Matching Event Data by Location, Time and Type
 \code{meltt} merges and disambiguates event data based on spatiotemporal co-occurrence and secondary event characteristics. It can account for intrinsic "fuzziness" in the coding of events through the incorporation of user-specified taxonomies and adjusts for different degrees of geospatial and temporal precision by allowing for the specification of spatiotemporal "windows".
 }
 \usage{
-meltt(...,taxonomies,twindow,spatwindow,smartmatch=TRUE,
-	   certainty=NA,partial=0,averaging=FALSE,weight=NA)
+meltt(...,taxonomies, twindow, spatwindow, smartmatch = TRUE,
+	   certainty = NA, partial = 0, averaging = FALSE, weight = NA)
 }
 \arguments{
   \item{\dots}{
@@ -44,7 +44,7 @@ meltt(...,taxonomies,twindow,spatwindow,smartmatch=TRUE,
 
 The \code{twindow} and \code{spatwindow} inputs specify the temporal and spatial dimensions for which entries are considered to be spatio-temporally proximate, and with that, potential matches (i.e. duplicate entries). For all potential matches, \code{meltt} then leverages the secondary information about events (formalized through the mapping of categories specified in \code{taxonomies}) to identify most likely matches.
 
-\code{meltt} by default uses \code{smartmatch}, which leverages all taxonomy levels, i.e., establishes agreement on any taxonomy level while discounting inferior (i.e. more coarse) agreement using a matching score. When \code{smartmatch} is set to false, a \code{certainty} must be set, specifying which taxonomy level two events must agree on to be considered a match. 
+\code{meltt} by default uses \code{smartmatch}, which leverages all taxonomy levels, i.e., establishes agreement on any taxonomy level while discounting inferior (i.e. more coarse) agreement using a matching score. When \code{smartmatch} is set to false, a \code{certainty} must be set, specifying which taxonomy level (i.e., 1 for the base level of the taxonomy, 2 for the next broader level etc.) two events must agree on to be considered a match. 
 
 \code{partial} specifies the number of dimensions along which no matching information is permitted for events to still be considered a potential match. In this case, every dimension not matched is assigned the worst matching score in the calculation of the overall fit. By default, all dimensions are considered, i.e. \kbd{partial=0}. \code{averaging} allows for users to take the average of all input information (date, longitude, latitude, taxonomy, etc.) when merging more then one dataset. When set to \kbd{FALSE}, events use the input information of the first or most left dataset in the order the data was received.
 
@@ -55,7 +55,7 @@ The \code{twindow} and \code{spatwindow} inputs specify the temporal and spatial
 \value{
 Returns an object of class "meltt".
 
-The functions \code{summary}, \code{print}, \code{plot} overload the standard outputs for objects of type \code{meltt} providing summary information and and visualizations specific to the output object. The generic accessor functions \code{\link{meltt.data}}, \code{\link{meltt.duplicates}}, \code{\link{tplot}}, \code{\link{mplot}} extract various useful features of the integrated data frame: the unique de-duplicated entries, all duplicate entries (or matches), a histogram of the temporal distribution and a map of the integrated output.
+The functions \code{summary}, \code{print}, \code{plot} overload the standard outputs for objects of type \code{meltt} providing summary information and and visualizations specific to the output object. The generic accessor functions \code{\link{meltt_data}}, \code{\link{meltt_duplicates}}, \code{\link{tplot}}, \code{\link{mplot}} extract various useful features of the integrated data frame: the unique de-duplicated entries, all duplicate entries (or matches), a histogram of the temporal distribution and a map of the integrated output.
 
 An object of class "meltt" is a list containing at least the following components. First, a list named "processed" that contains all outputs of the integration process:
 
@@ -67,7 +67,7 @@ An object of class "meltt" is a list containing at least the following component
 
 \item{event_contenders}{Numeric matrix containing indices for each "runner up" event from each input dataset that was identified as a potential but less optimal match based on its matching score.}
 
-\item{episode_matched}{Numeric matrix containing indices for each matching "episodes" (i.e. events that span more than one time unit with an end and start date) from each input dataset. Only contains matches between episodes. Matches between events and episodes must be manually reviewed by users (see \code{\link{meltt.inspect}}).}
+\item{episode_matched}{Numeric matrix containing indices for each matching "episodes" (i.e. events that span more than one time unit with an end and start date) from each input dataset. Only contains matches between episodes. Matches between events and episodes must be manually reviewed by users (see \code{\link{meltt_inspect}}).}
 
 \item{episode_contenders}{Numeric matrix containing indices for each "runner up" episodes from each input dataset that was identified as a potential but less optimal match based on its matching score.}
 
@@ -81,28 +81,26 @@ Second, it contains a comprehensive summary of the input data, parameters and ta
 
 \item{taxonomy}{List containing the taxonomy (secondary assumption criteria) datasets used to integrate the input data. The list contains: the names of the taxonomies (which must match the names of the variables they seek to generalize in the input data), an integer of the number of input taxonomies, a vector containing information on the depth (i.e. the number of columns) of each taxonomy, and a list of the original input taxonomies.}
 }
-\note{
-\code{meltt} requires the Python package NumPy to run. The package automatically checks whether NumPy is installed at runtime and returns an error if it is not.
-}
+
 \references{
-Karsten Donnay, Eric Dunford, Erin C. McGrath, David Backer, David E. Cunningham. (2016). "MELTT: Matching Event Data by Location, Time and Type." Paper presented at \emph{Annual Conference of the Midwest Political Science Association}, April 7-10 2016, Chicago.
+Karsten Donnay, Eric T. Dunford, Erin C. McGrath, David Backer, David E. Cunningham. (2018). "Integrating Conflict Event Data." \emph{Journal of Conflict Resolution}.
 }
 \author{
   Karsten Donnay and Eric Dunford.
 }
 \seealso{
-\code{\link{meltt.data}}, \code{\link{meltt.duplicates}}, \code{\link{meltt.inspect}}, \code{\link{tplot}}, \code{\link{mplot}}
+\code{\link{meltt_data}}, \code{\link{meltt_duplicates}}, \code{\link{meltt_inspect}}, \code{\link{tplot}}, \code{\link{mplot}}
 }
 \examples{
-\dontrun{
+\donttest{
 data(crashMD)
-output <- meltt(crash_data1,crash_data2,crash_data3,
-                taxonomies = crash_taxonomies,twindow = 1,spatwindow = 3)
+output <- meltt(crash_data1, crash_data2, crash_data3,
+                taxonomies = crash_taxonomies, twindow = 1, spatwindow = 3)
 summary(output)
 plot(output)
 
 # Extract De-duplicated events
-dataset <- meltt.data(output)
+dataset <- meltt_data(output)
 head(dataset)
 }
 }

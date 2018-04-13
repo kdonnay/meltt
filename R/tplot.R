@@ -1,9 +1,11 @@
-tplot = function(object,time_unit="month",free_scale=T){
+tplot = function(object,time_unit="months",free_scale=TRUE){
   UseMethod('tplot')
 }
 
+# Variable declaration to satisfy CRAN check
+utils::globalVariables(c("data.source", "status", "n"))
 
-tplot.meltt = function(object,time_unit="month",free_scale=T){
+tplot.meltt = function(object,time_unit="months",free_scale=TRUE){
 
   n.datasets = length(object$inputDataNames)
   key = object$processed$deduplicated_index[,c(1,2)]
@@ -55,7 +57,7 @@ tplot.meltt = function(object,time_unit="month",free_scale=T){
     geom_hline(yintercept=0,lwd=1,color="grey30") +
     {
       if(free_scale){
-        facet_wrap(~status,scale="free_y",ncol=1,strip.position = "right")
+        facet_wrap(~status,scales="free_y",ncol=1,strip.position="right")
       }
     } +
     theme_light() +
@@ -64,6 +66,3 @@ tplot.meltt = function(object,time_unit="month",free_scale=T){
     theme(strip.placement = "inside",
           panel.grid.minor = element_blank())
 }
-
-
-

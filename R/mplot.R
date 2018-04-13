@@ -1,17 +1,21 @@
-mplot <- function(object,matching = F,jitter=.0001){
+mplot <- function(object,matching = FALSE,jitter=.0001){
   UseMethod("mplot")
 }
 
-mplot.meltt <- function(object,matching = F,jitter=.0001){
+# Variable declaration to satisfy CRAN check
+utils::globalVariables(c('key', 'val', 'index', 'dataset', 'event', 'color', 'longitude','latitude', 'type', 'descr', '.'))
+
+mplot.meltt <- function(object,matching = FALSE,jitter=.0001){
 
   # Isolate Unique Entries
   unis = meltt_data(object,c("dataset","event","longitude","latitude")) %>%
     mutate(type="Unique")
 
   # Isolate Duplicate Entries
-  dups = meltt_duplicates(object) %>%
+  all_duplicates = meltt_duplicates(object)
+  dups = all_duplicates %>%
     select(contains("_dataset"),contains("_eventID"),contains("_lon"),contains("_lat")) %>%
-    mutate(index = row_number()) %>%
+    mutate(index = 1:nrow(all_duplicates)) %>%
     gather(key,val,-index) %>%
     mutate(dataset = gsub("_dataset|_eventID|_lat+\\w+|_lon\\w+|_lat|_lon","",key),
            event = ifelse(grepl("_eventID",key),val,NA),
@@ -79,7 +83,3 @@ mplot.meltt <- function(object,matching = F,jitter=.0001){
               title = "",opacity = 1) %>%
     addMiniMap()
 }
-
-
-
-

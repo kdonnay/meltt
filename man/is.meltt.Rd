@@ -17,7 +17,7 @@ is.meltt(object)
 \code{is.meltt} returns \code{TRUE} or \code{FALSE} depending on whether its argument is of type \code{meltt} or not.
 }
 \references{
-Karsten Donnay, Eric Dunford, Erin C. McGrath, David Backer, David E. Cunningham. (2016). "MELTT: Matching Event Data by Location, Time and Type." Paper presented at \emph{Annual Conference of the Midwest Political Science Association}, April 7-10 2016, Chicago.
+Karsten Donnay, Eric T. Dunford, Erin C. McGrath, David Backer, David E. Cunningham. (2018). "Integrating Conflict Event Data." \emph{Journal of Conflict Resolution}.
 }
 \author{
   Karsten Donnay and Eric Dunford.
@@ -26,7 +26,7 @@ Karsten Donnay, Eric Dunford, Erin C. McGrath, David Backer, David E. Cunningham
   \code{\link{meltt}}
 }
 \examples{
-\dontrun{
+\donttest{
 data(crashMD)
 output <- meltt(crash_data1,crash_data2,crash_data3,
                 taxonomies = crash_taxonomies,twindow = 1,spatwindow = 3)

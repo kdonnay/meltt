@@ -4,4 +4,3 @@
 proximity <- function(dat, t, s) {
     .Call('_meltt_proximity', PACKAGE = 'meltt', dat, t, s)
 }
-

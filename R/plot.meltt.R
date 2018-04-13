@@ -1,3 +1,6 @@
+# Variable declaration to satisfy CRAN check
+utils::globalVariables(c('total', 'Unique Entries', 'key', 'value', 'prop'))
+
 plot.meltt <- function(x,...){
 
   # Gather statistics

@@ -7,8 +7,8 @@ Performing iterative comparison and matching [Auxiliary Function]
 Auxiliary function that generates an R wrapper around the main python function used to process the numerical matrix generated in \code{meltt}. Returns a summary of matched entries. 
 }
 \usage{
-meltt.match(data,twindow,spatwindow,smartmatch,certainty,k,
-	     secondary,partial,weight,episodal)
+meltt.match(data, twindow, spatwindow, smartmatch, certainty, k,
+	    secondary, partial, weight, episodal)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -45,7 +45,7 @@ meltt.match(data,twindow,spatwindow,smartmatch,certainty,k,
 }
 
 \details{
-Main Auxilary wrapper function that passes the processed data matrix from \code{meltt} to the python code used to manage the matching procedure.
+Main auxiliary wrapper function that passes the processed data matrix from \code{meltt} to the python code used to manage the matching procedure.
 }
 \value{
 Returns a list object containing output of matching entries and a matrix of optimal selected matches.
@@ -54,7 +54,7 @@ Returns a list object containing output of matching entries and a matrix of opti
 \code{meltt.match} requires the Python package NumPy to run. The package automatically checks whether NumPy is installed at runtime and returns an error if it is not.
 }
 \references{
-Karsten Donnay, Eric Dunford, Erin C. McGrath, David Backer, David E. Cunningham. (2016). "MELTT: Matching Event Data by Location, Time and Type." Paper presented at \emph{Annual Conference of the Midwest Political Science Association}, April 7-10 2016, Chicago.
+Karsten Donnay, Eric T. Dunford, Erin C. McGrath, David Backer, David E. Cunningham. (2018). "Integrating Conflict Event Data." \emph{Journal of Conflict Resolution}.
 }
 \author{
   Karsten Donnay and Eric Dunford.

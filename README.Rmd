@@ -299,4 +299,4 @@ str(output$processed$event_contenders)
 - License:  LGPL-3
 - Get citation information for `meltt` in R using `citation(package = 'meltt')`
 - CRAN: https://cran.r-project.org/package=meltt
-- Check out our forthcoming article in the [Journal of Conflict Resolution](https://www.google.com/search?q=journal+of+conflict+resolution&oq=Journal+of+con&aqs=chrome.1.69i57j0l2j69i65j0l2.8015j0j7&sourceid=chrome&ie=UTF-8) for more details on the algorithm, its functionality, and applications to conflict research.
+- Check out our forthcoming article in the [Journal of Conflict Resolution](http://journals.sagepub.com/loi/jcr) for more details on the algorithm, its functionality, and applications to conflict research.

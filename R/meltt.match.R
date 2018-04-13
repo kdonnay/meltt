@@ -1,6 +1,11 @@
 meltt.match <- function(data,twindow,spatwindow,smartmatch,certainty,k,secondary,partial,weight,episodal){
+  
   if (smartmatch==TRUE){
+    # set default value
     certainty <- rep(0,k)
+  }else{
+    # certainty entered as levels but zero-based notation in Python
+    certainty <- certainty - 1
   }
   
   # SORT by timestamp and remove last columns, if necessary

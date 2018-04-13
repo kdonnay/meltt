@@ -1,13 +1,13 @@
 \name{meltt.disambiguate}
 \alias{meltt.disambiguate}
 \title{
-Tracking and indexing of matching entries  [Auxiliary Function]
+Tracking and indexing of matching entries [Auxiliary Function]
 }
 \description{
 Auxiliary function used within \code{meltt} to index events as multiple datasets are processed.
 }
 \usage{
-meltt.disambiguate(data,match_output,indexing,priormatches,averaging)
+meltt.disambiguate(data, match_output, indexing, priormatches, averaging)
 }
 \arguments{
   \item{data}{
@@ -33,7 +33,7 @@ Auxilary function used within \code{meltt} to index events as multiple datasets 
 \code{meltt.disambiguate} returns a list containing two object: a data frame with all located matches paired and a new index, specifying the data frame as a single frame, and a running index of all matched events.
 }
 \references{
-Karsten Donnay, Eric Dunford, Erin C. McGrath, David Backer, David E. Cunningham. (2016). "MELTT: Matching Event Data by Location, Time and Type." Paper presented at \emph{Annual Conference of the Midwest Political Science Association}, April 7-10 2016, Chicago.
+Karsten Donnay, Eric T. Dunford, Erin C. McGrath, David Backer, David E. Cunningham. (2018). "Integrating Conflict Event Data." \emph{Journal of Conflict Resolution}.
 }
 \author{
   Karsten Donnay and Eric Dunford.

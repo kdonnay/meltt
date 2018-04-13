@@ -7,7 +7,7 @@ Handling of taxonomy inputs [Auxiliary Function].
 Auxiliary function that maps secondary taxonomies onto the input data and transforms the taxonomies into a numerical matrices.
 }
 \usage{
-meltt.taxonomy(data,taxonomies)
+meltt.taxonomy(data, taxonomies)
 }
 \arguments{
   \item{data}{
@@ -21,10 +21,10 @@ meltt.taxonomy(data,taxonomies)
 \code{meltt.taxonomy} maps the user-created taxonomies onto the input data, and converts the taxonomy to a numerical matrix. The taxonomies are used as secondary criteria in the matching procedure. 
 }
 \value{
-Returns a numerical matrix that contains all data indices, date/enddate, lon/lat, and taxonomies. 
+Returns a numerical matrix that contains all data indices, date/enddate, longitude/latitude, and taxonomies. 
 }
 \references{
-Karsten Donnay, Eric Dunford, Erin C. McGrath, David Backer, David E. Cunningham. (2016). "MELTT: Matching Event Data by Location, Time and Type." Paper presented at \emph{Annual Conference of the Midwest Political Science Association}, April 7-10 2016, Chicago.
+Karsten Donnay, Eric T. Dunford, Erin C. McGrath, David Backer, David E. Cunningham. (2018). "Integrating Conflict Event Data." \emph{Journal of Conflict Resolution}.
 }
 \author{
 Karsten Donnay and Eric Dunford.

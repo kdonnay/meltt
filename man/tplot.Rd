@@ -7,17 +7,17 @@ Temporal distribution of meltt output data.
 \code{tplot} provides a histogram of integrated data that plots the temporal distribution of duplicate and unique entries
 }
 \usage{
-tplot(object,time_unit="month",free_scale=T)
+tplot(object, time_unit = "months", free_scale = TRUE)
 }
 \arguments{
   \item{object}{
   object of class \code{\link{meltt}}.
 }
   \item{time_unit}{
-  character specifying the temporal bin: "day", "week", "month", and "year". Default = "month".
+  character specifying the temporal bin: \kbd{"days"}, \kbd{"weeks"}, \kbd{"months"}, and \kbd{"years"}. \code{Default = "months"}.
 }
  \item{free_scale}{
-  boolean if duplicates should be presented on a different scale from unique entries. A free scale makes it easier to assess the number of duplicate entries and from which input data they emerge, given that there can relatively few at times. Default = TRUE.
+  boolean if duplicates should be presented on a different scale from unique entries. A free scale makes it easier to assess the number of duplicate entries and from which input data they emerge, given that there can be relatively few at times. \code{Default = TRUE}.
 }
 }
 \details{
@@ -27,7 +27,7 @@ tplot(object,time_unit="month",free_scale=T)
 Returns a histogram plot where the y-axis is a frequency capturing the total number of events for that time period, and the x-axis is time.
 }
 \references{
-Karsten Donnay, Eric Dunford, Erin C. McGrath, David Backer, David E. Cunningham. (2018). "Integrating Conflict Event Data." \emph{Journal of Conflict Resolution}.
+Karsten Donnay, Eric T. Dunford, Erin C. McGrath, David Backer, David E. Cunningham. (2018). "Integrating Conflict Event Data." \emph{Journal of Conflict Resolution}.
 }
 \author{
   Karsten Donnay and Eric Dunford.
@@ -36,15 +36,15 @@ Karsten Donnay, Eric Dunford, Erin C. McGrath, David Backer, David E. Cunningham
   \code{\link{meltt}}, \code{\link{mplot}}
 }
 \examples{
-\dontrun{
+\donttest{
 data(crashMD)
-output <- meltt(crash_data1,crash_data2,crash_data3,
-                      taxonomies = crash_taxonomies,twindow = 1,spatwindow = 3)
+output <- meltt(crash_data1, crash_data2, crash_data3,
+                      taxonomies = crash_taxonomies, twindow = 1, spatwindow = 3)
 
 # Free scale
-tplot(output,time_unit="day")
+tplot(output, time_unit = "days")
 
 # Relative scale
-tplot(output,time_unit="day",free_scale=F)
+tplot(output, time_unit = "days", free_scale = FALSE)
 }
 }

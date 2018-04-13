@@ -9,7 +9,7 @@ These taxonomies formalize how the information about model, color, and type of a
 \format{A list of three \code{data.frame} containing information about the different categories (specific to general) of models, colors and degree of damages coded in each dataset.}
 \source{Simulated data.}
 \references{
-Karsten Donnay, Eric Dunford, Erin C. McGrath, David Backer, David E. Cunningham. (2016). "MELTT: Matching Event Data by Location, Time and Type." Paper presented at \emph{Annual Conference of the Midwest Political Science Association}, April 7-10 2016, Chicago.
+Karsten Donnay, Eric T. Dunford, Erin C. McGrath, David Backer, David E. Cunningham. (2018). "Integrating Conflict Event Data." \emph{Journal of Conflict Resolution}.
 }
 \author{
   Karsten Donnay and Eric Dunford.

@@ -2,14 +2,16 @@ meltt_validate = function(
   object,# Meltt object
   description.vars = NULL, # Varibles to consider in the description; if none are provided, taxonomy levels are used.
   sample_prop = .1, # the proportion of matches sampled (which determines the size of the control group); minimum bound of .01% is placed on this
-  within_window = T, # generate entries within the meltt integration s/t window
+  within_window = TRUE, # generate entries within the meltt integration s/t window
   spatial_window = NULL, # if within_window==F, set new s window
   temporal_window = NULL, # if within_window==F, set new t window
-  reset = F # If T, the validation step will be reset and a new validation sample frame will be produced.
+  reset = FALSE # If TRUE, the validation step will be reset and a new validation sample frame will be produced.
 ){
   UseMethod("meltt_validate")
 }
 
+# Variable declaration to satisfy CRAN check
+utils::globalVariables(c('uid', 'm1', 'm2','cohort'))
 
 meltt_validate.meltt = function(
   object,# Meltt object
@@ -18,13 +20,8 @@ meltt_validate.meltt = function(
   within_window = T, # generate entries within the meltt integration s/t window
   spatial_window = NULL, # if within_window==F, set new s window
   temporal_window = NULL, # if within_window==F, set new t window
-  reset = F # If T, the validation step will be reset and a new validation sample frame will be produced.
+  reset = FALSE # If T, the validation step will be reset and a new validation sample frame will be produced.
 ){
-  # initialize variables to satisfy CRAN check
-  # uid <- NULL
-  # m1 <- NULL
-  # m2 <- NULL
-  # cohort <- NULL
 
   # The "Choose from 3-options" version
   obj_name <- deparse(substitute(object))
@@ -416,7 +413,7 @@ meltt_validate.meltt = function(
       object$validation$placeholder <<- .n
       cat("Input object has been overwritten, retaining current work.\n\n")
       # Export main data object on cancel
-      stopApp(assign(as.character(obj_name),object,envir = globalenv()))
+      stopApp((function(key,val,pos) assign(key,val,envir = as.environment(pos)))(as.character(obj_name),object,1L))
       # stopApp(object)
     })
 
@@ -464,7 +461,7 @@ meltt_validate.meltt = function(
         round(object$validation$params$sample_proportion*100,2)
         ,"% of the matched pairs -- from the integrated data were manually reviewed.",
         "2 controls (entries not identified as matches) are randomly drawn from pool of events in proximity for each match.")
-    assign(as.character(obj_name),object,envir = .GlobalEnv)
+    (function(key,val,pos) assign(key,val,envir = as.environment(pos)))(as.character(obj_name),object,1L)
   }
 
 

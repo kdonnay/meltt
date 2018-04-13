@@ -8,8 +8,7 @@ meltt <- function(...,taxonomies,twindow,spatwindow,smartmatch=TRUE,certainty=NA
   min_date <- min(hh) # locate global minimum date
   tax_names <- names(taxonomies)
   k <- length(taxonomies)
-  secondary <- c()
-  for(iter in 1:k){secondary = c(secondary,ncol(taxonomies[[iter]])-2)}
+  secondary <- sapply(1:k,function(x) length(taxonomies[[x]])-2)
 
   # CHECK if input data is appropriately formatted
   missing_arguments <- c()
@@ -120,7 +119,7 @@ meltt <- function(...,taxonomies,twindow,spatwindow,smartmatch=TRUE,certainty=NA
       if (length(certainty)!=k){
         missing_arguments <- append(missing_arguments,'\n  certainty must be specified for each taxonomy')
         terminate <- TRUE
-      }else if (any(certainty<0) | any(secondary-certainty<0)){
+      }else if (any(certainty<1) | any(secondary-certainty<0)){
         missing_arguments <- append(missing_arguments,'\n  certainty (out of value range)')
         terminate <- TRUE
       }

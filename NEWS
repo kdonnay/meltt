@@ -5,12 +5,13 @@
 //
 
 
-== 0.4.0 (13 Dec 2017) ==
-   * Introduced meltt.validate as a validation procedure for output
+== 0.4.0 (13 Apr 2018) ==
+   * Introduced meltt_validate() as a validation procedure for output
    * Added Rcpp src functionality for quick proximity calculation (internal)
-   * Fixed index propagation to retain event indices according to event order in inputs
+   * All new (interactive) mplot() function based exclusively using ggplot2 and leaflet
+   * Now using tidyverse to simplify data handling and processing
    * New Python core completely based on list comprehension (removes numpy dependency) 
-   * Other small bug fixes and improvements
+   * Other bug fixes and improvements
 
 == 0.3.3 (10 Oct 2017) ==
    * Fixed issue with automatic color and shape propagation in mplot()
@@ -18,11 +19,11 @@
 
 == 0.3.2 (26 Aug 2017) ==
    * Fixed indexing issue in meltt() affecting datasets featuring events and episodes
-   * Resolved possible column argument issue in meltt.data()
-   * Updated meltt.inspect() for consistency with extended package functionality
-   * Fixed incorrect propagation of meltt.data() output within mplot()
+   * Resolved possible column argument issue in meltt_data()
+   * Updated meltt_inspect() for consistency with extended package functionality
+   * Fixed incorrect propagation of meltt_data() output within mplot()
 
 == 0.3.1 (19 Jul 2017) ==
-   * Fixed issue in meltt() affecting meltt.duplicates() for non time-ordered input data
-   * Extended functionality of meltt.data() to retrieve any column
+   * Fixed issue in meltt() affecting meltt_duplicates() for non time-ordered input data
+   * Extended functionality of meltt_data() to retrieve any column
    * Fixed other small bugs and issues

@@ -49,7 +49,7 @@ meltt_inspect.meltt = function(object,columns=NULL,confirmed_matches=NULL){
     if(length(confirmed_matches)<length(flagged_entries)){stop("Vector provided to the 'confirmed_matches' argument contains less entries than the number flagged matches")}
 
     keep = flagged_entries[confirmed_matches]
-    unique_entries = meltt.data(object,columns=orig_columns)
+    unique_entries = meltt_data(object,columns=orig_columns)
     for(k in seq_along(keep)){
       remove = keep[[k]][[2]][,c("data.source","obs.count")]
       unique_entries = unique_entries[(unique_entries$dataset != remove[,1]) | (unique_entries$event != remove[,2]),]

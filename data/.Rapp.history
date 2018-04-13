@@ -1,3 +1,0 @@
-load("/Users/edunford/Desktop/meltt_0.2.2/data/crashMD.Rdata")
-load("/Users/kdonnay/Dropbox/INSPIRE project/Iterative Procedure/meltt package/meltt_0.2.2/data/crashMD.Rdata")
-save(crashMD,"/Users/kdonnay/Desktop/crashMD.rda")

@@ -21,7 +21,7 @@ Overloads the default \code{plot()} for objects of class \code{meltt}.
 Returns a bar plot outlining the proportion of events that are unique and duplicates from an object of class \code{meltt}.
 }
 \references{
-Karsten Donnay, Eric Dunford, Erin C. McGrath, David Backer, David E. Cunningham. (2016). "MELTT: Matching Event Data by Location, Time and Type." Paper presented at \emph{Annual Conference of the Midwest Political Science Association}, April 7-10 2016, Chicago.
+Karsten Donnay, Eric T. Dunford, Erin C. McGrath, David Backer, David E. Cunningham. (2018). "Integrating Conflict Event Data." \emph{Journal of Conflict Resolution}.
 }
 \author{
   Karsten Donnay and Eric Dunford.
@@ -30,7 +30,7 @@ Karsten Donnay, Eric Dunford, Erin C. McGrath, David Backer, David E. Cunningham
   \code{\link{meltt}}
 }
 \examples{
-\dontrun{
+\donttest{
 data(crashMD)
 output <- meltt(crash_data1,crash_data2,crash_data3,
                 taxonomies = crash_taxonomies,twindow = 1,spatwindow = 3)
