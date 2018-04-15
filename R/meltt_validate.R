@@ -433,9 +433,9 @@ meltt_validate.meltt = function(
     reviewed = drop_na(reviewed)
 
     TP  = sum(reviewed$match == 1 & reviewed$coding == 1)/nrow(reviewed)
-    FP  = sum(reviewed$match == 0 & reviewed$coding == 1)/nrow(reviewed)
+    FP  = sum(reviewed$match == 1 & reviewed$coding == 0)/nrow(reviewed)
     TN  = sum(reviewed$match == 0 & reviewed$coding == 0)/nrow(reviewed)
-    FN  = sum(reviewed$match == 1 & reviewed$coding == 0)/nrow(reviewed)
+    FN  = sum(reviewed$match == 0 & reviewed$coding == 1)/nrow(reviewed)
     TPR = TP + TN
     FPR = FP + FN
 
