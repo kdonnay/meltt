@@ -441,26 +441,19 @@ meltt_validate.meltt = function(
 
 
     # Save rates in object
-    object$validation$rates <- list("True Positives"=round(TP,3),
-                                    "False Positives"=round(FP,3),
-                                    "True Negatives"=round(TN,3),
-                                    "False Negatives"=round(FN,3))
+    object$validation$rates <- list("True Positive Rate"=round(TPR,3),
+                                    "False Positive Rate"=round(FPR,3))
 
     # Print accuracty output
-    accuracy = matrix(round(c(TP,FP,TN,FN),3),2,2)
-    colnames(accuracy) = c("Postives","Negatives")
-    rownames(accuracy) = c("True","False")
     rates = matrix(paste0(round(c(TPR,FPR),3)*100,"%"),1,2)
-    cat("\n\nMELTT Performance Accuracy of Integrated Sample \n",
-        paste0(rep("---",12),collapse=""),"\n")
-    print(accuracy)
+    cat("\n\nMELTT Performance Accuracy of Integrated Sample \n")
     cat("",paste0(rep("---",12),collapse=""),"\n")
     cat("TPR: ",rates[1],"\n")
     cat("FPR: ",rates[2],"\n")
     cat("",paste0(rep("---",12),collapse=""),"\nA sample of",nrow(reviewed)/3,"observations --",
         round(object$validation$params$sample_proportion*100,2)
         ,"% of the matched pairs -- from the integrated data were manually reviewed.",
-        "2 controls (entries not identified as matches) are randomly drawn from pool of events in proximity for each match.")
+        "2 controls (entries not identified as matches) were randomly drawn from pool of events in proximity for each match.")
     (function(key,val,pos) assign(key,val,envir = as.environment(pos)))(as.character(obj_name),object,1L)
   }
 
