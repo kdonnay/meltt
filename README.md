@@ -318,8 +318,8 @@ plot(output)
 Users can specify the temporal unit that the data should be binned (day, week, month, year).
 
 ``` r
-t1 <- tplot(output, time_unit="day")
-t2 <- tplot(output, time_unit="week")
+t1 <- tplot(output, time_unit="days")
+t2 <- tplot(output, time_unit="weeks")
 gridExtra::grid.arrange(t1,t2)
 ```
 
@@ -338,7 +338,7 @@ mplot(output)
 To view duplicate and matched events (i.e. the types of data retrieved via `meltt_duplicates()`), set the `matching=` argument to `TRUE`.
 
 ``` r
-mplot(output,matching = T) 
+mplot(output, matching = TRUE) 
 ```
 
 ### Extracting Data
@@ -348,7 +348,7 @@ mplot(output,matching = T)
 `meltt_data()` returns the de-duplicated data along with any necessary columns the user might need. This is the primary function for extracting matched data and moving on with subsequent analysis. The `columns =` argument takes any vector of variable names and returns those variables in the output. If no variables are specified, `meltt` returns the spatio-temporal and taxonomy variables that were employed during the match. In addition, the function returns a unique event and data ID for reference.
 
 ``` r
-uevents <- meltt_data(output,columns = c("date","model_tax"))
+uevents <- meltt_data(output, columns = c("date","model_tax"))
 
 str(uevents)
 ```
@@ -366,7 +366,7 @@ str(uevents)
 Note that the data is presented differently than in `meltt_data()`; here each dataset (and its corresponding variables) is presented in a separate column. This representation is chose for ease of comparison. For example, the entry for row 1 denotes that the 55th entry in the crash\_data2 data matched with entry 57 from the crash\_data3, whereas no entry from crash\_data1 matched (as indicated with "dataID" and "eventID" 0 and "date" NA). The requested columns are intended to assist with validation.
 
 ``` r
-dups <- meltt_duplicates(output,columns = c("date"))
+dups <- meltt_duplicates(output, columns = c("date"))
 str(dups)
 ```
 
@@ -390,7 +390,7 @@ str(dups)
 3.  **Reports accuracy statistics**: once the validation set has been manually reviewed, `meltt_validate()` collapses into a simple print function that reports accuracy diagnostics (i.e. the true/false positive/negative rates).
 
 ``` r
-meltt_validate(output,sample_prop = .5,description.vars = c("date","model_tax"))
+meltt_validate(output, sample_prop = .5, description.vars = c("date","model_tax"))
 ```
 
 Given that `meltt` operates primarily on user input assumptions, validating the output of any integration task is key as assumptions often need to be adjusted to optimize the matching algorithm.
