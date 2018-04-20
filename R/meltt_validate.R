@@ -185,7 +185,7 @@ meltt_validate.meltt = function(
       })
     entries_info <- as.tibble(ldply(entries_info))
 
-    formatted <- apply(entries_info[,c(1:2)*-1],1,function(x){
+    formatted <- apply(entries_info[,c(1:3)*-1],1,function(x){
       x = iconv(x, "latin1", "ASCII", sub="") # Remove any potential encoding issues
       paste0(paste(paste0("<b><i>",names(x),"</i></b>"),x,sep=": "),collapse = "<br/><br/>")
       # paste0(paste(names(x),x,sep=": "),collapse = "\n\n")
