@@ -432,4 +432,4 @@ Meta
 -   License: LGPL-3
 -   Get citation information for `meltt` in R using `citation(package = 'meltt')`
 -   CRAN: <https://cran.r-project.org/package=meltt>
--   Check out our forthcoming article in the [Journal of Conflict Resolution](http://journals.sagepub.com/home/jcrb) for more details on the algorithm, its functionality, and applications to conflict research.
+-   Check out our article in the [Journal of Conflict Resolution](https://doi.org/10.1177/0022002718777050) for more details on the algorithm, its functionality, and applications to conflict research.
