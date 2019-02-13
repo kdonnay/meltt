@@ -174,7 +174,11 @@ meltt <- function(...,taxonomies,twindow,spatwindow,smartmatch=TRUE,certainty=NA
       }
       datecheck <- try(as.Date(date_col, format= "%Y-%m-%d %H:%M:%S"))
       if (any(class(datecheck) == "try-error" || is.na(datecheck))){
-        missing_arguments <- append(missing_arguments,"\n  data: date entry 'NA' or wrong format (must be 'YYYY-MM-DD hh:mm:ss')")
+        missing_arguments <- append(missing_arguments,"\n  data: date format must be 'YYYY-MM-DD hh:mm:ss'")
+        terminate <- TRUE
+      }
+      if (any(is.na(date_col))){
+        missing_arguments <- append(missing_arguments,"\n  data: date must be well-defined for all entries ('NA' values exist)")
         terminate <- TRUE
       }
     }
