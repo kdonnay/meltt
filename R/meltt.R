@@ -161,24 +161,24 @@ meltt <- function(...,taxonomies,twindow,spatwindow,smartmatch=TRUE,certainty=NA
   }
   for (dat in 1:length(datasets)){
     if (!is.element('date',names(eval(datasets[[dat]])))){
-      missing_arguments <- append(missing_arguments,paste0('\n  data: date column(s) are missing in ',as.character(datasets[[dat]]),''))
+      missing_arguments <- append(missing_arguments,paste0("\n  data: date column(s) are missing in ',as.character(datasets[[dat]]),'"))
       terminate <- TRUE
     }else{
       date_col = as.data.frame(eval(datasets[[dat]]))[,'date']
       if(class(date_col)!="Date"){
         missing_arguments <- append(missing_arguments,
-                                    paste0('\n  data: date column in ',as.character(datasets[[dat]])," is not of class 'Date'"))
+                                    paste0("\n  data: date column in '",as.character(datasets[[dat]]),"' is not of class 'Date'"))
         terminate <- TRUE
       }
       datecheck <- try(as.Date(date_col, format= "%Y-%m-%d %H:%M:%S"))
       if (any(class(datecheck) == "try-error" || is.na(datecheck))){
-        missing_arguments <- append(missing_arguments,paste0("\n  data: 'date' column in",as.character(datasets[[dat]]),
-                                                             "  must be formatted as 'YYYY-MM-DD hh:mm:ss'")
+        missing_arguments <- append(missing_arguments,paste0("\n  data: 'date' column in '",as.character(datasets[[dat]]),
+                                                             "' must be formatted as 'YYYY-MM-DD hh:mm:ss'\n")
         terminate <- TRUE
       }
       if (any(is.na(date_col))){
-        missing_arguments <- append(missing_arguments,paste0("\n  data: date column in ",as.character(datasets[[dat]]),
-                                                             "  must be well-defined for all entries ('NA' values exist)\n"))
+        missing_arguments <- append(missing_arguments,paste0("\n  data: date column in '",as.character(datasets[[dat]]),
+                                                             "' must be well-defined for all entries ('NA' values exist)\n"))
         terminate <- TRUE
       }
     }
@@ -187,32 +187,32 @@ meltt <- function(...,taxonomies,twindow,spatwindow,smartmatch=TRUE,certainty=NA
                                                            "'. If an end date variable exists, please relabel as 'enddate'.\n"))
     }
     if (!is.element('latitude',names(eval(datasets[[dat]])))){
-      missing_arguments <- append(missing_arguments,paste0("\n  data: latitude column is missing in ",as.character(datasets[[dat]]),"\n"))
+      missing_arguments <- append(missing_arguments,paste0("\n  data: latitude column is missing in '",as.character(datasets[[dat]]),"'\n"))
       terminate <- TRUE
     } else{
       if(!is.numeric(as.data.frame(eval(datasets[[dat]]))[,'latitude'])){
         missing_arguments <- append(missing_arguments,paste0('\n  data: latitude column in ',as.character(datasets[[dat]]),
-                                                             " is not class 'Numeric' \n"))
+                                                             "' is not class 'Numeric' \n"))
         terminate <- TRUE
       }
       if(any(is.na(as.data.frame(eval(datasets[[dat]]))[,'latitude']))){
-        missing_arguments <- append(missing_arguments,paste0('\n  data: latitude column in ',as.character(datasets[[dat]]),
-                                                             "  must be well-defined for all entries ('NA' values exist)\n"))
+        missing_arguments <- append(missing_arguments,paste0("\n  data: latitude column in '",as.character(datasets[[dat]]),
+                                                             "'  must be well-defined for all entries ('NA' values exist)\n"))
         terminate <- TRUE
       }
     }
     if (!is.element('longitude',names(eval(datasets[[dat]])))){
-      missing_arguments <- append(missing_arguments,paste0('\n  data: longitude column is missing in ',as.character(datasets[[dat]]),''))
+      missing_arguments <- append(missing_arguments,paste0("\n  data: longitude column is missing in ',as.character(datasets[[dat]]),'"))
       terminate <- TRUE
     } else{
       if(!is.numeric(as.data.frame(eval(datasets[[dat]]))[,'longitude'])){
-        missing_arguments <- append(missing_arguments,paste0('\n  data: longitude column in ',as.character(datasets[[dat]]),
-                                                             " is not class 'Numeric'"))
+        missing_arguments <- append(missing_arguments,paste0("\n  data: longitude column in '",as.character(datasets[[dat]]),
+                                                             "' is not class 'Numeric'"))
         terminate <- TRUE
       }
       if(any(is.na(as.data.frame(eval(datasets[[dat]]))[,'longitude']))){
-        missing_arguments <- append(missing_arguments,paste0('\n  data: longitude column in ',as.character(datasets[[dat]]),
-                                                             "  must be well-defined for all entries ('NA' values exist)\n"))
+        missing_arguments <- append(missing_arguments,paste0("\n  data: longitude column in '",as.character(datasets[[dat]]),
+                                                             "'  must be well-defined for all entries ('NA' values exist)\n"))
         terminate <- TRUE
       }
     }
