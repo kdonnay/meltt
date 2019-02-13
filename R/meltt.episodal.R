@@ -91,7 +91,7 @@ meltt.episodal <- function(data,indexing,priormatches,twindow,spatwindow,smartma
 
   # MARK all events that have episodal matches
   if (!is.element("episodal_match",names(out$data))){
-    out$data$episodal_match <- ""
+    out$data$episodal_match <- character(0)
   }
   if (nrow(out_12$selected_matches)+nrow(out_21$selected_matches)>0){
     all_matches <- rbind(out_12$selected_matches[,1:4],out_21$selected_matches[,1:4])
