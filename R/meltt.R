@@ -183,7 +183,7 @@ meltt <- function(...,taxonomies,twindow,spatwindow,smartmatch=TRUE,certainty=NA
       }
     }
     if (!is.element('enddate',names(eval(datasets[[dat]]))) & enddate_check){
-      warning_arguments <- append(warning_arguments,paste0("\n One or more of the input datasets contains episodal data but no 'enddate' varible was specified for dataset '",as.character(datasets[[dat]]),
+      warning_arguments <- append(warning_arguments,paste0("\n  One or more of the input datasets contains episodal data but no 'enddate' varible was specified for dataset '",as.character(datasets[[dat]]),
                                                            "'. If an end date variable exists, please relabel as 'enddate'.\n"))
     }
     if (!is.element('latitude',names(eval(datasets[[dat]])))){
@@ -197,7 +197,7 @@ meltt <- function(...,taxonomies,twindow,spatwindow,smartmatch=TRUE,certainty=NA
       }
       if(any(is.na(as.data.frame(eval(datasets[[dat]]))[,'latitude']))){
         missing_arguments <- append(missing_arguments,paste0("\n  data: latitude column in '",as.character(datasets[[dat]]),
-                                                             "'  must be well-defined for all entries ('NA' values exist)\n"))
+                                                             "' must be well-defined for all entries ('NA' values exist)\n"))
         terminate <- TRUE
       }
     }
@@ -212,7 +212,7 @@ meltt <- function(...,taxonomies,twindow,spatwindow,smartmatch=TRUE,certainty=NA
       }
       if(any(is.na(as.data.frame(eval(datasets[[dat]]))[,'longitude']))){
         missing_arguments <- append(missing_arguments,paste0("\n  data: longitude column in '",as.character(datasets[[dat]]),
-                                                             "'  must be well-defined for all entries ('NA' values exist)\n"))
+                                                             "' must be well-defined for all entries ('NA' values exist)\n"))
         terminate <- TRUE
       }
     }
