@@ -277,7 +277,9 @@ meltt <- function(...,taxonomies,twindow,spatwindow,smartmatch=TRUE,certainty=NA
       # new joined data
       dat <- rbind(dat,dat_new)
       out <- meltt.episodal(dat,indexing,priormatches = c(),twindow,spatwindow,smartmatch,certainty,k,secondary,partial,averaging,weight,silent)
-      out$data[,1:2] <- data.frame(t(sapply(1:nrow(out$data),function(x) unlist(indexing[[out$data$dataset[x]]][out$data$event[x],])))) # restore correct indices in data
+      if nrow(out$data) > 0{
+        out$data[,1:2] <- data.frame(t(sapply(1:nrow(out$data),function(x) unlist(indexing[[out$data$dataset[x]]][out$data$event[x],])))) # restore correct indices in data
+      }
       cat('Done.')
     }else{
       cat(paste0('\n Integrating merged data and dataset ',datst,': '))
@@ -303,7 +305,9 @@ meltt <- function(...,taxonomies,twindow,spatwindow,smartmatch=TRUE,certainty=NA
                                                              out$episode_matched,
                                                              out$episode_contenders),
                             twindow,spatwindow,smartmatch,certainty,k,secondary,partial,averaging,weight,silent)
-      out$data[,1:2] <- data.frame(t(sapply(1:nrow(out$data),function(x) unlist(indexing[[out$data$dataset[x]]][out$data$event[x],])))) # restore correct indices in data
+      if nrow(out$data) > 0{
+        out$data[,1:2] <- data.frame(t(sapply(1:nrow(out$data),function(x) unlist(indexing[[out$data$dataset[x]]][out$data$event[x],])))) # restore correct indices in data
+      }
 
       # Bind past contenders with current
       out$event_contenders <- rbind(past_event_contenders,out$event_contenders)
