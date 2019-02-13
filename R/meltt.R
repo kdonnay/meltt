@@ -164,11 +164,17 @@ meltt <- function(...,taxonomies,twindow,spatwindow,smartmatch=TRUE,certainty=NA
       missing_arguments <- append(missing_arguments,paste0('\n  data: date column(s) are missing in ',as.character(datasets[[dat]]),''))
       terminate <- TRUE
     }else{
-      if(class(as.data.frame(eval(datasets[[dat]]))[,'date'])!="Date"){
+      date_col = as.data.frame(eval(datasets[[dat]]))[,'date']
+      if(class(date_col)!="Date"){
         missing_arguments <- append(missing_arguments,
                                     paste0('\n  data: date column in ',
                                            as.character(datasets[[dat]]),
-                                           " is not of class 'Date' or is not formatted as 'yyyy-mm-dd'"))
+                                           " is not of class 'Date'"))
+        terminate <- TRUE
+      }
+      datecheck <- try(as.Date(date_col, format= "%Y-%m-%d %H:%M:%S"))
+      if (any(class(datecheck) == "try-error" || is.na(datecheck))){
+        missing_arguments <- append(missing_arguments,"\n  data: date entry 'NA' or wrong format (must be 'YYYY-MM-DD hh:mm:ss')")
         terminate <- TRUE
       }
     }
@@ -277,9 +283,7 @@ meltt <- function(...,taxonomies,twindow,spatwindow,smartmatch=TRUE,certainty=NA
       # new joined data
       dat <- rbind(dat,dat_new)
       out <- meltt.episodal(dat,indexing,priormatches = c(),twindow,spatwindow,smartmatch,certainty,k,secondary,partial,averaging,weight,silent)
-      if (nrow(out$data) > 0){
-        out$data[,1:2] <- data.frame(t(sapply(1:nrow(out$data),function(x) unlist(indexing[[out$data$dataset[x]]][out$data$event[x],])))) # restore correct indices in data
-      }
+      out$data[,1:2] <- data.frame(t(sapply(1:nrow(out$data),function(x) unlist(indexing[[out$data$dataset[x]]][out$data$event[x],])))) # restore correct indices in data
       cat('Done.')
     }else{
       cat(paste0('\n Integrating merged data and dataset ',datst,': '))
@@ -305,9 +309,7 @@ meltt <- function(...,taxonomies,twindow,spatwindow,smartmatch=TRUE,certainty=NA
                                                              out$episode_matched,
                                                              out$episode_contenders),
                             twindow,spatwindow,smartmatch,certainty,k,secondary,partial,averaging,weight,silent)
-      if (nrow(out$data) > 0){
-        out$data[,1:2] <- data.frame(t(sapply(1:nrow(out$data),function(x) unlist(indexing[[out$data$dataset[x]]][out$data$event[x],])))) # restore correct indices in data
-      }
+      out$data[,1:2] <- data.frame(t(sapply(1:nrow(out$data),function(x) unlist(indexing[[out$data$dataset[x]]][out$data$event[x],])))) # restore correct indices in data
 
       # Bind past contenders with current
       out$event_contenders <- rbind(past_event_contenders,out$event_contenders)

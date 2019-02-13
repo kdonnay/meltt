@@ -28,9 +28,7 @@ meltt_data.meltt <- function(object,columns=NULL,return_all=FALSE){
     out = dd2[,columns] # only select requested columns
   }
   out = out[order(out$date,out$dataset,out$event),] # order by date, if tied by dataset, then event
-  if (nrow(out) > 0){
-    row.names(out) = 1:nrow(out) # re-index rows
-    out$dataset = dat.names[out$dataset] # restore data names
-  }
+  row.names(out) = 1:nrow(out) # re-index rows
+  out$dataset = dat.names[out$dataset] # restore data names
   return(out)
 }
