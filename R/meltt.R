@@ -209,7 +209,7 @@ meltt <- function(...,taxonomies,twindow,spatwindow,smartmatch=TRUE,certainty=NA
   }
   if (terminate){ # Stop the function and print warnings
     missing_arguments <- append(unique(missing_arguments)," \n\n")
-    message("The following required arguments of meltt() are MISSING or MIS-SPECIFIED:", missing_arguments)
+    message("\n\nThe following required arguments of meltt() are MISSING or MIS-SPECIFIED:\n", missing_arguments)
     stop("meltt(...,taxonomies,twindow,spatwindow)) was not executed!", call.=FALSE)
   }else{
     cat('Done.\n')
