@@ -53,9 +53,15 @@ summary.meltt = function(object, ...){
   uni = as.data.frame(table(Uevent_set[!(Uevent_set$ID %in% Mevent_key3),][1]))
   uni$Var1 = object$inputDataNames[uni$Var1]
   val = as.data.frame(matrix(t(uni$Var1),nrow=length(uni$Var1),ncol=length(uni$Var1)),stringsAsFactors = F)
-  colnames(val) = object$inputDataNames
-  for(c in seq_along(val)){val[val[,c] != colnames(val)[c],c] = "";val[val[,c] == colnames(val)[c],c] = "X"}
-  unique_obs = cbind(val,Freq=uni$Freq)
+  if( nrow(val) == 0 ){ # If all elements match, create placeholder
+    unique_obs = matrix(0,ncol=length(object$inputDataNames) + 1)
+    colnames(unique_obs) = c(object$inputDataNames,"Freq")
+  }else{
+    colnames(val) = object$inputDataNames
+    for(c in seq_along(val)){val[val[,c] != colnames(val)[c],c] = "";val[val[,c] == colnames(val)[c],c] = "X"}
+    unique_obs = cbind(val,Freq=uni$Freq)
+  }
+
 
   # Summary of Overlap
   matched = rbind(object$processed$event_matched,object$processed$episode_matched)
