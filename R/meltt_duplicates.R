@@ -1,10 +1,4 @@
 meltt_duplicates = function(object,columns=NULL){
-UseMethod("meltt_duplicates")
-  }
-
-
-meltt_duplicates.meltt = function(object,columns=NULL){
-
   # Returns input data retaining only to duplicative entries. The function
   # provides users with an easy way to qualitatively assess overlap.
 
