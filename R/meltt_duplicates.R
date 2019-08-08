@@ -79,10 +79,10 @@ meltt_duplicates.meltt = function(object,columns=NULL){
                   by.y=c("dataset","obs.count"),all.x=T)
     }
   }
-  # Generate Unique IDs
+  # Generate Unique IDs (convention in line with meltt_data
   .ind = c();for( c in data_key){.ind = c(.ind,c)}
   viable_options = unique(.ind[.ind>0])
-  colnames(out)[colnames(out) %in% colnames(data_key)] = paste0(object$inputDataNames[viable_options],"_data")
+  colnames(out)[colnames(out) %in% colnames(data_key)] = paste0(object$inputDataNames[viable_options],"_dataset")
   colnames(out)[colnames(out) %in% colnames(obs_key)] = paste0(object$inputDataNames[viable_options],"_event")
   return(out)
 }
