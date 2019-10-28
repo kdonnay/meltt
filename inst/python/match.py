@@ -266,7 +266,7 @@ def select(matches):
                     sub1.append([0, 0, 0, 0, 0])
                 else:
                     sub1.append([0, 0, 0, 0, 0])
-            output[result][:] = match_out[result] + sub1[ind + 1][2:5] + sub1[ind + 2][2:5] + [sub1_dim]
+            output[result][:] = match_out[result] + list(sub1[ind + 1][2:5]) + list(sub1[ind + 2][2:5]) + [sub1_dim]
     else:
         output = []
     return output
