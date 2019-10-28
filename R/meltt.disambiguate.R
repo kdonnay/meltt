@@ -34,10 +34,10 @@ meltt.disambiguate <- function(data,match_output,indexing,priormatches,averaging
       a = unlist(indexing[[contenders$dataset[x]]][contenders$event[x],])
       b = unlist(indexing[[contenders$bestmatch_data[x]]][contenders$bestmatch_event[x],])
       if(contenders$runnerUp1_data[x]>0){
-        c = unlist(indexing[[contenders$runnerUp1_data[x]]][contenders$runnerUp1_data[x],])
+        c = unlist(indexing[[contenders$runnerUp1_data[x]]][contenders$runnerUp1_event[x],])
       } else{c = unlist(data.frame(dataset=0,event=0))}
       if(contenders$runnerUp2_data[x]>0){
-        d = unlist(indexing[[contenders$runnerUp2_data[x]]][contenders$runnerUp2_data[x],])
+        d = unlist(indexing[[contenders$runnerUp2_data[x]]][contenders$runnerUp2_event[x],])
       } else{d = unlist(data.frame(dataset=0,event=0))}
       c(a,b,c,d)
     })))
