@@ -15,7 +15,7 @@ In many cases, more than one event dataset exists capturing related topics -- su
 
  - **Jittering Locations**, different geo-referencing software can produce slightly different longitude and latitude locations for the same place. This results in an artificial geo-spatial "jitter" around the same location.
 
- - **Temporal Fuzziness**, given how information about events are collected, the exact date of an event reported might differ from source to source. For example, if data is generated using news reports, they might differ in their reporting of the exact timing of the event---especially if precise on-the-ground information is hard to come by. This creates a temporal fuzziness where the same empirical event falls on different days in different datasets .
+ - **Temporal Fuzziness**, given how information about events are collected, the exact date of an event reported might differ from source to source. For example, if data is generated using news reports, they might differ in their reporting of the exact timing of the event---especially if precise on-the-ground information is hard to come by. This creates a temporal fuzziness where the same empirical event falls on different days in different datasets.
 
  - **Conceptual Differences**, different event datasets are built for different reasons, meaning each dataset will likely contain its own coding schema for the same general category. For example, a dataset recording local muggings and burglaries might have a schema that records these types of events categorically (i.e "mugging", "break in", etc.), whereas another crime dataset might record violent crimes and do so ordinally (1, 2, 3, etc.). Both datasets might be capturing the same event (say, a violent mugging) but each has its own method of coding that event.
 
@@ -37,9 +37,9 @@ Or the development version from Github
 
 ```R
 # install.packages("devtools")
-devtools::install_github("css-konstanz/meltt")
+devtools::install_github("kdonnay/meltt")
 ```
-The package requires that users have Python (>= 2.7) installed on their computer. To quickly get Pythong, install an [Anaconda](https://www.continuum.io/downloads) platform. `meltt` will use the program in the background.
+The package requires that users have Python (>= 2.7) installed on their computer. To quickly get Pythong, install an [Anaconda](ttps://www.anaconda.com/distribution) platform. `meltt` will use the program in the background.
 
 # Usage
 
@@ -295,7 +295,7 @@ str(output$processed$event_contenders)
 
 
 ## Meta
-- Please [report any issues or bugs](https://github.com/css-konstanz/meltt/issues).
+- Please [report any issues or bugs](https://github.com/kdonnay/meltt/issues).
 - License:  LGPL-3
 - Get citation information for `meltt` in R using `citation(package = 'meltt')`
 - CRAN: https://cran.r-project.org/package=meltt

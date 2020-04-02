@@ -4,6 +4,10 @@
 //
 //
 
+== 0.4.1 (02 Apr 2020) ==
+   * Fixed bug in match bookkeeping that could lead to incorrect match informations
+   * Updates to input checking and made robust to empty integration
+   * Moved GitHub development version to www.github.com/kdonnay/meltt
 
 == 0.4.0 (13 Apr 2018) ==
    * Introduced meltt_validate() as a validation procedure for output
