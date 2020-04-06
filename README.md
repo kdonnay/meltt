@@ -19,7 +19,8 @@ More information about the specifics of the method can also be found in an upcom
 Installation
 ============
 
-[![CRAN](https://www.r-pkg.org/badges/version/meltt)](https://cran.r-project.org/package=meltt) ![Downloads](https://cranlogs.r-pkg.org/badges/meltt)
+[![CRAN](https://www.r-pkg.org/badges/version/meltt)](https://cran.r-project.org/package=meltt)
+![Downloads](https://cranlogs.r-pkg.org/badges/meltt)
 
 The package can be installed through the CRAN repository.
 
