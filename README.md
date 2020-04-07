@@ -14,7 +14,7 @@ In many cases, more than one event dataset exists capturing related topics -- su
 
 In the past, to overcome these hurdles, researchers have typically relied on hand-coding to systematically match these data, which needless to say, is extremely time consuming, error-prone, and hard to reproduce. `meltt` provides a way around this problem by implementing a method that automates the matching of different event datasets in a fast, transparent, and reproducible way.
 
-More information about the specifics of the method can also be found in an upcoming article in the *Journal of Conflict Resolution* as well as in the package documentation.
+More information about the specifics of the method can also be found in our article in the *Journal of Conflict Resolution* as well as in the package documentation.
 
 Installation
 ============
