@@ -62,7 +62,7 @@ meltt_validate(output)
 meltt_validate(output, sample_prop=.1, reset = TRUE) 
 
 # override of the validation to get a sense of the report
-output$validation$validation_set$are_match = 1 
+output$validation$validation_set$coding = 1 
 
 meltt_validate(output)
 }
