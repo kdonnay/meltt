@@ -40,7 +40,7 @@ meltt_validate.meltt = function(
 
     # Specify Matching events
     matches <- meltt_duplicates(object)
-    matches <- matches[,grepl("dataID|eventID",colnames(matches))]
+    matches <- matches[,grepl("dataset|event",colnames(matches))]
     cols <- (1:ncol(matches))[1:ncol(matches) %% 2 == 1]
     match_id <- matrix(nrow=nrow(matches),ncol=length(cols))
     for (c in 1:length(cols)) {
