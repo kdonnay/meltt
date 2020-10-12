@@ -10,7 +10,7 @@ meltt.taxonomy <- function(data,taxonomies){
     # save as a numerical matrix
 
     inputs <- data[,c("data.source","obs.count",tax_names[i])]
-    temp_tax <- taxonomies[[i]]
+    temp_tax <- as.data.frame(taxonomies[[i]])
 
 
     # TAXONOMY CLEANING
