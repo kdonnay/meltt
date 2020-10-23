@@ -4,6 +4,10 @@
 //
 //
 
+
+== 0.4.2 (23 Oct 2020) ==
+   * Now accommodates taxonomies formatted as tibbles (Patch: Rob Williams. Thank you!)
+
 == 0.4.1 (02 Apr 2020) ==
    * Fixed bug in match bookkeeping that could lead to incorrect match informations
    * Updates to input checking and made robust to empty integration
