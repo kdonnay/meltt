@@ -21,6 +21,9 @@ meltt_duplicates.meltt = function(object,columns=NULL){
   }else{
     columns = c('dataset','obs.count',columns) # Return data id and event id
   }
+  
+  # drop "data" or event" column if they exit in data
+  columns = unique(columns[!columns %in% c('data','event')])
 
   # Recover Matched Events
   event_to_event = object$processed$event_matched
