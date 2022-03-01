@@ -5,7 +5,7 @@ meltt <- function(...,taxonomies,twindow,spatwindow,smartmatch=TRUE,certainty=NA
     cat <- function(...){}  
   }
   
-  cat(' meltt: Matching Event Data by Location, Time and Type.\n Karsten Donnay and Eric Dunford, 2018\n\n NOTE: Depending on the size and number of datasets integration may take some time!\n\n\n ')
+  cat(' meltt: Matching Event Data by Location, Time and Type.\n Karsten Donnay and Eric Dunford, 2022\n\n NOTE: Depending on the size and number of datasets integration may take some time!\n\n\n ')
   call <- match.call()
   if (!silent){
     print(call)
