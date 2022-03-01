@@ -171,7 +171,7 @@ meltt <- function(...,taxonomies,twindow,spatwindow,smartmatch=TRUE,certainty=NA
         terminate <- TRUE
       }
       datecheck <- try(as.Date(date_col, format= "%Y-%m-%d %H:%M:%S"))
-      if (any(class(datecheck) == "try-error" || is.na(datecheck))){
+      if (any(class(datecheck) == "try-error") || sum(is.na(datecheck))>0){
         missing_arguments <- append(missing_arguments,paste0("\n  data: 'date' column in '",as.character(datasets[[dat]]),
                                                              "' must be formatted as 'YYYY-MM-DD hh:mm:ss'\n"))
         terminate <- TRUE
