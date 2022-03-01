@@ -39,7 +39,7 @@ Or the development version from Github
 # install.packages("devtools")
 devtools::install_github("kdonnay/meltt")
 ```
-The package requires that users have Python (>= 2.7) installed on their computer. To quickly get Pythong, install an [Anaconda](ttps://www.anaconda.com/distribution) platform. `meltt` will use the program in the background.
+The package requires that users have Python (>= 2.7) installed on their computer. To quickly get Pythong, install an [Anaconda](https://www.anaconda.com/products/individual) platform. `meltt` will use the program in the background.
 
 # Usage
 
