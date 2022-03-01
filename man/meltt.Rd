@@ -43,7 +43,7 @@ meltt(...,taxonomies, twindow, spatwindow, smartmatch = TRUE, certainty = NA,
 }
 
 \details{
-\code{meltt} expects input datasets to be of class \code{data.frame}. Minimally each data must have columns "date" (formatted as "YYYY-mm-dd" or "YYYY-mm-dd hh:mm:ss"), "longitude" and "latitude" (both in degree) and the columns representing the dimensions used in the matching taxonomies. Note that \code{meltt} requires at least two datasets as input and can otherwise, in principle, handle any number of datasets.
+\code{meltt} expects input datasets to be of class \code{data.frame}. Minimally each data must have columns "date" (formatted as "YYYY-mm-dd" or "YYYY-mm-dd hh:mm:ss"), "longitude" and "latitude" (both in degree; we assume global coordinates formatted in WGS-84) and the columns representing the dimensions used in the matching taxonomies. Note that \code{meltt} requires at least two datasets as input and can otherwise, in principle, handle any number of datasets.
 
 The input \code{taxonomies} is expected to be of class \code{list}, which contain one or more taxonomy data frames. Each taxonomy must have a column denoting the "base.category" (i.e. the version of the variable that appears in each data frame) and a "data.source" column that matches the object name of the dataset containing those variables. All subsequent column in each taxonomy denote the  user-specified levels of generalization, which capture the degree to which the taxonomy category generalizes out. The most left column must contain the most granular levels while the furthest right the broadest. Error will be issued if taxonomy levels are not in the correct order.
 

@@ -5,8 +5,10 @@
 //
 
 
-== 0.4.2 (23 Oct 2020) ==
+== 0.4.2 (01 Mar 2022) ==
    * Now accommodates taxonomies formatted as tibbles (Patch: Rob Williams. Thank you!)
+   * Fixed minor issue in meltt() main datecheck functionality
+   * Updated meltt() description to included further details on GIS information required
 
 == 0.4.1 (02 Apr 2020) ==
    * Fixed bug in match bookkeeping that could lead to incorrect match informations
