@@ -42,14 +42,14 @@ Karsten Donnay, Eric T. Dunford, Erin C. McGrath, David Backer, David E. Cunning
 \examples{
 \donttest{
 data(crashMD)
-output <- meltt(crash_data1, crash_data2, crash_data3,
+output = meltt(crash_data1, crash_data2, crash_data3,
                 taxonomies = crash_taxonomies, twindow = 1, spatwindow = 3)
 
-flagged <- meltt_inspect(output)
+flagged = meltt_inspect(output)
 flagged
 
-retain <- c(TRUE,TRUE,TRUE,TRUE,TRUE)
-dataset <- meltt_inspect(output, confirmed_matches = retain)
+retain = c(TRUE,TRUE,TRUE,TRUE,TRUE)
+dataset = meltt_inspect(output, confirmed_matches = retain)
 head(dataset)
 }
 }

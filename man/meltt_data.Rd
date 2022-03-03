@@ -39,12 +39,12 @@ Karsten Donnay, Eric T. Dunford, Erin C. McGrath, David Backer, David E. Cunning
 \examples{
 \donttest{
 data(crashMD)
-output <- meltt(crash_data1, crash_data2, crash_data3,
+output = meltt(crash_data1, crash_data2, crash_data3,
                 taxonomies = crash_taxonomies, twindow = 1, spatwindow = 3)
-dataset <- meltt_data(output, column = c("date", "longitude", "latitude"))
+dataset = meltt_data(output, column = c("date", "longitude", "latitude"))
 head(dataset)
 
 # Return all original columns
-dataset <- meltt_data(output, return_all = TRUE)
+dataset = meltt_data(output, return_all = TRUE)
 }
 }

@@ -99,13 +99,13 @@ Karsten Donnay, Eric T. Dunford, Erin C. McGrath, David Backer, David E. Cunning
 \examples{
 \donttest{
 data(crashMD)
-output <- meltt(crash_data1, crash_data2, crash_data3,
+output = meltt(crash_data1, crash_data2, crash_data3,
                 taxonomies = crash_taxonomies, twindow = 1, spatwindow = 3)
 summary(output)
 plot(output)
 
 # Extract De-duplicated events
-dataset <- meltt_data(output)
+dataset = meltt_data(output)
 head(dataset)
 }
 }
