@@ -24,7 +24,6 @@ Karsten Donnay, Eric T. Dunford, Erin C. McGrath, David Backer, David E. Cunning
 data(crashMD)
 output = meltt(crash_data1, crash_data2, crash_data3,
                 taxonomies = crash_taxonomies, twindow = 1, spatwindow = 3)
-summary(output)
 plot(output)
 tplot(output, time_unit = 'days')
 }
