@@ -32,7 +32,10 @@ meltt_validate.meltt = function(
     stop("'within_window' has been set to FALSE, user must provide a new temporal and spatial window from which to draw control group.")
   }
   if(sample_prop > 1 | sample_prop < 0.001){
-    stop("`sample_prop` exceeds relevant bounds. Set argument to any numeric value existing between .01 and 1")
+    stop("'sample_prop' exceeds relevant bounds. Set argument to any numeric value existing between .01 and 1")
+  }
+  if(class(object)!="meltt"){
+    stop("input 'object' must be of type 'meltt', i.e. the output object returned by function meltt()")
   }
 
   # BULID VALIDATION SET (if need be) ------------------------------------------------------------------
