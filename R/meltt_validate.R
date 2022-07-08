@@ -7,6 +7,11 @@ meltt_validate = function(
   temporal_window = NULL, # if within_window==F, set new t window
   reset = FALSE # If TRUE, the validation step will be reset and a new validation sample frame will be produced.
 ){
+  # INPUT CHECK
+  if(class(object)!="meltt"){
+    stop("input 'object' must be of type 'meltt', i.e. the output object returned by function meltt()")
+  }
+  
   UseMethod("meltt_validate")
 }
 
@@ -33,9 +38,6 @@ meltt_validate.meltt = function(
   }
   if(sample_prop > 1 | sample_prop < 0.001){
     stop("'sample_prop' exceeds relevant bounds. Set argument to any numeric value existing between .01 and 1")
-  }
-  if(class(object)!="meltt"){
-    stop("input 'object' must be of type 'meltt', i.e. the output object returned by function meltt()")
   }
 
   # BULID VALIDATION SET (if need be) ------------------------------------------------------------------
