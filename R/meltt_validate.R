@@ -183,7 +183,7 @@ meltt_validate.meltt = function(
         }
         cbind(type=names(x),y)
       })
-    entries_info <- as.tibble(ldply(entries_info))
+    entries_info <- as_tibble(ldply(entries_info))
 
     formatted <- apply(entries_info[,(1:2)*-1],1,function(x){
       x = iconv(x, "latin1", "ASCII", sub="") # Remove any potential encoding issues
