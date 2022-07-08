@@ -296,7 +296,7 @@ meltt_validate.meltt = function(
       fluidRow(
         column(12,align='center',
                actionButton("quit", "End Review",
-                            icon = icon("circle-o-notch"),
+                            icon = icon("circle-notch"),
                             style="color: #ffffff; background-color:#444242;padding:20px; font-size:100%",
                             onclick = "setTimeout(function(){window.close();},500);")
         )
