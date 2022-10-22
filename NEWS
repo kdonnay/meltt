@@ -7,7 +7,7 @@
 == 0.4.3 (22 Oct 2022) ==
    * Replaced deprecated icon style that was causing plotting issues
    * Added additional input type and format check to meltt_validate()
-   * Fixed issue with missing package dependency in match.py
+   * Now requires Python 3 and fixed issue with missing package dependency in match.py
 
 == 0.4.2 (01 Mar 2022) ==
    * Now accommodates taxonomies formatted as tibbles (Patch: Rob Williams. Thank you!)

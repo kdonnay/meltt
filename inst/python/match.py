@@ -15,7 +15,7 @@
 
 import bisect
 import math
-from sys import stdout
+import sys
 
 def run(datainput, names, twindow, spatwindow, smartmatch, k, secondary, certainty, partial, weight, episodal, silent):
     """

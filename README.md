@@ -34,7 +34,7 @@ Or the development version from Github
 devtools::install_github("kdonnay/meltt")
 ```
 
-The package requires that users have Python (&gt;= 2.7) installed on their computer. To quickly get Python, install an [Anaconda](https://www.anaconda.com/products/distribution) platform. `meltt` will use the program in the background.
+The package requires that users have Python (&gt;= 3.6) installed on their computer. To quickly get Python, install an [Anaconda](https://www.anaconda.com/products/distribution) platform. `meltt` will use the program in the background.
 
 Usage
 =====
