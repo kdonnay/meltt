@@ -8,7 +8,7 @@ meltt_validate = function(
   reset = FALSE # If TRUE, the validation step will be reset and a new validation sample frame will be produced.
 ){
   # INPUT CHECK
-  if(is(object,"meltt")){
+  if(!is(object,"meltt")){
     stop("input 'object' must be of type 'meltt', i.e. the output object returned by function meltt()")
   }
   
