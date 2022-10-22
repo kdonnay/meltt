@@ -165,7 +165,7 @@ meltt <- function(...,taxonomies,twindow,spatwindow,smartmatch=TRUE,certainty=NA
       terminate <- TRUE
     }else{
       date_col = as.data.frame(eval(datasets[[dat]]))[,'date']
-      if(class(date_col)!="Date"){
+      if(is(date_col,"Date")){
         missing_arguments <- append(missing_arguments,
                                     paste0("\n  data: date column in '",as.character(datasets[[dat]]),"' is not of class 'Date'"))
         terminate <- TRUE
