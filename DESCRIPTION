@@ -9,6 +9,8 @@ Description: Framework for merging and disambiguating event data based on spatio
 License: LGPL-3
 Depends: R (>= 2.6)
 Imports: utils, ggplot2, plyr, dplyr, reticulate, Rcpp, shiny, shinyjs, tidyr, leaflet, tibble, methods
+URL: https://github.com/kdonnay/meltt
+BugReports: https://github.com/kdonnay/meltt/issues
 SystemRequirements: Python (>= 3.6)
 NeedsCompilation: yes
 LinkingTo: Rcpp, RcppArmadillo
